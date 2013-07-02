@@ -1,50 +1,72 @@
 package core.model;
 
+import core.model.exception.HITException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * The {@code AbstractContainer} class is an abstract implementation of the
  * {@link Container} interface intended as a base class for concrete containers.
  * 
+ * @invariant TODO
+ * 
  * @author kemcqueen
  */
-class AbstractContainer<T extends Containable> implements Container<T> {
+abstract class AbstractContainer<T extends Containable> implements Container<T> {
+    private final List<T> contents = new ArrayList<>();
+    
     @Override
     public Iterable<T> getContents() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Collections.unmodifiableList(this.contents);
     }
 
     @Override
     public void add(T content) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean canAdd(T content) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (this.canAdd(content)) {
+            try {
+                this.doAdd(content);
+                this.contents.add(content);
+            } catch (HITException ex) {
+                Logger.getLogger(AbstractContainer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     @Override
     public void remove(T content) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean canRemove(T content) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (this.canRemove(content)) {
+            try {
+                this.doRemove(content);
+                this.contents.remove(content);
+            } catch (HITException ex) {
+                Logger.getLogger(AbstractContainer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     @Override
     public boolean contains(T content) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final int i = this.contents.indexOf(content);
+        if (i >= 0) {
+            return true;
+        }
+        
+        return false;
     }
 
     @Override
     public boolean hasContent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.size() > 0;
     }
 
     @Override
     public int size() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.contents.size();
     }
-    
+
+    protected abstract void doAdd(T content) throws HITException;
+    protected abstract void doRemove(T content) throws HITException;
 }

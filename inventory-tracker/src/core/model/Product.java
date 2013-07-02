@@ -12,11 +12,17 @@ import java.util.Date;
  * <li>Alcon Lens Drops, 0.17 fl. oz., Bar code 3000650192057</li>
  * </ul>
  * 
+ * @invariant TODO
+ * 
  * @author kemcqueen
  */
-public interface Product extends MultiContainable<Container<Product>> {
+public interface Product extends Containable<ProductContainer> {
     /**
      * Returns the date (and time) this product was added to the system.
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
      * 
      * @return the date (and time) this product was added to the system
      */
@@ -26,6 +32,10 @@ public interface Product extends MultiContainable<Container<Product>> {
      * Get the bar code associated with this product (assigned by the 
      * manufacturer).
      * 
+     * @pre TODO
+     * 
+     * @post TODO
+     * 
      * @return the bar code associated with this product
      */
     BarCode getBarCode();
@@ -33,6 +43,10 @@ public interface Product extends MultiContainable<Container<Product>> {
     
     /**
      * Get the textual description of this product.
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
      * 
      * @return the textual description of this product
      */
@@ -49,6 +63,10 @@ public interface Product extends MultiContainable<Container<Product>> {
      * <li>0.17 fl. oz.</li>
      * </ul>
      * 
+     * @pre TODO
+     * 
+     * @post TODO
+     * 
      * @return the size of this product
      */
     Quantity getSize();
@@ -57,6 +75,10 @@ public interface Product extends MultiContainable<Container<Product>> {
     /**
      * Get the shelf life of this product measured in months.  A value of zero
      * (0) means "unspecified."
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
      * 
      * @return the shelf life of this product measured in months (or 0 if not
      * specified)
@@ -68,7 +90,9 @@ public interface Product extends MultiContainable<Container<Product>> {
      * Set the shelf life of this product measured in months.  A value of zero
      * (0) (the default) means "unspecified."
      * 
-     * @pre the shelf life should be >= 0
+     * @pre shelfLife >= 0
+     * 
+     * @post TODO
      * 
      * @param shelfLife the shelf life of this product measured in months (>= 0)
      */
@@ -78,6 +102,10 @@ public interface Product extends MultiContainable<Container<Product>> {
     /**
      * Get the number of this product required for a three (3) month supply. A
      * value of zero (0) means "unspecified."
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
      * 
      * @return the number of this product required for a 3 month supply (or 0 if
      * not specified)
@@ -89,12 +117,54 @@ public interface Product extends MultiContainable<Container<Product>> {
      * Set the number of this product required for a three (3) month supply.  A
      * value of zero (0) means "unspecified."
      * 
-     * @pre the quota should be >= 0
+     * @pre quota >= 0
+     * 
+     * @post TODO
      * 
      * @param quota the number of this product required for a 3-month supply 
      * (>= 0)
      */
     void set3MonthSupplyQuota(int quota);
+    
+    
+    /**
+     * Get all the storage units where this product is located.
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
+     * 
+     * @return all the storage units where this product is located
+     */
+    Iterable<StorageUnit> getStorageUnits();
+    
+    
+    /**
+     * Get all the categories to which this product has been assigned.
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
+     * 
+     * @return all the categories to which this product has been assigned
+     */
+    Iterable<Category> getCategories();
+    
+    
+    /**
+     * Get the {@link ProductContainer} containing this product within the given
+     * storage unit.
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
+     * 
+     * @param unit the storage unit that contains this product
+     * 
+     * @return the product container that actually contains this product in the
+     * given storage unit (may be the storage unit itself)
+     */
+    ProductContainer getProductContainer(StorageUnit unit);
     
     
     /**
@@ -105,6 +175,10 @@ public interface Product extends MultiContainable<Container<Product>> {
         /**
          * Get a new {@link Product} instance for use in the system based on the
          * given manufacturer's bar code (UPC).
+         * 
+         * @pre TODO
+         * 
+         * @post TODO
          * 
          * @param barCode the manufacturer's bar code (UPC)
          * 
@@ -122,6 +196,10 @@ public interface Product extends MultiContainable<Container<Product>> {
         /**
          * Get a new {@link Product} instance for use in the system based on the
          * given manufacturer's bar code (UPC) and description.
+         * 
+         * @pre TODO
+         * 
+         * @post TODO
          * 
          * @param barCode the manufacturer's bar code (UPC)
          * @param description the description of the product

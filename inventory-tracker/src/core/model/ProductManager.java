@@ -17,7 +17,7 @@ public enum ProductManager {
     
     private Collection<Product> Products;
     
-    public Product newProduct(BarCodeImplementation barcode, String description) throws HITException{
+    public Product newProduct(BarCode barcode, String description) throws HITException{
         return null;
     }
     

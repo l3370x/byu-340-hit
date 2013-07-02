@@ -1,58 +1,62 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package core.model;
 
 import core.model.exception.HITException;
+import java.io.OutputStream;
 
 /**
- * The {@code BarCode} class is used to uniquely identify products and items in
- * the system.  A product's bar code (UPC) is assigned by the manufacturer.  An
- * item's bar code is assigned by the system at the time the item is entered
- * into the system.
- * 
- * @author kemcqueen
+ * The {@code BarCodeImpl} class is the default implementation of the 
+ * {@link BarCode} interface
+ * @author Andrew
  */
-public interface BarCode extends Printable {
+public class BarCode {
+    private final String value;
+    
     /**
-     * Get the value of this bar code.
+     * Create a new bar code with the given value.
      * 
-     * @return the value of this bar code
+     * @pre TODO
+     * 
+     * @post TODO
+     * 
+     * @param value the value of the bar code
+     * 
+     * @throws HITException if the bar code could not be created for any reason.
      */
-    String getValue();
-    
-    
-    /**
-     * The {@code BarCode.Factory} class is used to generate valid bar code
-     * instances for use within the system.
-     */
-    public static class Factory {
-        /**
-         * Get a new {@link BarCode} instance with the given value.  This is 
-         * intended for creating an instance with a manufacturer's UPC.
-         * 
-         * @param value the value of the bar code
-         * 
-         * @return a new bar code with the given value
-         * 
-         * @throws HITException if the bar code could not be created for any
-         * reason
-         */
-        public static BarCode newInstance(String value) throws HITException {
-            // TODO implement
-            return null;
-        }
-        
-        
-        /**
-         * Get a new {@link BarCode} instance.  This is intended for generating
-         * bar codes for items entered into the system.
-         * 
-         * @return a new bar code with an internally-generated value
-         * 
-         * @throws HITException if the bar code could not be created for any 
-         * reason
-         */
-        public static BarCode newInstance() throws HITException {
-            // TODO implement
-            return null;
-        }
+    public BarCode(String value) throws HITException {
+        this.value = value;
     }
+
+    /**
+     * Get the string value of the bar code.
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
+     * 
+     * @return the bar code value
+     */
+    public String getValue() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Print this bar code to the given stream.
+     * 
+     * @pre null != stream
+     * 
+     * @post this bar code has been written to the given stream
+     * 
+     * @param stream the stream to which to write this bar code
+     * 
+     * @throws HITException if this bar code could not be written to the given
+     * stream for any reason.
+     */
+    public void print(OutputStream stream) throws HITException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
 }
