@@ -6,6 +6,8 @@ import core.model.exception.HITException;
  * The {@code Containable} interface defines the contract for an object that can
  * be stored in a {@link Container}.
  * 
+ * @invariant TODO
+ * 
  * @author kemcqueen
  */
 public interface Containable<T extends Container> {
@@ -14,9 +16,9 @@ public interface Containable<T extends Container> {
      * 
      * @param container the target container to which this item will be added
      * 
-     * @pre ???
+     * @pre TODO
      * 
-     * @post ???
+     * @post TODO
      * 
      * @throws HITException if this object could not be added to the given 
      * container for any reason
@@ -33,9 +35,9 @@ public interface Containable<T extends Container> {
      * @param from the container that currently stores this item
      * @param to the container that will store this item
      * 
-     * @pre ???
+     * @pre TODO
      * 
-     * @post ???
+     * @post TODO
      * 
      * @throws HITException if this item could not be transferred from the
      * original container to the new container for any reason
@@ -48,9 +50,9 @@ public interface Containable<T extends Container> {
      * 
      * @param container the container from which this item is to be removed
      * 
-     * @pre ???
+     * @pre TODO
      * 
-     * @post ???
+     * @post TODO
      * 
      * @throws HITException if this item could not be removed from the given
      * container for any reason
@@ -61,6 +63,10 @@ public interface Containable<T extends Container> {
     /**
      * Get the container that currently stores this item.
      * 
+     * @pre TODO
+     * 
+     * @post TODO
+     * 
      * @return the container that currently stores this item (may be null if
      * this item has not yet been stored, or has been removed)
      */
@@ -69,6 +75,10 @@ public interface Containable<T extends Container> {
     
     /**
      * Determine if this item is stored in the given container.
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
      * 
      * @param container the container in which this item may be stored
      * 

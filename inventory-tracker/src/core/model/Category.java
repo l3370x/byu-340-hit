@@ -3,10 +3,15 @@ package core.model;
 import core.model.exception.HITException;
 
 /**
- *
+ * The {@code Category} interface defines the contract for an object that
+ * describes a group of related products.  A category may also contain other
+ * categories in the manner of a tree of product groups.
+ * 
+ * @invariant TODO
+ * 
  * @author kemcqueen
  */
-public interface Category extends Containable<Container<Category>>, StorageUnit {
+public interface Category extends Containable<Container<Category>>, ProductContainer<Category> {
     /**
      * Get the total amount of products in this category required for a three 
      * (3) month supply. For example:
@@ -20,6 +25,10 @@ public interface Category extends Containable<Container<Category>>, StorageUnit 
      * </ul>
      * A value of zero (0) means "unspecified."  
      * 
+     * @pre TODO
+     * 
+     * @post TODO
+     * 
      * @return the quantity of products in this category required for a 3 month 
      * supply (a quantity with value of 0 means "unspecified")
      */
@@ -30,14 +39,26 @@ public interface Category extends Containable<Container<Category>>, StorageUnit 
      * Set the quantity of products in this category required for a three (3) 
      * month supply.  A quantity with a value of zero (0) means "unspecified."
      * 
-     * @pre ???
+     * @pre TODO
      * 
-     * @post ???
+     * @post TODO
      * 
      * @param quantity the quantity of products in this category required for a 
      * 3-month supply (the value of the quantity should be >= 0)
      */
     void set3MonthSupplyQuantity(Quantity quantity);
+    
+    
+    /**
+     * Get the {@link StorageUnit} under which this category may be found.
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
+     * 
+     * @return the storage unit under which this category may be found
+     */
+    StorageUnit getStorageUnit();
 
     
     /**
@@ -47,6 +68,10 @@ public interface Category extends Containable<Container<Category>>, StorageUnit 
     public static class Factory {
         /**
          * Get a new {@link Category} instance with the given name.
+         * 
+         * @pre TODO
+         * 
+         * @post TODO
          * 
          * @param name the name of the new category
          * 

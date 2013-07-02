@@ -10,11 +10,17 @@ import java.util.Date;
  * this case, the Product is "Diet Coke, 12 fl. oz.", while each physical can is
  * a distinct item.
  * 
+ * @invariant TODO
+ * 
  * @author kemcqueen
  */
-public interface Item extends Containable<Container<Item>> {
+public interface Item extends Containable<ProductContainer> {
     /**
      * Get the {@link Product} of which this item is an instance.
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
      * 
      * @return this item's product
      */
@@ -26,6 +32,10 @@ public interface Item extends Containable<Container<Item>> {
      * the inventory tracking system and is distinct from the associated
      * product's bar code which was assigned by the product manufacturer.
      * 
+     * @pre TODO
+     * 
+     * @post TODO
+     * 
      * @return the bar code assigned to this individual item
      */
     BarCode getBarCode();
@@ -33,6 +43,10 @@ public interface Item extends Containable<Container<Item>> {
     
     /**
      * Get the date (and time) this item was entered into the system.
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
      * 
      * @return the date (and time) this item was entered into the system
      */
@@ -42,6 +56,10 @@ public interface Item extends Containable<Container<Item>> {
     /**
      * Get the date (and time) this item was removed from the system.
      * 
+     * @pre TODO
+     * 
+     * @post TODO
+     * 
      * @return the date (and time) this item was removed from the system
      */
     Date getExitDate();
@@ -50,6 +68,10 @@ public interface Item extends Containable<Container<Item>> {
     /**
      * Get the date on which this item will expire.  This value is calculated
      * based on this item's entry date and the product's shelf life.
+     * 
+     * @pre TODO
+     * 
+     * @post TODO
      * 
      * @return the date on which this item will expire
      */
@@ -63,13 +85,18 @@ public interface Item extends Containable<Container<Item>> {
         /**
          * Get a new {@link Item} instance based on the given {@link Product}.
          * 
+         * @pre TODO
+         * 
+         * @post TODO
+         * 
          * @param product the product for which to create a new item
+         * @param entryDate the date the item was entered into the system
          * 
          * @return a new item instance based on the given product
          * 
          * @throws HITException if the item could not be created for any reason
          */
-        public static Item newInstance(Product product) throws HITException {
+        public static Item newInstance(Product product, Date entryDate) throws HITException {
             // TODO implement factory method
             return null;
         }
