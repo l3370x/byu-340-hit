@@ -28,8 +28,8 @@ public enum PersistenceManager {
 	 * 
 	 * @throws HITException if saving the data failed for some reason.
 	 */
-	public void save() throws HITException{
-		StorageUnitManager.values();
+	public void save() throws HITException {
+		
     }
 	
 	/**
