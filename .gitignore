@@ -1,3 +1,6 @@
 inventory-tracker/.classpath
+inventory-tracker/.settings
 inventory-tracker/.project
 inventory-tracker/bin/
+inventory-tracker/build
+inventory-tracker/doc
