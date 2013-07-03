@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  * The {@code AbstractContainer} class is an abstract implementation of the
  * {@link Container} interface intended as a base class for concrete containers.
  * 
- * @invariant TODO
+ * @invariant size() >= 0
  * 
  * @author kemcqueen
  */

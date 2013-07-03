@@ -14,7 +14,7 @@ import java.util.Map;
  * constructor is hidden, so the only way to get an instance is through the
  * {@link InventoryManager.Factory}.
  * 
- * @invariant TODO
+ * @invariant ?
  * 
  * @author kemcqueen
  */

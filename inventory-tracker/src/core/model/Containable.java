@@ -6,7 +6,7 @@ import core.model.exception.HITException;
  * The {@code Containable} interface defines the contract for an object that can
  * be stored in a {@link Container}.
  * 
- * @invariant TODO
+ * @invariant ??
  * 
  * @author kemcqueen
  */

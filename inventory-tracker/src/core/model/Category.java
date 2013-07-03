@@ -7,7 +7,7 @@ import core.model.exception.HITException;
  * describes a group of related products.  A category may also contain other
  * categories in the manner of a tree of product groups.
  * 
- * @invariant TODO
+ * @invariant getStorageUnit() != null
  * 
  * @author kemcqueen
  */

@@ -5,7 +5,7 @@ package core.model;
  * can manage an inventory of products and items stored in various product 
  * containers.  This class acts as the root node of the inventory tree (forest).
  * 
- * @invariant TODO
+ * @invariant ?
  * 
  * @author kemcqueen
  */
@@ -25,7 +25,7 @@ public interface InventoryManager extends ProductContainer<StorageUnit> {
      * The {@code InventoryManager.Factory} class is used to get the singleton
      * instance of the {@link InventoryManager}.
      * 
-     * @invariant TODO
+     * @invariant ?
      */
     public static class Factory {
         private static final InventoryManager INSTANCE  = 

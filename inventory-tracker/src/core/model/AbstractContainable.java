@@ -6,7 +6,7 @@ import core.model.exception.HITException;
  * The {@code AbstractContainable} class is the base class for implementations
  * of the {@link Containable} interface.
  * 
- * @invariant TODO
+ * @invariant ?
  * 
  * @author kemcqueen
  */

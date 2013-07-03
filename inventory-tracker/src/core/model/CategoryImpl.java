@@ -8,7 +8,7 @@ import core.model.exception.HITException;
  * hidden.  To get an instance of {@link Category} you must use the 
  * {@link Category.Factory}.
  * 
- * @invariant TODO
+ * @invariant getStorageUnit() != null
  * 
  * @author kemcqueen
  */

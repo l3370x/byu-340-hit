@@ -6,7 +6,7 @@ import core.model.exception.HITException;
  * The {@code AbstractProductContainer} class is the base class for 
  * {@link ProductContainer} implementations.
  * 
- * @invariant TODO
+ * @invariant getName() != null
  * 
  * @author kemcqueen
  */
