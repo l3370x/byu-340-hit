@@ -6,7 +6,7 @@ import java.io.Serializable;
  * The {@code Container} interface defines the contract for an object that
  * may contain a collection of {@link Containable} objects.
  * 
- * @invariant ???
+ * @invariant size() >= 0
  * 
  * @author kemcqueen
  */
