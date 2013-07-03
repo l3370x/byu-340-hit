@@ -18,9 +18,9 @@ public interface Item extends Containable<ProductContainer> {
     /**
      * Get the {@link Product} of which this item is an instance.
      * 
-     * @pre TODO
+     * @pre 
      * 
-     * @post TODO
+     * @post return Product contains item
      * 
      * @return this item's product
      */
@@ -32,9 +32,9 @@ public interface Item extends Containable<ProductContainer> {
      * the inventory tracking system and is distinct from the associated
      * product's bar code which was assigned by the product manufacturer.
      * 
-     * @pre TODO
+     * @pre 
      * 
-     * @post TODO
+     * @post return != null
      * 
      * @return the bar code assigned to this individual item
      */
@@ -44,9 +44,9 @@ public interface Item extends Containable<ProductContainer> {
     /**
      * Get the date (and time) this item was entered into the system.
      * 
-     * @pre TODO
+     * @pre 
      * 
-     * @post TODO
+     * @post return != null
      * 
      * @return the date (and time) this item was entered into the system
      */
@@ -56,9 +56,9 @@ public interface Item extends Containable<ProductContainer> {
     /**
      * Get the date (and time) this item was removed from the system.
      * 
-     * @pre TODO
+     * @pre 
      * 
-     * @post TODO
+     * @post return != null
      * 
      * @return the date (and time) this item was removed from the system
      */
@@ -69,9 +69,9 @@ public interface Item extends Containable<ProductContainer> {
      * Get the date on which this item will expire.  This value is calculated
      * based on this item's entry date and the product's shelf life.
      * 
-     * @pre TODO
+     * @pre 
      * 
-     * @post TODO
+     * @post return != null
      * 
      * @return the date on which this item will expire
      */
@@ -85,9 +85,9 @@ public interface Item extends Containable<ProductContainer> {
         /**
          * Get a new {@link Item} instance based on the given {@link Product}.
          * 
-         * @pre TODO
+         * @pre product != null, entryDate != null
          * 
-         * @post TODO
+         * @post product.contains(Item)
          * 
          * @param product the product for which to create a new item
          * @param entryDate the date the item was entered into the system

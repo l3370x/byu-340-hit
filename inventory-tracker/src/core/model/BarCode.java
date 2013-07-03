@@ -18,9 +18,9 @@ public class BarCode {
     /**
      * Create a new bar code with the given value.
      * 
-     * @pre TODO
+     * @pre value != null
      * 
-     * @post TODO
+     * @post BarCode.value == value
      * 
      * @param value the value of the bar code
      * 
@@ -33,9 +33,9 @@ public class BarCode {
     /**
      * Get the string value of the bar code.
      * 
-     * @pre TODO
+     * @pre 
      * 
-     * @post TODO
+     * @post return != null
      * 
      * @return the bar code value
      */

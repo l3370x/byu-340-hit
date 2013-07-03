@@ -25,9 +25,9 @@ public interface Category extends Containable<Container<Category>>, ProductConta
      * </ul>
      * A value of zero (0) means "unspecified."  
      * 
-     * @pre TODO
+     * @pre 
      * 
-     * @post TODO
+     * @post return != null
      * 
      * @return the quantity of products in this category required for a 3 month 
      * supply (a quantity with value of 0 means "unspecified")
@@ -39,9 +39,9 @@ public interface Category extends Containable<Container<Category>>, ProductConta
      * Set the quantity of products in this category required for a three (3) 
      * month supply.  A quantity with a value of zero (0) means "unspecified."
      * 
-     * @pre TODO
+     * @pre quantity != null
      * 
-     * @post TODO
+     * @post Category.get3MonthSupplyQuantity() == quantity
      * 
      * @param quantity the quantity of products in this category required for a 
      * 3-month supply (the value of the quantity should be >= 0)
@@ -52,9 +52,9 @@ public interface Category extends Containable<Container<Category>>, ProductConta
     /**
      * Get the {@link StorageUnit} under which this category may be found.
      * 
-     * @pre TODO
+     * @pre 
      * 
-     * @post TODO
+     * @post return != null
      * 
      * @return the storage unit under which this category may be found
      */
@@ -69,9 +69,10 @@ public interface Category extends Containable<Container<Category>>, ProductConta
         /**
          * Get a new {@link Category} instance with the given name.
          * 
-         * @pre TODO
+         * @pre name != null, for each Category in currentStorageUnit none of 
+         * their names == name
          * 
-         * @post TODO
+         * @post return != null
          * 
          * @param name the name of the new category
          * 

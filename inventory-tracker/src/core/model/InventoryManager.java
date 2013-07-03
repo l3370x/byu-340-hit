@@ -13,9 +13,9 @@ public interface InventoryManager extends ProductContainer<StorageUnit> {
     /**
      * Get all the items in the inventory that have been removed.
      * 
-     * @pre TODO
+     * @pre removed items exist
      * 
-     * @post TODO
+     * @post return != null
      * 
      * @return a collection of items that have been removed from the system
      */
@@ -34,9 +34,9 @@ public interface InventoryManager extends ProductContainer<StorageUnit> {
         /**
          * Get the {@link InventoryManager} instance.
          * 
-         * @pre TODO
+         * @pre 
          * 
-         * @post TODO
+         * @post return != null
          * 
          * @return the inventory manager
          */

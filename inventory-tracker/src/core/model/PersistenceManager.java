@@ -4,14 +4,12 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.StorageUnitManager;
-import core.model.ProductManager;
-import core.model.ItemManager;
 
 
 /**
  * The {@code PersistenceManager} will be used to handle loading and saving
  * the data that the program will be using.
+ * 
  * @author aaron
  *
  */

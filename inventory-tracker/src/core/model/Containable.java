@@ -16,9 +16,9 @@ public interface Containable<T extends Container> {
      * 
      * @param container the target container to which this item will be added
      * 
-     * @pre TODO
+     * @pre container != NULL
      * 
-     * @post TODO
+     * @post Containable.getContainer() == container
      * 
      * @throws HITException if this object could not be added to the given 
      * container for any reason
@@ -35,9 +35,9 @@ public interface Containable<T extends Container> {
      * @param from the container that currently stores this item
      * @param to the container that will store this item
      * 
-     * @pre TODO
+     * @pre from != NULL, to != NULL
      * 
-     * @post TODO
+     * @post Containable.getContainer() == to
      * 
      * @throws HITException if this item could not be transferred from the
      * original container to the new container for any reason
@@ -50,9 +50,9 @@ public interface Containable<T extends Container> {
      * 
      * @param container the container from which this item is to be removed
      * 
-     * @pre TODO
+     * @pre container != NULL
      * 
-     * @post TODO
+     * @post container.contains(Containable) == False
      * 
      * @throws HITException if this item could not be removed from the given
      * container for any reason
@@ -63,9 +63,9 @@ public interface Containable<T extends Container> {
     /**
      * Get the container that currently stores this item.
      * 
-     * @pre TODO
+     * @pre Containable has been saved
      * 
-     * @post TODO
+     * @post return Container contains(Containable)
      * 
      * @return the container that currently stores this item (may be null if
      * this item has not yet been stored, or has been removed)
@@ -76,9 +76,9 @@ public interface Containable<T extends Container> {
     /**
      * Determine if this item is stored in the given container.
      * 
-     * @pre TODO
+     * @pre container != NULL
      * 
-     * @post TODO
+     * @post if container.contains(Containable) then true else false
      * 
      * @param container the container in which this item may be stored
      * 
