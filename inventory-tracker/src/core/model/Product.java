@@ -12,7 +12,7 @@ import java.util.Date;
  * <li>Alcon Lens Drops, 0.17 fl. oz., Bar code 3000650192057</li>
  * </ul>
  * 
- * @invariant TODO
+ * @invariant barCode != null
  * 
  * @author kemcqueen
  */
@@ -20,9 +20,9 @@ public interface Product extends Containable<ProductContainer> {
     /**
      * Returns the date (and time) this product was added to the system.
      * 
-     * @pre TODO
+     * @pre none
      * 
-     * @post TODO
+     * @post retval != null
      * 
      * @return the date (and time) this product was added to the system
      */
@@ -32,9 +32,9 @@ public interface Product extends Containable<ProductContainer> {
      * Get the bar code associated with this product (assigned by the 
      * manufacturer).
      * 
-     * @pre TODO
+     * @pre none
      * 
-     * @post TODO
+     * @post retval != null
      * 
      * @return the bar code associated with this product
      */
@@ -44,9 +44,9 @@ public interface Product extends Containable<ProductContainer> {
     /**
      * Get the textual description of this product.
      * 
-     * @pre TODO
+     * @pre none
      * 
-     * @post TODO
+     * @post retval == string description
      * 
      * @return the textual description of this product
      */
@@ -63,9 +63,9 @@ public interface Product extends Containable<ProductContainer> {
      * <li>0.17 fl. oz.</li>
      * </ul>
      * 
-     * @pre TODO
+     * @pre none
      * 
-     * @post TODO
+     * @post retval != null
      * 
      * @return the size of this product
      */
@@ -76,9 +76,9 @@ public interface Product extends Containable<ProductContainer> {
      * Get the shelf life of this product measured in months.  A value of zero
      * (0) means "unspecified."
      * 
-     * @pre TODO
+     * @pre none
      * 
-     * @post TODO
+     * @post retval >= 0
      * 
      * @return the shelf life of this product measured in months (or 0 if not
      * specified)
@@ -92,7 +92,7 @@ public interface Product extends Containable<ProductContainer> {
      * 
      * @pre shelfLife >= 0
      * 
-     * @post TODO
+     * @post getShelfLifeInMonths() == shelfLife
      * 
      * @param shelfLife the shelf life of this product measured in months (>= 0)
      */
@@ -103,9 +103,9 @@ public interface Product extends Containable<ProductContainer> {
      * Get the number of this product required for a three (3) month supply. A
      * value of zero (0) means "unspecified."
      * 
-     * @pre TODO
+     * @pre none
      * 
-     * @post TODO
+     * @post retval >= 0
      * 
      * @return the number of this product required for a 3 month supply (or 0 if
      * not specified)
@@ -119,7 +119,7 @@ public interface Product extends Containable<ProductContainer> {
      * 
      * @pre quota >= 0
      * 
-     * @post TODO
+     * @post get3MonthSupplyQuota() == quota
      * 
      * @param quota the number of this product required for a 3-month supply 
      * (>= 0)
@@ -130,9 +130,9 @@ public interface Product extends Containable<ProductContainer> {
     /**
      * Get all the storage units where this product is located.
      * 
-     * @pre TODO
+     * @pre none
      * 
-     * @post TODO
+     * @post retval != null ?? Product doesn't exist if not in any Storage Unit 
      * 
      * @return all the storage units where this product is located
      */
@@ -142,9 +142,9 @@ public interface Product extends Containable<ProductContainer> {
     /**
      * Get all the categories to which this product has been assigned.
      * 
-     * @pre TODO
+     * @pre none
      * 
-     * @post TODO
+     * @post retval == iterable if exists in any category, and null if not
      * 
      * @return all the categories to which this product has been assigned
      */
@@ -155,9 +155,10 @@ public interface Product extends Containable<ProductContainer> {
      * Get the {@link ProductContainer} containing this product within the given
      * storage unit.
      * 
-     * @pre TODO
+     * @pre unit != null
+     * @pre unit exists in getStorageUnits()
      * 
-     * @post TODO
+     * @post retval != null
      * 
      * @param unit the storage unit that contains this product
      * 
@@ -176,9 +177,10 @@ public interface Product extends Containable<ProductContainer> {
          * Get a new {@link Product} instance for use in the system based on the
          * given manufacturer's bar code (UPC).
          * 
-         * @pre TODO
+         * @pre barCode != null
          * 
-         * @post TODO
+         * @post retval != null
+         * @post getBarcode() = barCode
          * 
          * @param barCode the manufacturer's bar code (UPC)
          * 
@@ -197,9 +199,12 @@ public interface Product extends Containable<ProductContainer> {
          * Get a new {@link Product} instance for use in the system based on the
          * given manufacturer's bar code (UPC) and description.
          * 
-         * @pre TODO
+         * @pre barCode != null
+         * @pre description != null
          * 
-         * @post TODO
+         * @post retval != null
+         * @post getBarcode() = barCode
+         * @post getDescription() = description
          * 
          * @param barCode the manufacturer's bar code (UPC)
          * @param description the description of the product

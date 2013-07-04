@@ -4,7 +4,8 @@ package core.model;
  * The {@code Quantity} class is used to measure a product.  This class is 
  * immutable and therefore thread-safe.
  * 
- * @invariant
+ * @invariant value != null
+ * @invariant unit != null
  * 
  * @author kemcqueen
  */

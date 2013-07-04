@@ -7,7 +7,7 @@ import core.model.exception.HITException;
  * {@link StorageUnit} interface.  The constructor(s) for this class are hidden.
  * To get a StorageUnit instance, you must use the {@link StorageUnit.Factory}.
  * 
- * @invariant TODO
+ * @invariant name != null
  * 
  * @author kemcqueen
  */

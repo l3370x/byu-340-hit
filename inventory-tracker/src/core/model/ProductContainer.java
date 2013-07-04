@@ -6,7 +6,6 @@ import core.model.exception.HITException;
  * The {@code ProductContainer} class defines the contract for a class that can
  * manage a collection of {@link Product} and {@link Item} instances.
  * 
- * @invariant ???
  * 
  * @author kemcqueen
  */
@@ -15,9 +14,11 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
     /**
      * Add the given {@link Item} instance to this product container.
      * 
-     * @pre ???
+     * @pre item != null
      * 
-     * @post ???
+     * @post getItems contains item
+     * @post all items of the same product in this storage unit will be 
+     * transfered to this container along with the product 
      *
      * @param item the item to be added
      *
@@ -28,9 +29,12 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
     /**
      * Add the given {@link Product} instance to this product container.
      * 
-     * @pre ???
+     * @pre product != null
      * 
-     * @post ???
+     * @post getProducts contains product
+     * @post product will only exist in this container of its Storage Unit
+     * @post all items of product in this storage unit will be 
+     * transfered to this container
      *
      * @param product the product to be added
      *
@@ -42,9 +46,9 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
      * Determine whether the given {@link Item} instance can be added to this
      * product container.
      * 
-     * @pre ???
+     * @pre item != null
      * 
-     * @post ???
+     * @post returnval == false if inventoryManager, true otherwise
      *
      * @param item the candidate item
      *
@@ -57,9 +61,9 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
      * Determine whether the given {@link Product} instance can be added to this
      * product container.
      * 
-     * @pre ???
+     * @pre product != null
      * 
-     * @post ???
+     * @post returnval == false if inventoryManager, true otherwise
      *
      * @param product the candidate product
      *
@@ -72,9 +76,9 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
      * Determine whether the given {@link Item} instance can be removed from
      * this product container.
      * 
-     * @pre ???
+     * @pre item != null
      * 
-     * @post ???
+     * @post retval true if item exists in container else false
      *
      * @param item the candidate item
      *
@@ -87,9 +91,9 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
      * Determine whether the given {@link Product} instance can be removed from
      * this product container.
      * 
-     * @pre ???
+     * @pre product != null
      * 
-     * @post ???
+     * @post retval true if product exists in container else false
      *
      * @param product the candidate product
      *
@@ -101,9 +105,11 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
     /**
      * Get the items contained in this product container.
      * 
-     * @pre ???
+     * @pre none
      * 
-     * @post ???
+     * @post retval == iterator for all items in tree if storage unit and all 
+     * in container otherwise.
+     * @post retval == null if no items in conainer;
      *
      * @return the {@link Item}s contained in this product container
      */
@@ -113,9 +119,10 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
      * Get the collection of {@link Item} instances contained in this product
      * container belonging to the given product.
      * 
-     * @pre ???
+     * @pre product != null
+     * @pre product.getContainer() == this
      * 
-     * @post ???
+     * @post retval != null
      * 
      * @param product the product for which to retrieve items
      * 
@@ -126,9 +133,9 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
     /**
      * Get the name of this product container.
      * 
-     * @pre ???
+     * @pre none
      * 
-     * @post ???
+     * @post retval == String name
      *
      * @return the name of this product container
      */
@@ -139,6 +146,7 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
      * not be {@code null} and must not be empty.
      * 
      * @pre null != name && false == name.isEmpty()
+     * @pre name != getName() of any sibling
      * 
      * @post getName() == name
      * 
@@ -151,9 +159,9 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
     /**
      * Get the products contained in this product container.
      * 
-     * @pre ???
+     * @pre none
      * 
-     * @post ???
+     * @post retval == null if no products, iterable otherwise 
      *
      * @return the {@link Product}s contained in this product container
      */
@@ -162,26 +170,26 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
     /**
      * Remove the given {@link Item} instance from this product container.
      * 
-     * @pre ???
+     * @pre item != null
      * 
-     * @post ???
+     * @post getItems !contain item
      *
      * @param item the item to be removed
      *
-     * @throws HITException if the item could not be added for any reason
+     * @throws HITException if the item could not be removed for any reason
      */
     void removeItem(Item item) throws HITException;
 
     /**
      * Remove the given {@link Product} instance from this product container.
      * 
-     * @pre ???
+     * @pre product != null
      * 
-     * @post ???
+     * @post getProducts !contain product
      *
      * @param product the product to be removed
      *
-     * @throws HITException if the product could not be added for any reason
+     * @throws HITException if the product could not be removed for any reason
      */
     void removeProduct(Product product) throws HITException;
     

@@ -23,9 +23,10 @@ public interface StorageUnit extends ProductContainer<Category>, Containable<Inv
         /**
          * Get a new {@link StorageUnit} instance with the given name.
          * 
-         * @pre TODO
+         * @pre name != null
+         * @pre name != getName() of any sibling Container
          * 
-         * @post TODO
+         * @post retval != null
          * 
          * @param name the name of the new storage unit
          * 

@@ -7,7 +7,6 @@ import java.util.Date;
  * {@link Product} interface.  The constructor(s) are (mostly) hidden.  To get
  * a Product instance use the {@link Product.Factory}.
  * 
- * @invariant TODO
  * 
  * @author kemcqueen
  */

@@ -10,7 +10,8 @@ import java.util.Date;
  * this case, the Product is "Diet Coke, 12 fl. oz.", while each physical can is
  * a distinct item.
  * 
- * @invariant ?
+ * @invariant entryDate != null
+ * @invariant product != null
  * 
  * @author kemcqueen
  */
