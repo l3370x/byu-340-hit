@@ -11,29 +11,36 @@ import core.model.exception.HITException;
  * @author kemcqueen
  */
 class AbstractContainable<T extends Container> implements Containable<T> {
+    private T container;
+    
     @Override
-    public void putIn(T container) throws HITException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void putIn(final T container) throws HITException {
+        this.container = container;
+        container.add(this);
     }
 
     @Override
-    public void transfer(T from, T to) throws HITException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void transfer(final T from, final T to) throws HITException {
+        this.removeFrom(from);
+        this.putIn(to);
     }
 
     @Override
-    public void removeFrom(T container) throws HITException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void removeFrom(final T container) throws HITException {
+        if (container == this.getContainer()) {
+            this.container = null;
+        }
+        container.remove(this);
     }
 
     @Override
     public T getContainer() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.container;
     }
 
     @Override
-    public boolean isContainedIn(T container) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean isContainedIn(final T container) {
+        return container == this.container && container.contains(this);
     }
     
 }

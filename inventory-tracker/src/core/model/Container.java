@@ -1,5 +1,7 @@
 package core.model;
 
+import core.model.exception.HITException;
+import core.model.exception.Severity;
 import java.io.Serializable;
 
 /**
@@ -29,20 +31,22 @@ public interface Container<T extends Containable> extends Serializable {
      * 
      * @pre canAdd(content)
      * 
-     * @post Container.contains(content) == True, Container.size() == 
-     * oldContainer.size() + 1
+     * @post this.contains(content) == true && this.size() == old(this.size() + 1) 
+     * && content.getContainer() == this && content.isContainedIn(this) == true
      * 
      * @param content the object to be added
+     * 
+     * @throws HITException if the content could not be added for any reason.
+     * The severity of the thrown exception will be {@link Severity#INFO if the
+     * content has already been added to this container.
      */
-    void add(T content);
+    void add(T content) throws HITException;
     
     
     /**
      * Determine if the given object may be added to this container.
      * 
      * @pre content != null
-     * 
-     * @post
      * 
      * @param content the candidate
      * 
@@ -55,26 +59,24 @@ public interface Container<T extends Containable> extends Serializable {
     /**
      * Remove the given object from this container.
      * 
-     * @pre canRemove(content) == True
+     * @pre canRemove(content) == true
      * 
-     * @post Container.contains(content) == False, Container.size() == 
-     * oldContainer.size() - 1
+     * @post this.contains(content) == false && this.size() == old.size() - 1 && 
+     * null == content.getContainer() && content.isContainedIn(this) == false
      * 
      * @param content the object to be removed
      */
-    void remove(T content);
+    void remove(T content) throws HITException;
     
     
     /**
-     * Determine if the given object may be removed from this container.
+     * Determine if the given object can be removed from this container.
      * 
-     * @pre content != null, Container.size > 0
-     * 
-     * @post
+     * @pre content != null
      * 
      * @param content the candidate
      * 
-     * @return {@code true} if the given object may be removed from this
+     * @return {@code true} if the given object can be removed from this
      * container, {@code false} otherwise
      */
     boolean canRemove(T content);
@@ -83,9 +85,7 @@ public interface Container<T extends Containable> extends Serializable {
     /**
      * Determine if the given object is in this container.
      * 
-     * @pre content != null, Container.size > 0
-     * 
-     * @post 
+     * @pre content != null
      * 
      * @param content the candidate
      * 
@@ -98,9 +98,7 @@ public interface Container<T extends Containable> extends Serializable {
     /**
      * Determine if this container has any content.
      * 
-     * @pre Container.size > 0
-     * 
-     * @post
+     * @pre none
      * 
      * @return {@code true} if this container has contents, 
      * {@code false} otherwise
@@ -113,9 +111,7 @@ public interface Container<T extends Containable> extends Serializable {
      * returns {@code true} then this method should return a positive
      * integer, otherwise it should return zero (0).
      * 
-     * @pre 
-     * 
-     * @post return >= 0
+     * @pre none
      * 
      * @return a positive integer representing the number of objects in this
      * container (if {@link #hasContent} returns {@code true}), or 0 (if

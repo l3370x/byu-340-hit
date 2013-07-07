@@ -16,9 +16,10 @@ public interface Containable<T extends Container> {
      * 
      * @param container the target container to which this item will be added
      * 
-     * @pre container != NULL
+     * @pre container != null
      * 
-     * @post Containable.getContainer() == container
+     * @post this.getContainer() == container && this.isContainedIn(container) == true
+     * && container.contains(this) == true && container.size() = old(container.size() + 1)
      * 
      * @throws HITException if this object could not be added to the given 
      * container for any reason
@@ -76,9 +77,7 @@ public interface Containable<T extends Container> {
     /**
      * Determine if this item is stored in the given container.
      * 
-     * @pre container != NULL
-     * 
-     * @post if container.contains(Containable) then true else false
+     * @pre container != null
      * 
      * @param container the container in which this item may be stored
      * 
