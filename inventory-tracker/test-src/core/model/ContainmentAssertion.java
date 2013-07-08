@@ -66,14 +66,14 @@ public enum ContainmentAssertion {
     ASSERT_CONTAINER_CONTENTS_INCLUDES_CONTENT_TRUE {
         @Override
         public void _assert(Container container, Containable content, int oldSize) {
-            ContainmentTests.checkContents(container, content, true);
+            AbstractContainmentTests.checkContents(container, content, true);
         }
     },
     
     ASSERT_CONTAINER_CONTENTS_INCLUDES_CONTENT_FALSE {
         @Override
         public void _assert(Container container, Containable content, int oldSize) {
-            ContainmentTests.checkContents(container, content, false);
+            AbstractContainmentTests.checkContents(container, content, false);
         }
     };
     

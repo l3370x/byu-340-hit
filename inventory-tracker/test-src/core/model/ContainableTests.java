@@ -1,15 +1,17 @@
 package core.model;
 
 import core.model.exception.HITException;
-import static core.model.ContainmentAssertion.*;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
- *
+ * The {@code ContainableTests} class contains unit tests for the 
+ * {@link Containable} interface.  The {@link TestContainer} class is used as a 
+ * simple implementation of the container.  The {@link TestContainable} class is 
+ * used as a simple implementation of the container's content.
+ * 
  * @author kmcqueen
  */
-public class ContainableTests extends ContainerTests {
+public class ContainableTests extends AbstractContainmentTests<TestContainer, TestContainable> {
     @Test
     public void testTransferFromContainedToNotContained() throws HITException {
         TestContainer fromA = new TestContainer();
@@ -17,7 +19,7 @@ public class ContainableTests extends ContainerTests {
         TestContainable content = new TestContainable(true);
         
         // put the content in A
-        this.addContainableToContainer(content, fromA);
+        this.addContainableToContainer(fromA, content);
         
         int oldASize = fromA.size();
         int oldBSize = toB.size();
@@ -26,10 +28,10 @@ public class ContainableTests extends ContainerTests {
         content.transfer(fromA, toB);
         
         // make sure the content is NOT in A
-        this.assertContentNotInContainer(content, fromA, oldASize);
+        this.assertContentNotInContainer(fromA, content, oldASize);
         
         // make sure the content IS in B
-        this.assertContentInContainer(content, toB, oldBSize);
+        this.assertContentInContainer(toB, content, oldBSize);
     }
     
     @Test
@@ -39,7 +41,7 @@ public class ContainableTests extends ContainerTests {
         TestContainable content = new TestContainable(true);
         
         // put the content in A
-        this.addContainableToContainer(content, fromA);
+        this.addContainableToContainer(fromA, content);
         
         int oldASize = fromA.size();
         int oldBSize = 0;
@@ -48,7 +50,7 @@ public class ContainableTests extends ContainerTests {
         content.transfer(fromA, toB);
         
         // make sure the content IS in B
-        this.assertContentInContainer(content, toB, oldBSize);
+        this.assertContentInContainer(toB, content, oldBSize);
     }
     
     @Test (expected = HITException.class)
@@ -58,7 +60,7 @@ public class ContainableTests extends ContainerTests {
         TestContainable content = new TestContainable(true);
         
         // put the content in B
-        this.addContainableToContainer(content, toB);
+        this.addContainableToContainer(toB, content);
         
         content.transfer(fromA, toB);
     }
@@ -73,15 +75,23 @@ public class ContainableTests extends ContainerTests {
     }
 
     @Override
-    protected void doAddContentToContainer(TestContainable content, 
-        TestContainer container) throws HITException {
+    protected void doAddContentToContainer(TestContainer container, TestContainable content) throws HITException {
         content.putIn(container);
     }
 
     @Override
-    protected void doRemoveContentFromContainer(TestContainable content, 
-        TestContainer container) throws HITException {
+    protected void doRemoveContentFromContainer(TestContainer container, TestContainable content) throws HITException {
         content.removeFrom(container);
+    }
+
+    @Override
+    protected TestContainer createContainer(Object arg) {
+        return new TestContainer();
+    }
+
+    @Override
+    protected TestContainable createContent(Object arg) {
+        return new TestContainable(arg != null);
     }
     
 }

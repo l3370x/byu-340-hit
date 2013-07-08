@@ -1,6 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
+import core.model.exception.Severity;
 
 /**
  * The {@code Category} interface defines the contract for an object that
@@ -11,7 +12,7 @@ import core.model.exception.HITException;
  * 
  * @author kemcqueen
  */
-public interface Category extends Containable<Container<Category>>, ProductContainer<Category> {
+public interface Category extends Containable<ProductContainer<Category>>, ProductContainer<Category> {
     /**
      * Get the total amount of products in this category required for a three 
      * (3) month supply. For example:
@@ -69,8 +70,7 @@ public interface Category extends Containable<Container<Category>>, ProductConta
         /**
          * Get a new {@link Category} instance with the given name.
          * 
-         * @pre name != null, for each Category in currentStorageUnit none of 
-         * their names == name
+         * @pre name != null && name.isEmpty() == false
          * 
          * @post return != null
          * 
@@ -81,9 +81,17 @@ public interface Category extends Containable<Container<Category>>, ProductConta
          * @throws HITException if the category could not be created for any
          * reason
          */
-        public static Category newInstance(String name) throws HITException {
-            // TODO implement
-            return null;
+        public static Category newCategory(String name) throws HITException {
+            if (null == name) {
+                throw new HITException(Severity.WARNING, 
+                        "Category name must not be null");
+            }
+            if (true == name.isEmpty()) {
+                throw new HITException(Severity.WARNING,
+                        "Category name must not be empty");
+            }
+            
+            return new CategoryImpl(name);
         }
     }
 }

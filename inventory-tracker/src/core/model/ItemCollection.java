@@ -9,22 +9,21 @@ import core.model.exception.HITException;
  * @author kemcqueen
  */
 class ItemCollection extends AbstractContainer<Item> {
-
     @Override
-    protected void doAdd(Item content) throws HITException {
+    protected void doAdd(Item item) throws HITException {
     }
 
     @Override
-    protected void doRemove(Item content) throws HITException {
+    protected void doRemove(Item item) throws HITException {
     }
 
     @Override
-    public boolean canAdd(Item content) {
+    public boolean canAdd(Item item) {
         return true;
     }
 
     @Override
-    public boolean canRemove(Item content) {
+    public boolean canRemove(Item item) {
         return true;
     }
 }

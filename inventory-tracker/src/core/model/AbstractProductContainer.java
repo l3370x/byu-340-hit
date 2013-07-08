@@ -1,6 +1,12 @@
 package core.model;
 
 import core.model.exception.HITException;
+import core.model.exception.Severity;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The {@code AbstractProductContainer} class is the base class for 
@@ -11,9 +17,11 @@ import core.model.exception.HITException;
  * @author kemcqueen
  */
 public abstract class AbstractProductContainer<T extends Containable> 
-extends AbstractContainer<T> 
-implements ProductContainer<T> {
+    extends AbstractContainer<T> implements ProductContainer<T> {
+    
     private final Container<Item> items = new ItemCollection();
+    private Map<Product, Set<Item>> itemsByProduct = new HashMap<>();
+    
     private final Container<Product> products = new ProductCollection();
     
     private String name;
@@ -26,6 +34,8 @@ implements ProductContainer<T> {
     public void addItem(Item item) throws HITException {
         if (this.canAddItem(item)) {
             this.items.add(item);
+        
+            this.addItemToProductIndex(item);
         }
     }
 
@@ -63,7 +73,12 @@ implements ProductContainer<T> {
 
     @Override
     public Iterable<Item> getItems(Product product) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Set<Item> itemSet = this.itemsByProduct.get(product);
+        if (null == itemSet) {
+            return Collections.emptySet();
+        }
+        
+        return Collections.unmodifiableSet(itemSet);
     }
 
     @Override
@@ -80,6 +95,8 @@ implements ProductContainer<T> {
     public void removeItem(Item item) throws HITException {
         if (this.canRemoveItem(item)) {
             this.items.remove(item);
+
+            this.removeItemFromProductIndex(item);
         }
     }
 
@@ -93,6 +110,30 @@ implements ProductContainer<T> {
     @Override
     public void setName(String name) throws HITException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    protected void removeItemFromProductIndex(Item item) throws HITException {
+        final Product product = item.getProduct();
+
+        Set<Item> productItems = this.itemsByProduct.get(product);
+        if (null == productItems) {
+            throw new HITException(Severity.WARNING, 
+                    "Unable to remove item: item's product not found");
+        }
+
+        productItems.remove(item);
+    }
+
+    protected void addItemToProductIndex(Item item) {
+        final Product product = item.getProduct();
+        
+        Set<Item> productItems = this.itemsByProduct.get(product);
+        if (null == productItems) {
+            productItems = new HashSet<>();
+            this.itemsByProduct.put(product, productItems);
+        }
+        
+        productItems.add(item);
     }
 
 }
