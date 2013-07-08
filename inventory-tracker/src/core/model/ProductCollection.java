@@ -24,12 +24,12 @@ class ProductCollection extends AbstractContainer<Product> {
     }
 
     @Override
-    public boolean canAdd(Product product) {
+    protected boolean isAddable(Product product) {
         return false == this.productsByDescription.containsKey(product.getDescription());
     }
 
     @Override
-    public boolean canRemove(Product product) {
+    protected boolean isRemovable(Product product) {
         return false == this.canAdd(product);
     }
 }

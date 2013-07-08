@@ -18,12 +18,21 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
     private final List<T> contents = new ArrayList<>();
     
     @Override
-    public Iterable<T> getContents() {
+    public final Iterable<T> getContents() {
         return Collections.unmodifiableList(this.contents);
+    }
+    
+    @Override
+    public final boolean canAdd(T content) {
+        if (null == content) {
+            return false;
+        }
+        
+        return this.isAddable(content);
     }
 
     @Override
-    public void add(T content) throws HITException {
+    public final void add(T content) throws HITException {
         if (false == this.canAdd(content)) {
             if (this.contains(content)) {
                 throw new HITException(Severity.INFO, 
@@ -46,9 +55,18 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
             
         }
     }
+    
+    @Override
+    public final boolean canRemove(T content) {
+        if (null == content) {
+            return false;
+        }
+        
+        return this.isRemovable(content);
+    }
 
     @Override
-    public void remove(T content) throws HITException {
+    public final void remove(T content) throws HITException {
         if (false == this.canRemove(content)) {
             if (false == this.contains(content)) {
                 throw new HITException(Severity.INFO, 
@@ -73,7 +91,7 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
     }
 
     @Override
-    public boolean contains(T content) {
+    public final boolean contains(T content) {
         final int i = this.contents.indexOf(content);
         if (i >= 0) {
             return true;
@@ -83,15 +101,54 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
     }
 
     @Override
-    public boolean hasContent() {
+    public final boolean hasContent() {
         return this.size() > 0;
     }
 
     @Override
-    public int size() {
+    public final int size() {
         return this.contents.size();
     }
 
+    /**
+     * This method is called by the {@link #canAdd(core.model.Containable)} 
+     * method after it has performed its initial checks;
+     * 
+     * @param content the content to check
+     * 
+     * @return {@code true} if the given content can be added to this container,
+     * {@code false} otherwise
+     */
+    protected abstract boolean isAddable(T content);
+    
+    /**
+     * This method is called by the {@link #add(core.model.Containable)} method
+     * after it has performed its initial checks.
+     * 
+     * @param content the content to be added
+     * 
+     * @throws HITException if the content could not be added for any reason
+     */
     protected abstract void doAdd(T content) throws HITException;
+    
+    /**
+     * This method is called by the {@link #canRemove(core.model.Containable)} 
+     * method after it has performed its initial checks;
+     * 
+     * @param content the content to check
+     * 
+     * @return {@code true} if the given content can be removed from this 
+     * container, {@code false} otherwise
+     */
+    protected abstract boolean isRemovable(T content);
+
+    /**
+     * This method is called by the {@link #remove(core.model.Containable)} 
+     * method after it has performed its initial checks.
+     * 
+     * @param content the content to be removed
+     * 
+     * @throws HITException if the content could not be removed for any reason
+     */
     protected abstract void doRemove(T content) throws HITException;
 }

@@ -35,7 +35,7 @@ public class CategoryAsContainerTests extends AbstractContainmentTests<Category,
     
     @Test(expected = HITException.class)
     @Override
-    public void testAddWithNonAddableContainable() throws HITException {
+    public void testAddWithNonAddableContent() throws HITException {
         Category container = this.createContainer("Canned Goods");
         Category content = this.createContent("Soup");
         Category content2 = this.createContent("Soup");

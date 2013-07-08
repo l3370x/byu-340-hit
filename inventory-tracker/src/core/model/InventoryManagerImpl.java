@@ -39,12 +39,12 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> impleme
     }
 
     @Override
-    public boolean canAdd(StorageUnit unit) {
+    protected boolean isAddable(StorageUnit unit) {
         return false == this.storageUnitsByName.containsKey(unit.getName());
     }
 
     @Override
-    public boolean canRemove(StorageUnit unit) {
+    protected boolean isRemovable(StorageUnit unit) {
         return false == this.canAdd(unit);
     }
     

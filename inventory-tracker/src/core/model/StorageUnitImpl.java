@@ -27,12 +27,12 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
     }
 
     @Override
-    public boolean canAdd(Category content) {
+    protected boolean isAddable(Category content) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean canRemove(Category content) {
+    protected boolean isRemovable(Category content) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -38,13 +38,13 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
     }
 
     @Override
-    public boolean canAdd(Category category) {
+    protected boolean isAddable(Category category) {
         return false == this.contains(category) && 
                 false == this.categoriesByName.containsKey(category.getName());
     }
 
     @Override
-    public boolean canRemove(Category category) {
+    protected boolean isRemovable(Category category) {
         return this.contains(category);
     }
 

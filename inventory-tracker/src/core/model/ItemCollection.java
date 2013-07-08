@@ -18,12 +18,12 @@ class ItemCollection extends AbstractContainer<Item> {
     }
 
     @Override
-    public boolean canAdd(Item item) {
+    protected boolean isAddable(Item item) {
         return true;
     }
 
     @Override
-    public boolean canRemove(Item item) {
+    protected boolean isRemovable(Item item) {
         return true;
     }
 }

@@ -14,9 +14,9 @@ import org.junit.Test;
 public class ContainableTests extends AbstractContainmentTests<TestContainer, TestContainable> {
     @Test
     public void testTransferFromContainedToNotContained() throws HITException {
-        TestContainer fromA = new TestContainer();
-        TestContainer toB = new TestContainer();
-        TestContainable content = new TestContainable(true);
+        TestContainer fromA = this.createContainer("From");
+        TestContainer toB = this.createContainer("To");
+        TestContainable content = this.createContent("Content");
         
         // put the content in A
         this.addContainableToContainer(fromA, content);
@@ -36,9 +36,9 @@ public class ContainableTests extends AbstractContainmentTests<TestContainer, Te
     
     @Test
     public void testTransferFromContainedToContained() throws HITException {
-        TestContainer fromA = new TestContainer();
+        TestContainer fromA = this.createContainer("From");
         TestContainer toB = fromA;
-        TestContainable content = new TestContainable(true);
+        TestContainable content = this.createContent("Content");
         
         // put the content in A
         this.addContainableToContainer(fromA, content);
@@ -55,9 +55,9 @@ public class ContainableTests extends AbstractContainmentTests<TestContainer, Te
     
     @Test (expected = HITException.class)
     public void testTransferFromNotContainedToContained() throws HITException {
-        TestContainer fromA = new TestContainer();
-        TestContainer toB = new TestContainer();
-        TestContainable content = new TestContainable(true);
+        TestContainer fromA = this.createContainer("From");
+        TestContainer toB = this.createContainer("To");
+        TestContainable content = this.createContent("Content");
         
         // put the content in B
         this.addContainableToContainer(toB, content);
@@ -67,9 +67,50 @@ public class ContainableTests extends AbstractContainmentTests<TestContainer, Te
     
     @Test (expected = HITException.class)
     public void testTransferFromNotContainedtoNotContained() throws HITException {
-        TestContainer fromA = new TestContainer();
-        TestContainer toB = new TestContainer();
-        TestContainable content = new TestContainable(true);
+        TestContainer fromA = this.createContainer("From");
+        TestContainer toB = this.createContainer("To");
+        TestContainable content = this.createContent("Content");
+        
+        content.transfer(fromA, toB);
+    }
+    
+    @Test (expected = HITException.class)
+    public void testAddContentToNullContainer() throws HITException {
+        TestContainable content = this.createContent("Content");
+        
+        this.doAddContentToContainer(null, content);
+    }
+    
+    @Test (expected = HITException.class)
+    public void testRemoveContentFromNullContainer() throws HITException {
+        TestContainable content = this.createContent("Content");
+        
+        this.doRemoveContentFromContainer(null, content);
+    }
+    
+    @Test (expected = HITException.class)
+    public void testTransferFromNullToNonNull() throws HITException {
+        TestContainer fromA = null;
+        TestContainer toB = this.createContainer("To");
+        TestContainable content = this.createContent("Content");
+        
+        content.transfer(fromA, toB);
+    }
+
+    @Test (expected = HITException.class)
+    public void testTransferFromNullToNull() throws HITException {
+        TestContainer fromA = null;
+        TestContainer toB = null;
+        TestContainable content = this.createContent("Content");
+        
+        content.transfer(fromA, toB);
+    }
+
+    @Test (expected = HITException.class)
+    public void testTransferFromNonNullToNonNull() throws HITException {
+        TestContainer fromA = this.createContainer("From");
+        TestContainer toB = null;
+        TestContainable content = this.createContent("Content");
         
         content.transfer(fromA, toB);
     }

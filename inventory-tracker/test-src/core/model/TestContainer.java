@@ -18,12 +18,12 @@ public class TestContainer extends AbstractContainer<TestContainable> {
     }
 
     @Override
-    public boolean canAdd(TestContainable content) {
+    protected boolean isAddable(TestContainable content) {
         return true == content.isAddable() && false == this.contains(content);
     }
 
     @Override
-    public boolean canRemove(TestContainable content) {
+    protected boolean isRemovable(TestContainable content) {
         return true == this.contains(content);
     }
 }

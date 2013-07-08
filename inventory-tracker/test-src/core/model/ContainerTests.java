@@ -1,6 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
+import org.junit.Test;
 
 /**
  * The {@code ContainerTests} class contains unit tests for the 
@@ -11,6 +12,19 @@ import core.model.exception.HITException;
  * @author kmcqueen
  */
 public class ContainerTests extends AbstractContainmentTests<TestContainer, TestContainable> {
+    @Test (expected = HITException.class)
+    public void testAddNullContent() throws HITException {
+        TestContainer container = this.createContainer("Container");
+        
+        this.addContainableToContainer(container, null);
+    }
+    
+    @Test (expected = HITException.class)
+    public void testRemoveNullContent() throws HITException {
+        TestContainer container = this.createContainer("Container");
+        
+        this.removeContainableFromContainer(container, null);
+    }
 
     @Override
     protected void doAddContentToContainer(

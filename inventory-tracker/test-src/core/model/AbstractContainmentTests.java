@@ -91,7 +91,7 @@ public abstract class AbstractContainmentTests<A extends Container, B extends Co
     }
 
     @Test
-    public void testAddWithAddableContainable() throws HITException {
+    public void testAddWithAddableContent() throws HITException {
         A container = this.createContainer("Container");
         B content = this.createContent("Content");
         this.addContainableToContainer(container, content);
@@ -110,7 +110,7 @@ public abstract class AbstractContainmentTests<A extends Container, B extends Co
     }
 
     @Test(expected = HITException.class)
-    public void testAddWithNonAddableContainable() throws HITException {
+    public void testAddWithNonAddableContent() throws HITException {
         A container = this.createContainer("TestContainer");
         B containable = this.createContent(null);
         try {
@@ -136,7 +136,7 @@ public abstract class AbstractContainmentTests<A extends Container, B extends Co
     }
 
     @Test(expected = HITException.class)
-    public void testRemoveWithUncontainedContainable() throws HITException {
+    public void testRemoveWithUncontainedContent() throws HITException {
         A container = this.createContainer("Container");
         B content = this.createContent("Content");
         // remove the content without having added it first
