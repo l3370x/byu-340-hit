@@ -1,5 +1,8 @@
 package core.model;
 
+import core.model.exception.HITException;
+import core.model.exception.Severity;
+
 /**
  * The {@code Quantity} class is used to measure a product.  This class is 
  * immutable and therefore thread-safe.
@@ -17,14 +20,21 @@ public class Quantity {
    /**
     * Create a new Quantity with the given value and unit.
     * 
-    * @pre float >= 0.0f && null != unit
+    * @pre float >= 0.0f && unit != null
     * 
     * @post getValue() == value && getUnit() == unit
     * 
     * @param value the value (must be >= 0.0f)
     * @param unit the unit
     */
-   public Quantity(float value, QuantityUnit unit) {
+   public Quantity(float value, QuantityUnit unit) throws HITException{
+       if(value < 0.0){
+           throw new HITException(Severity.WARNING, "Value must be greater than"
+                   + " 0");
+       }
+       else if (unit == null){
+           throw new HITException(Severity.WARNING, "Unit cannot be null");
+       }
        this.value = value;
        this.unit = unit;
    }
@@ -38,6 +48,7 @@ public class Quantity {
     * @return  the value of this quantity
     */
    public float getValue() {
+       assert true;
        return this.value;
    }
    
@@ -50,6 +61,7 @@ public class Quantity {
     * @return the unit of this quantity
     */
    public QuantityUnit getUnit() {
+       assert true;
        return this.unit;
    }
 }
