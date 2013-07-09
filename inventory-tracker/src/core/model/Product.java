@@ -191,11 +191,15 @@ public interface Product extends Containable<ProductContainer> {
          * @throws HITException if the product could not be created for any 
          * reason
          */
-        public static Product newInstance(BarCode barCode) throws HITException {
+        public static Product newProduct(BarCode barCode) throws HITException {
             if(barCode == null){
                 throw new HITException(Severity.WARNING, "Barcode cannot be null");
             }
-            return new ProductImpl(barCode);
+            
+            // get the description for the given bar code (look on the internet)
+            String description = getDescriptionFor(barCode);
+            
+            return newProduct(barCode, description);
         }
         
         
@@ -218,14 +222,19 @@ public interface Product extends Containable<ProductContainer> {
          * @throws HITException if the product could not be created for any
          * reason
          */
-        public static Product newInstance(BarCode barCode, String description) throws HITException {
+        public static Product newProduct(BarCode barCode, String description) throws HITException {
             if(barCode == null){
                 throw new HITException(Severity.WARNING, "Barcode cannot be null");
             }
             else if(description == null || description.isEmpty()){
                 throw new HITException(Severity.WARNING, "Invalid Description");
             }
+            
             return new ProductImpl(barCode, description);
+        }
+
+        private static String getDescriptionFor(BarCode barCode) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     }
 }
