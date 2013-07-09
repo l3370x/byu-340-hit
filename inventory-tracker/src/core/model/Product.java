@@ -1,6 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
+import core.model.exception.Severity;
 import java.util.Date;
 import java.util.List;
 
@@ -190,10 +191,11 @@ public interface Product extends Containable<ProductContainer> {
          * @throws HITException if the product could not be created for any 
          * reason
          */
-        public static Product newProduct(BarCode barCode) throws HITException {
-            String description = getProductDescriptionFor(barCode);
-            
-            return newProduct(barCode, description);
+        public static Product newInstance(BarCode barCode) throws HITException {
+            if(barCode == null){
+                throw new HITException(Severity.WARNING, "Barcode cannot be null");
+            }
+            return new ProductImpl(barCode);
         }
         
         
@@ -216,12 +218,14 @@ public interface Product extends Containable<ProductContainer> {
          * @throws HITException if the product could not be created for any
          * reason
          */
-        public static Product newProduct(BarCode barCode, String description) throws HITException {
+        public static Product newInstance(BarCode barCode, String description) throws HITException {
+            if(barCode == null){
+                throw new HITException(Severity.WARNING, "Barcode cannot be null");
+            }
+            else if(description == null || description.isEmpty()){
+                throw new HITException(Severity.WARNING, "Invalid Description");
+            }
             return new ProductImpl(barCode, description);
-        }
-
-        private static String getProductDescriptionFor(BarCode barCode) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     }
 }

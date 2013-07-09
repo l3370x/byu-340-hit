@@ -49,10 +49,9 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
     @Override
     protected boolean isAddable(Category content) {
         assert true;
-        Iterator categoryIterator = this.getContents().iterator();
-        while(categoryIterator.hasNext()){
+        for(Category category : this.getContents()){
             if(content.getName().equals(
-                ((Category)categoryIterator.next()).getName())){
+                category.getName())){
                 return false;
             }
         }
@@ -109,6 +108,7 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
 
     @Override
     public StorageUnit getStorageUnit() {
+        assert true;
         return this;
     }
     

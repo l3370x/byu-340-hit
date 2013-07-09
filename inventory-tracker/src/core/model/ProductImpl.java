@@ -37,6 +37,15 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
         this.description = description;
     }
     
+    ProductImpl(BarCode barCode){
+        this.barcode = barCode;
+    }
+    
+    ProductImpl(BarCode barCode, String description){
+        this.barcode = barCode;
+        this.description = description;
+    }
+    
     private boolean isContainedInUnit(StorageUnit unit){
         return this.containersByStorageUnit.containsKey(unit);
     }
