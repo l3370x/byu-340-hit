@@ -1,6 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
+import core.model.exception.Severity;
 import java.util.Date;
 import java.util.List;
 
@@ -191,8 +192,10 @@ public interface Product extends Containable<ProductContainer> {
          * reason
          */
         public static Product newInstance(BarCode barCode) throws HITException {
-            // TODO implement
-            return null;
+            if(barCode == null){
+                throw new HITException(Severity.WARNING, "Barcode cannot be null");
+            }
+            return new ProductImpl(barCode);
         }
         
         
@@ -216,8 +219,13 @@ public interface Product extends Containable<ProductContainer> {
          * reason
          */
         public static Product newInstance(BarCode barCode, String description) throws HITException {
-            // TODO implement
-            return null;
+            if(barCode == null){
+                throw new HITException(Severity.WARNING, "Barcode cannot be null");
+            }
+            else if(description == null || description.isEmpty()){
+                throw new HITException(Severity.WARNING, "Invalid Description");
+            }
+            return new ProductImpl(barCode, description);
         }
     }
 }
