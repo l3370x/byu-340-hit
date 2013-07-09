@@ -192,4 +192,15 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
      */
     void removeProduct(Product product) throws HITException;
     
+    /**
+     * Get the {@link StorageUnit} under which this product container may be 
+     * found.
+     * 
+     * @pre 
+     * 
+     * @post return != null
+     * 
+     * @return the storage unit under which this category may be found
+     */
+    StorageUnit getStorageUnit();    
 }

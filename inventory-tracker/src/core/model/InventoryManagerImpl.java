@@ -66,4 +66,9 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> impleme
     public boolean canRemoveItem(Item item) {
         return super.canRemoveItem(item) && this.removedItems.canAdd(item);
     }
+
+    @Override
+    public StorageUnit getStorageUnit() {
+        throw new UnsupportedOperationException("InventoryManager does not belong to a StorageUnit");
+    }
 }
