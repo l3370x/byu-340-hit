@@ -109,7 +109,7 @@ public abstract class AbstractContainmentTests<A extends Container, B extends Co
         }
     }
 
-    @Test(expected = HITException.class)
+    @Test (expected = HITException.class)
     public void testAddWithNonAddableContent() throws HITException {
         A container = this.createContainer("TestContainer");
         B containable = this.createContent(null);

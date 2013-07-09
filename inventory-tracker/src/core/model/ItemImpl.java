@@ -2,6 +2,8 @@ package core.model;
 
 import java.util.Date;
 
+import java.util.*;
+
 /**
  * The {@code ItemImpl} class is the default implementation of the {@link Item}
  * interface.  The constructor(s(s) are (mostly) hidden.  To get an Item 
@@ -12,32 +14,50 @@ import java.util.Date;
  * @author kemcqueen
  */
 class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
-    ItemImpl() {
+	private Date entryDate;
+	private BarCode barcode;
+	private Date exitDate;
+	private Date expirationDate;
+	private Product product;
+	
+    ItemImpl(Date entryDate, Date expirationDate, Product product, BarCode barcode) {
+    	this.product = product;
+    	this.expirationDate = expirationDate;
+    	this.entryDate = entryDate;
+    	this.barcode = barcode;
     }
 
     @Override
     public Product getProduct() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.product;
     }
-
+    
+    
     @Override
     public BarCode getBarCode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.barcode;
     }
-
+    
+    
     @Override
     public Date getEntryDate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.entryDate;
     }
+    
 
     @Override
     public Date getExitDate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.exitDate;
+    }
+    
+    @Override
+    public void setExitDate(Date d) {
+    	this.exitDate = d;
     }
 
     @Override
     public Date getExpirationDate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.expirationDate;
     }
     
 }

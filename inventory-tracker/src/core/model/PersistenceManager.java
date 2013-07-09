@@ -39,6 +39,9 @@ public enum PersistenceManager {
 			while ( storageUnits.hasNext() ) {
 				out.writeObject(storageUnits.next());
 			}
+			
+			//TODO save removed items
+			
 			out.close();
 			fileOut.close();
 		} catch(Exception e) {
@@ -71,10 +74,10 @@ public enum PersistenceManager {
 			} catch (OptionalDataException e) {
 		        if (!e.eof) throw e;
 		    } finally {
-		    	System.out.println(storageUnits.size());
+		    	// System.out.println(storageUnits.size());
 		        in.close();
 		    }
-			System.out.println(storageUnits.size());
+			// System.out.println(storageUnits.size());
 			in.close();
 			fileIn.close();
 		} catch(Exception e) {

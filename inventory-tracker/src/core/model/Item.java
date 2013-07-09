@@ -1,6 +1,8 @@
 package core.model;
 
 import core.model.exception.HITException;
+import core.model.exception.Severity;
+
 import java.util.Date;
 
 /**
@@ -41,7 +43,6 @@ public interface Item extends Containable<ProductContainer> {
      */
     BarCode getBarCode();
     
-    
     /**
      * Get the date (and time) this item was entered into the system.
      * 
@@ -53,7 +54,6 @@ public interface Item extends Containable<ProductContainer> {
      */
     Date getEntryDate();
     
-    
     /**
      * Get the date (and time) this item was removed from the system.
      * 
@@ -64,7 +64,7 @@ public interface Item extends Containable<ProductContainer> {
      * @return the date (and time) this item was removed from the system
      */
     Date getExitDate();
-    
+    void setExitDate(Date d); //TODO docuentation
     
     /**
      * Get the date on which this item will expire.  This value is calculated
@@ -86,7 +86,7 @@ public interface Item extends Containable<ProductContainer> {
         /**
          * Get a new {@link Item} instance based on the given {@link Product}.
          * 
-         * @pre product != null, entryDate != null
+         * @pre product != null, entryDate != null, expirationDate != null
          * 
          * @post product.contains(Item)
          * 
@@ -97,9 +97,15 @@ public interface Item extends Containable<ProductContainer> {
          * 
          * @throws HITException if the item could not be created for any reason
          */
-        public static Item newInstance(Product product, Date entryDate) throws HITException {
-            // TODO implement factory method
-            return null;
+        public static Item newInstance(Product product, Date entryDate, Date expirationDate) throws HITException {
+            if (product == null) {
+            	throw new HITException(Severity.WARNING, "Can't add item to null product.");
+            } else if (entryDate == null) {
+            	throw new HITException(Severity.WARNING, "Date missing.");
+            }
+            Item i = new ItemImpl(entryDate, expirationDate, product, BarCode.generateItemBarCode());
+            // product.getContainer().add(i);
+            return i;
         }
     }
 }
