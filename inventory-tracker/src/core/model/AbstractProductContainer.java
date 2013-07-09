@@ -19,10 +19,10 @@ import java.util.Set;
 public abstract class AbstractProductContainer<T extends Containable> 
     extends AbstractContainer<T> implements ProductContainer<T> {
     
-    private final Container<Item> items = new ItemCollection();
+    private final Container<Item> items = new ItemCollection(this);
     private Map<Product, Set<Item>> itemsByProduct = new HashMap<>();
     
-    private final Container<Product> products = new ProductCollection();
+    private final Container<Product> products = new ProductCollection(this);
     
     private String name;
     
@@ -109,10 +109,20 @@ public abstract class AbstractProductContainer<T extends Containable>
 
     @Override
     public void setName(String name) throws HITException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (null == name || name.isEmpty()) {
+            throw new HITException(Severity.WARNING, "Name must not be empty");
+        }
+        
+        String oldName = this.getName();
+        
+        this.name = name;
+        
+        // TODO changing the name may cause integrity violations
     }
 
     protected void removeItemFromProductIndex(Item item) throws HITException {
+        assert null != item;
+        
         final Product product = item.getProduct();
 
         Set<Item> productItems = this.itemsByProduct.get(product);
@@ -125,6 +135,8 @@ public abstract class AbstractProductContainer<T extends Containable>
     }
 
     protected void addItemToProductIndex(Item item) {
+        assert null != item;
+        
         final Product product = item.getProduct();
         
         Set<Item> productItems = this.itemsByProduct.get(product);

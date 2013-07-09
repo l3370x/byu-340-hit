@@ -16,6 +16,15 @@ import java.util.List;
  */
 abstract class AbstractContainer<T extends Containable> implements Container<T> {
     private final List<T> contents = new ArrayList<>();
+    private final Container<T> proxy;
+    
+    protected AbstractContainer(Container<T> proxy) {
+        this.proxy = proxy;
+    }
+    
+    protected AbstractContainer() {
+        this.proxy = null;
+    }
     
     @Override
     public final Iterable<T> getContents() {
@@ -50,7 +59,7 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
         this.contents.add(content);
         
         try {
-            content.putIn(this);
+            content.putIn(null != this.proxy ? this.proxy : this);
         } catch (HITException e) {
             
         }
@@ -84,7 +93,7 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
         this.contents.remove(content);
         
         try {
-            content.removeFrom(this); 
+            content.removeFrom(null != this.proxy ? this.proxy : this); 
         } catch (HITException e) {
             
         }

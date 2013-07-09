@@ -13,6 +13,10 @@ import java.util.Map;
  */
 class ProductCollection extends AbstractContainer<Product> {
     private final Map<BarCode, Product> productsByBarCode = new HashMap<>();
+    
+    ProductCollection(ProductContainer proxy) {
+        super(proxy);
+    }
 
     @Override
     protected void doAdd(Product product) throws HITException {

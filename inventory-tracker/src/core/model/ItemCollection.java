@@ -14,6 +14,10 @@ import java.util.Map;
 class ItemCollection extends AbstractContainer<Item> {
     private Map<BarCode, Item> itemsByBarCode = new HashMap<>();
     
+    ItemCollection(ProductContainer proxy) {
+        super(proxy);
+    }
+
     @Override
     protected void doAdd(Item item) throws HITException {
         assert null != item;

@@ -17,7 +17,7 @@ import java.util.Map;
  * @author kemcqueen
  */
 class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> implements InventoryManager {
-    private final Container<Item> removedItems = new ItemCollection();
+    private final Container<Item> removedItems = new ItemCollection(null);
     
     Map<String, StorageUnit> storageUnitsByName = new HashMap<>();
     
