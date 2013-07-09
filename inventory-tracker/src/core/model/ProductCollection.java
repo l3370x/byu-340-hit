@@ -12,7 +12,7 @@ import java.util.Map;
  * @author kemcqueen
  */
 class ProductCollection extends AbstractContainer<Product> {
-    private final Map<String, Product> productsByDescription = new HashMap<>();
+    private final Map<BarCode, Product> productsByBarCode = new HashMap<>();
 
     @Override
     protected void doAdd(Product product) throws HITException {
@@ -24,7 +24,7 @@ class ProductCollection extends AbstractContainer<Product> {
             throw new HITException(Severity.ERROR, "Invalid Product Description");
         }
         if(this.canAdd(product)){
-            this.productsByDescription.put(product.getDescription(), product);
+            this.productsByBarCode.put(product.getBarCode(), product);
         }
     }
 
@@ -38,17 +38,19 @@ class ProductCollection extends AbstractContainer<Product> {
             throw new HITException(Severity.ERROR, "Invalid Product Description");
         }
         if(this.canRemove(product)){
-            this.productsByDescription.remove(product.getDescription());
+            this.productsByBarCode.remove(product.getBarCode());
         }
     }
 
     @Override
     protected boolean isAddable(Product product) {
-        return false == this.productsByDescription.containsKey(product.getDescription());
+        assert true;
+        return false == this.productsByBarCode.containsKey(product.getBarCode());
     }
 
     @Override
     protected boolean isRemovable(Product product) {
+        assert true;
         return false == this.canAdd(product);
     }
 }
