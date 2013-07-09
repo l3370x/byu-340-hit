@@ -103,8 +103,8 @@ public interface Item extends Containable<ProductContainer> {
             } else if (entryDate == null) {
             	throw new HITException(Severity.WARNING, "Date missing.");
             }
-            Item i = new ItemImpl(entryDate, expirationDate,product,BarCode.generateItemBarCode());
-            product.getContainer().add(i);
+            Item i = new ItemImpl(entryDate, expirationDate, product, BarCode.generateItemBarCode());
+            // product.getContainer().add(i);
             return i;
         }
     }

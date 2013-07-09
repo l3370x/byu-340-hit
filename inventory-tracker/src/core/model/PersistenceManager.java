@@ -74,10 +74,10 @@ public enum PersistenceManager {
 			} catch (OptionalDataException e) {
 		        if (!e.eof) throw e;
 		    } finally {
-		    	System.out.println(storageUnits.size());
+		    	// System.out.println(storageUnits.size());
 		        in.close();
 		    }
-			System.out.println(storageUnits.size());
+			// System.out.println(storageUnits.size());
 			in.close();
 			fileIn.close();
 		} catch(Exception e) {

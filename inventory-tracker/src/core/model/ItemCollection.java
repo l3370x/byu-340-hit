@@ -15,7 +15,7 @@ class ItemCollection extends AbstractContainer<Item> {
     	if (item == null) {
     		throw new HITException(Severity.INFO,"Can't add a null item.");
     	}
-    	item.getContainer().addItem(item);
+    	item.getContainer().addItem(item); // TODO is this correct?
     }
 
     @Override
@@ -25,7 +25,7 @@ class ItemCollection extends AbstractContainer<Item> {
     	} else if( this.contains(item) == false) {
     		throw new HITException(Severity.INFO, "Item isn't contained in collection");
     	}
-    	item.getContainer().removeItem(item);
+    	item.getContainer().removeItem(item);  // TODO is this correct?
     }
 
     @Override
