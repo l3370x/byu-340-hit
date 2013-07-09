@@ -51,18 +51,6 @@ public interface Category extends Containable<ProductContainer<Category>>, Produ
     
     
     /**
-     * Get the {@link StorageUnit} under which this category may be found.
-     * 
-     * @pre 
-     * 
-     * @post return != null
-     * 
-     * @return the storage unit under which this category may be found
-     */
-    StorageUnit getStorageUnit();
-
-    
-    /**
      * The static {@code Category.Factory} class is used to generate valid
      * Category instances for use in the system.
      */
