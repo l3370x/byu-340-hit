@@ -46,12 +46,10 @@ public interface StorageUnit extends ProductContainer<Category>, Containable<Inv
             }
             InventoryManager manager = InventoryManager.Factory.getInventoryManager();
             Iterable<StorageUnit> units = manager.getContents();
-            Iterator unitIterator = units.iterator();
-            while(unitIterator.hasNext()){
-                StorageUnit unit = (StorageUnit)unitIterator.next();
+            for (StorageUnit unit : units){
                 if(name.equals(unit.getName())){
                     throw new HITException(Severity.WARNING, "There is already a"
-                            + "Storage Unit named " + name);
+                            + " Storage Unit named " + name);
                 }
             }
             return new StorageUnitImpl(name);

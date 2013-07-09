@@ -23,7 +23,7 @@ class ProductCollection extends AbstractContainer<Product> {
                 || product.getDescription().equals("")){
             throw new HITException(Severity.ERROR, "Invalid Product Description");
         }
-        if(this.canAdd(product)){
+        if(this.isAddable(product)){
             this.productsByBarCode.put(product.getBarCode(), product);
         }
     }
@@ -37,7 +37,7 @@ class ProductCollection extends AbstractContainer<Product> {
                 || product.getDescription().equals("")){
             throw new HITException(Severity.ERROR, "Invalid Product Description");
         }
-        if(this.canRemove(product)){
+        if(this.isRemovable(product)){
             this.productsByBarCode.remove(product.getBarCode());
         }
     }
