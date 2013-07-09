@@ -20,7 +20,11 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
 	private Date expirationDate;
 	private Product product;
 	
-    ItemImpl() {
+    ItemImpl(Date entryDate, Date expirationDate, Product product, BarCode barcode) {
+    	this.product = product;
+    	this.expirationDate = expirationDate;
+    	this.entryDate = entryDate;
+    	this.barcode = barcode;
     }
 
     @Override
@@ -28,27 +32,18 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
         return this.product;
     }
     
-    public void setProduct(Product p) {
-    	this.product = p;
-    }
-
+    
     @Override
     public BarCode getBarCode() {
         return this.barcode;
     }
     
-    public void setBarCode(BarCode b) {
-    	this.barcode = b;
-    }
-
+    
     @Override
     public Date getEntryDate() {
         return this.entryDate;
     }
     
-    public void setEntryDate(Date d) {
-    	this.entryDate = d;
-    } 
 
     @Override
     public Date getExitDate() {
@@ -63,11 +58,6 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
     @Override
     public Date getExpirationDate() {
         return this.expirationDate;
-    }
-    
-    @Override
-    public void setExpirationDate(Date d) {
-    	this.expirationDate = d;
     }
     
 }

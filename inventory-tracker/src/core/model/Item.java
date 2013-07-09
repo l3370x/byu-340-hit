@@ -28,7 +28,6 @@ public interface Item extends Containable<ProductContainer> {
      * @return this item's product
      */
     Product getProduct();
-    void setProduct(Product p); //TODO documentation
     
     
     /**
@@ -43,7 +42,6 @@ public interface Item extends Containable<ProductContainer> {
      * @return the bar code assigned to this individual item
      */
     BarCode getBarCode();
-    void setBarCode(BarCode b); // TODO documentation
     
     /**
      * Get the date (and time) this item was entered into the system.
@@ -55,7 +53,6 @@ public interface Item extends Containable<ProductContainer> {
      * @return the date (and time) this item was entered into the system
      */
     Date getEntryDate();
-    void setEntryDate(Date d); // TODO documentation
     
     /**
      * Get the date (and time) this item was removed from the system.
@@ -80,7 +77,6 @@ public interface Item extends Containable<ProductContainer> {
      * @return the date on which this item will expire
      */
     Date getExpirationDate();
-    void setExpirationDate(Date d); //TODO docs
     
     /**
      * The static {@code Item.Factory} class is used to generate valid Item
@@ -107,11 +103,7 @@ public interface Item extends Containable<ProductContainer> {
             } else if (entryDate == null) {
             	throw new HITException(Severity.WARNING, "Date missing.");
             }
-            Item i = new ItemImpl();
-            i.setEntryDate(entryDate);
-            i.setProduct(product);
-            i.setExpirationDate(expirationDate);
-            i.setBarCode(BarCode.generateItemBarCode());
+            Item i = new ItemImpl(entryDate, expirationDate,product,BarCode.generateItemBarCode());
             product.getContainer().add(i);
             return i;
         }
