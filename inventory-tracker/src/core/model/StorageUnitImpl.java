@@ -49,16 +49,7 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
     }
 
     @Override
-<<<<<<< HEAD
     protected boolean isAddable(Category content) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    protected boolean isRemovable(Category content) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-=======
-    public boolean canAdd(Category content) {
         assert true;
         Iterator categoryIterator = this.getContents().iterator();
         while(categoryIterator.hasNext()){
@@ -71,10 +62,9 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
     }
 
     @Override
-    public boolean canRemove(Category content) {
+    protected boolean isRemovable(Category content) {
         assert true;
         return this.contains(content);
->>>>>>> Product through Storage Unit Implementation
     }
 
     @Override
