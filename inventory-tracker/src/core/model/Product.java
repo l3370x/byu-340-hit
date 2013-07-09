@@ -2,6 +2,7 @@ package core.model;
 
 import core.model.exception.HITException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * The {@code Product} interface defines the contract for an object that
@@ -96,7 +97,7 @@ public interface Product extends Containable<ProductContainer> {
      * 
      * @param shelfLife the shelf life of this product measured in months (>= 0)
      */
-    void setShelfLifeInMonths(int shelfLife);
+    void setShelfLifeInMonths(int shelfLife) throws HITException;
     
     
     /**
@@ -124,7 +125,7 @@ public interface Product extends Containable<ProductContainer> {
      * @param quota the number of this product required for a 3-month supply 
      * (>= 0)
      */
-    void set3MonthSupplyQuota(int quota);
+    void set3MonthSupplyQuota(int quota) throws HITException;
     
     
     /**
@@ -165,7 +166,7 @@ public interface Product extends Containable<ProductContainer> {
      * @return the product container that actually contains this product in the
      * given storage unit (may be the storage unit itself)
      */
-    ProductContainer getProductContainer(StorageUnit unit);
+    ProductContainer getProductContainer(StorageUnit unit) throws HITException;
     
     
     /**

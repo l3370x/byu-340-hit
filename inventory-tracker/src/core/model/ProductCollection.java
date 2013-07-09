@@ -1,6 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
+import core.model.exception.Severity;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,12 +16,30 @@ class ProductCollection extends AbstractContainer<Product> {
 
     @Override
     protected void doAdd(Product product) throws HITException {
-        this.productsByDescription.put(product.getDescription(), product);
+        if(product == null){
+            throw new HITException(Severity.ERROR, "Null Product");
+        }
+        else if(product.getDescription() == null 
+                || product.getDescription().equals("")){
+            throw new HITException(Severity.ERROR, "Invalid Product Description");
+        }
+        if(this.canAdd(product)){
+            this.productsByDescription.put(product.getDescription(), product);
+        }
     }
 
     @Override
     protected void doRemove(Product product) throws HITException {
-        this.productsByDescription.remove(product.getDescription());
+        if(product == null){
+            throw new HITException(Severity.ERROR, "Null Product");
+        }
+        else if(product.getDescription() == null 
+                || product.getDescription().equals("")){
+            throw new HITException(Severity.ERROR, "Invalid Product Description");
+        }
+        if(this.canRemove(product)){
+            this.productsByDescription.remove(product.getDescription());
+        }
     }
 
     @Override
