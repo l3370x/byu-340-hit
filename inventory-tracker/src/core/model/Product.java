@@ -234,7 +234,7 @@ public interface Product extends Containable<ProductContainer> {
         }
 
         private static String getDescriptionFor(BarCode barCode) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return "TODO";
         }
     }
 }
