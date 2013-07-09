@@ -6,9 +6,6 @@ package core.model;
 import static org.junit.Assert.*;
 import core.model.exception.HITException;
 import org.junit.Test;
-import core.model.InventoryManager;
-import core.model.PersistenceManager;
-import core.model.StorageUnit;
 /**
  * @author aaron
  *
@@ -22,7 +19,7 @@ public class PersistenceManagerTest {
 	@Test
 	public void testSave() throws HITException {
 		InventoryManager i = InventoryManager.Factory.getInventoryManager();
-		StorageUnit s = StorageUnit.Factory.newInstance("su1");
+		StorageUnit s = StorageUnit.Factory.newStorageUnit("su1");
 		i.add(s);
 		System.out.println("before save " + i.getContents().iterator().next().getName());
 		PersistenceManager.INSTANCE.save();

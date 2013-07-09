@@ -24,7 +24,7 @@ extends AbstractContainmentTests<StorageUnit, Category> {
     @Override
     protected StorageUnit createContainer(Object arg) {
         try {
-            return StorageUnit.Factory.newInstance("Storage Unit");
+            return StorageUnit.Factory.newStorageUnit("Storage Unit");
         } catch (HITException ex) {
             fail(ex.getMessage());
             return null;
