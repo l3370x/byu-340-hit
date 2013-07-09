@@ -1,6 +1,8 @@
 package core.model;
 
 import core.model.exception.HITException;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +59,7 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> impleme
     public void removeItem(Item item) throws HITException {
         super.removeItem(item);
         
-        // TODO set the exit date on the item
+        item.setExitDate(new Date());
         
         this.removedItems.add(item);
     }

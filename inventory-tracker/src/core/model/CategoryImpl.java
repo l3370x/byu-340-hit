@@ -19,6 +19,7 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
     private Map<String, Category> categoriesByName = new HashMap<>();
     private ProductContainer<Category> container;
     private StorageUnit storageUnit;
+    private Quantity threeMonthSupply;
     
     /**
      * Hidden (mostly) construct
@@ -50,12 +51,12 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
 
     @Override
     public Quantity get3MonthSupplyQuantity() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.threeMonthSupply;
     }
 
     @Override
     public void set3MonthSupplyQuantity(Quantity quantity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.threeMonthSupply = quantity;
     }
 
     @Override
