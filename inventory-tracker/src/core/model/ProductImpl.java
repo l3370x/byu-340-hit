@@ -34,6 +34,11 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
     
     @Override
     public void putIn(final ProductContainer container) throws HITException {
+        if (null == container) {
+            throw new HITException(Severity.WARNING, 
+                    "Product container must not be null");
+        }
+        
         StorageUnit unit = container.getStorageUnit();
         if (this.isContainedInUnit(unit)) {
             this.transfer(this.containersByStorageUnit.get(unit), container);

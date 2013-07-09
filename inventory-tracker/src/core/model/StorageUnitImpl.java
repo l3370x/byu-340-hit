@@ -2,7 +2,8 @@ package core.model;
 
 import core.model.exception.HITException;
 import core.model.exception.Severity;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The {@code StorageUnitImpl} class is the default implementation of the 
@@ -14,6 +15,7 @@ import java.util.Iterator;
  * @author kemcqueen
  */
 class StorageUnitImpl extends AbstractProductContainer<Category> implements StorageUnit {
+    private Map<String, Category> categoriesByName = new HashMap<>();
     
     StorageUnitImpl(String name) {
         super(name);
@@ -21,47 +23,31 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
     
 
     @Override
-    protected void doAdd(Category content) throws HITException {
-        if (content == null){
-            throw new HITException(Severity.ERROR, "Null category");
-        }
-        else if(!canAdd(content)){
-            throw new HITException(Severity.ERROR, "Can't add the category");
-        }
-        else{
-            this.add(content);
-        }
+    protected void doAdd(Category category) throws HITException {
+        assert null != category;
+        this.categoriesByName.put(category.getName(), category);
     }
 
     @Override
-    protected void doRemove(Category content) throws HITException {
-        if (content == null){
-            throw new HITException(Severity.ERROR, "Null category");
-        }
-        else if(!canRemove(content)){
-            throw new HITException(Severity.ERROR, "Can't add the category");
-        }
-        else{
-            this.remove(content);
-        }
+    protected void doRemove(Category category) throws HITException {
+        assert null != category;
+        
+        this.categoriesByName.remove(category.getName());
     }
 
     @Override
-    protected boolean isAddable(Category content) {
-        assert true;
-        for(Category category : this.getContents()){
-            if(content.getName().equals(
-                category.getName())){
-                return false;
-            }
-        }
-        return !this.contains(content);
+    protected boolean isAddable(Category category) {
+        assert null != category;
+        
+        return false == this.categoriesByName.containsKey(category.getName());
     }
 
     @Override
-    protected boolean isRemovable(Category content) {
-        assert true;
-        return this.contains(content);
+    protected boolean isRemovable(Category category) {
+        assert null != category;
+        
+        return this.categoriesByName.containsKey(category.getName()) && 
+                this.categoriesByName.containsValue(category);
     }
 
     @Override
@@ -72,6 +58,7 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
         else if(!container.canAdd(this)){
             throw new HITException(Severity.WARNING, "Can't add to manager");
         }
+        
         container.add(this);
     }
 
@@ -88,6 +75,7 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
         else if(!container.canRemove(this)){
             throw new HITException(Severity.WARNING, "Can't remove from manager");
         }
+        
         container.remove(this);
     }
 
@@ -99,10 +87,12 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
 
     @Override
     public boolean isContainedIn(InventoryManager container) {
-        assert true;
+        assert null != container;
+        
         if(container.contains(this)){
             return true;
         }
+        
         return false;
     }
 
