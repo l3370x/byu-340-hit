@@ -30,23 +30,29 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
 
     @Override
     protected void doAdd(Category category) throws HITException {
+        assert null != category;
+        
         this.categoriesByName.put(category.getName(), category);
     }
 
     @Override
     protected void doRemove(Category category) throws HITException {
+        assert null != category;
+        
         this.categoriesByName.remove(category.getName());
     }
 
     @Override
     protected boolean isAddable(Category category) {
+        assert null != category;
+        
         return false == this.contains(category) && 
                 false == this.categoriesByName.containsKey(category.getName());
     }
 
     @Override
     protected boolean isRemovable(Category category) {
-        return this.contains(category);
+        return false == this.canAdd(category);
     }
 
     @Override
@@ -66,11 +72,22 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
 
     @Override
     public void putIn(ProductContainer<Category> container) throws HITException {
-        this.container = container;
-        container.add(this);
+        ProductContainer<Category> oldContainer = this.getContainer();
         
-        if (container instanceof StorageUnit) {
-            this.storageUnit = (StorageUnit) container;
+        try {
+            this.container = container;
+            this.storageUnit = container.getStorageUnit();
+
+            container.add(this);
+        } catch (HITException ex) {
+            // rollback the change to the container and storage unit
+            /*
+            this.container = 
+                    null != oldContainer ? oldContainer : null;
+            this.storageUnit = 
+                    null != oldContainer ? oldContainer.getStorageUnit() : null;
+            */
+            throw ex;
         }
     }
 
@@ -82,11 +99,24 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
 
     @Override
     public void removeFrom(ProductContainer<Category> container) throws HITException {
-        if (container == this.getContainer()) {
-            this.container = null;
-            this.storageUnit = null;
+        ProductContainer<Category> oldContainer = this.getContainer();
+        
+        try {
+            if (container == this.getContainer()) {
+                this.container = null;
+                this.storageUnit = null;
+            }
+            container.remove(this);
+        } catch (HITException ex) {
+            // rollback the changes to the container and storage unit
+            /*
+            this.container = 
+                    null != oldContainer ? oldContainer : null;
+            this.storageUnit = 
+                    null != oldContainer ? oldContainer.getStorageUnit() : null;
+            */
+            throw ex;
         }
-        container.remove(this);
     }
 
     @Override
@@ -96,6 +126,10 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
 
     @Override
     public boolean isContainedIn(ProductContainer<Category> container) {
+        if (null == container) {
+            return false;
+        }
+        
         return container == this.container && container.contains(this);
     }
 }

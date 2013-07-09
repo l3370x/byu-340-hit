@@ -44,10 +44,7 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
 
     @Override
     protected boolean isRemovable(Category category) {
-        assert null != category;
-        
-        return this.categoriesByName.containsKey(category.getName()) && 
-                this.categoriesByName.containsValue(category);
+        return false == this.canAdd(category);
     }
 
     @Override
@@ -55,7 +52,8 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
         if(container == null){
             throw new HITException(Severity.ERROR, "Null manager");
         }
-        else if(!container.canAdd(this)){
+        
+        if(!container.canAdd(this)){
             throw new HITException(Severity.WARNING, "Can't add to manager");
         }
         
@@ -72,7 +70,8 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
         if(container == null){
             throw new HITException(Severity.ERROR, "Null manager");
         }
-        else if(!container.canRemove(this)){
+        
+        if(!container.canRemove(this)){
             throw new HITException(Severity.WARNING, "Can't remove from manager");
         }
         
@@ -82,6 +81,7 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
     @Override
     public InventoryManager getContainer() {
         assert true;
+        
         return InventoryManager.Factory.getInventoryManager();
     }
 
@@ -99,6 +99,7 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
     @Override
     public StorageUnit getStorageUnit() {
         assert true;
+        
         return this;
     }
     

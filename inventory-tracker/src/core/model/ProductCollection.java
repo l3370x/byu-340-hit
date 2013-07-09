@@ -19,10 +19,12 @@ class ProductCollection extends AbstractContainer<Product> {
         if(product == null){
             throw new HITException(Severity.ERROR, "Null Product");
         }
-        else if(product.getDescription() == null 
+        
+        if(product.getDescription() == null 
                 || product.getDescription().equals("")){
             throw new HITException(Severity.ERROR, "Invalid Product Description");
         }
+        
         if(this.canAdd(product)){
             this.productsByBarCode.put(product.getBarCode(), product);
         }
@@ -33,10 +35,12 @@ class ProductCollection extends AbstractContainer<Product> {
         if(product == null){
             throw new HITException(Severity.ERROR, "Null Product");
         }
-        else if(product.getDescription() == null 
+        
+        if(product.getDescription() == null 
                 || product.getDescription().equals("")){
             throw new HITException(Severity.ERROR, "Invalid Product Description");
         }
+        
         if(this.canRemove(product)){
             this.productsByBarCode.remove(product.getBarCode());
         }
@@ -45,12 +49,14 @@ class ProductCollection extends AbstractContainer<Product> {
     @Override
     protected boolean isAddable(Product product) {
         assert true;
+        
         return false == this.productsByBarCode.containsKey(product.getBarCode());
     }
 
     @Override
     protected boolean isRemovable(Product product) {
         assert true;
+        
         return false == this.canAdd(product);
     }
 }
