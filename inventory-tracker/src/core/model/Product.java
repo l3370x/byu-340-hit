@@ -190,9 +190,10 @@ public interface Product extends Containable<ProductContainer> {
          * @throws HITException if the product could not be created for any 
          * reason
          */
-        public static Product newInstance(BarCode barCode) throws HITException {
-            // TODO implement
-            return null;
+        public static Product newProduct(BarCode barCode) throws HITException {
+            String description = getProductDescriptionFor(barCode);
+            
+            return newProduct(barCode, description);
         }
         
         
@@ -215,9 +216,12 @@ public interface Product extends Containable<ProductContainer> {
          * @throws HITException if the product could not be created for any
          * reason
          */
-        public static Product newInstance(BarCode barCode, String description) throws HITException {
-            // TODO implement
-            return null;
+        public static Product newProduct(BarCode barCode, String description) throws HITException {
+            return new ProductImpl(barCode, description);
+        }
+
+        private static String getProductDescriptionFor(BarCode barCode) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     }
 }

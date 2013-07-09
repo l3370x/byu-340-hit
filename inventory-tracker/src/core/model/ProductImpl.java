@@ -22,6 +22,20 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
     private Quantity size;
     private int shelfLife;
     private int quota;
+
+    ProductImpl(BarCode barCode, String description) throws HITException {
+        if (null == barCode) {
+            throw new HITException(Severity.WARNING, 
+                    "Bar code must not be null");
+        }
+        this.barcode = barCode;
+        
+        if (null == description || true == description.isEmpty()) {
+            throw new HITException(Severity.WARNING, 
+                    "Product description must not be empty");
+        }
+        this.description = description;
+    }
     
     private boolean isContainedInUnit(StorageUnit unit){
         return this.containersByStorageUnit.containsKey(unit);

@@ -37,7 +37,7 @@ public interface StorageUnit extends ProductContainer<Category>, Containable<Inv
          * @throws HITException if the storage unit could not be created for
          * any reason
          */
-        public static StorageUnit newInstance(String name) throws HITException {
+        public static StorageUnit newStorageUnit(String name) throws HITException {
             if(name == null){
                 throw new HITException(Severity.WARNING, "Name cannot be null");
             }
