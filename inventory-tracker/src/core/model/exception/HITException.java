@@ -19,9 +19,13 @@ public class HITException extends Exception {
      * @param cause the original reason for throwing the exception
      */
     public HITException(Throwable cause) {
+        this(Severity.ERROR, cause);
+    }
+    
+    public HITException(Severity sev, Throwable cause) {
         super(cause);
         
-        this.severity = Severity.ERROR;
+        this.severity = sev;
     }
     
     /**

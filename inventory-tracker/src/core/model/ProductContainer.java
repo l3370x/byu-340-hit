@@ -3,9 +3,8 @@ package core.model;
 import core.model.exception.HITException;
 
 /**
- * The {@code ProductContainer} class defines the contract for a class that can
- * manage a collection of {@link Product} and {@link Item} instances.
- * 
+ * The {@code ProductContainer} interface defines the contract for a class that 
+ * can manage a collection of {@link Product} and {@link Item} instances.
  * 
  * @author kemcqueen
  */
