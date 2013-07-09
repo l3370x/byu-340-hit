@@ -5,6 +5,8 @@ import core.model.exception.Severity;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,7 +59,7 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
 
         this.containersByStorageUnit.remove(container.getStorageUnit());
     }
-
+   
     @Override
     public boolean isContainedIn(final ProductContainer container) {
         // if the super says I'm contained in the container then it must be true
