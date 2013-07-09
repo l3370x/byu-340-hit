@@ -149,7 +149,7 @@ public interface Product extends Containable<ProductContainer> {
      * 
      * @return all the categories to which this product has been assigned
      */
-    Iterable<Category> getCategories();
+    Iterable<ProductContainer> getProductContainers();
     
     
     /**

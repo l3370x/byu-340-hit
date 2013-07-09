@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The {@code ProductImpl} class is the default implementation of the 
@@ -18,8 +20,7 @@ import java.util.List;
  * @author kemcqueen
  */
 class ProductImpl extends AbstractContainable<ProductContainer> implements Product {
-    private List<Category> categories = new ArrayList();
-    private List<StorageUnit> units = new ArrayList();
+    private Map<StorageUnit, ProductContainer> containers = new HashMap();
     private BarCode barcode;
     private Date creationDate;
     private String description;
@@ -27,41 +28,28 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
     private int shelfLife;
     private int quota;
     
-    private boolean isContainedInUnit(StorageUnit unit){
-        Iterator unitIterator = units.iterator();
-        while(unitIterator.hasNext()){
-            if(unit.equals(unitIterator.next())){
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    private ProductContainer findProductContainerInUnit(StorageUnit unit){
-        Iterator containerIterator = categories.iterator();
-        while(containerIterator.hasNext()){
-            Category category = (Category)containerIterator.next();
-            if(unit.equals(category.getStorageUnit())){
-                return category;
-            }
-        }
-        return unit;
-    }
-    
     @Override
     public void putIn(final ProductContainer container) throws HITException {
-        if(container instanceof Category){
+        if (container == null){
+            throw new HITException(Severity.ERROR, "Null container");
+        }
+        else if(container instanceof Category){
             StorageUnit unit = ((Category)container).getStorageUnit();
-            if(isContainedInUnit(unit)){
-                ProductContainer old = findProductContainerInUnit(unit);
+            if(containers.containsKey(unit)){
+                ProductContainer old = containers.get(unit);
                 transfer(old,container);
                 return;
             }
-            categories.add((Category)container);
-            units.add(((Category)container).getStorageUnit());
+            containers.put(((Category)container).getStorageUnit(), container);
         }
-        else if(container instanceof StorageUnit){
-            units.add((StorageUnit)container);
+        else if(container instanceof StorageUnit){            
+            StorageUnit unit = ((StorageUnit)container);
+            if(containers.containsKey(unit)){
+                ProductContainer old = containers.get(unit);
+                transfer(old,container);
+                return;
+            }
+            containers.put((StorageUnit)container, container);
         }
         else{
             throw new HITException(Severity.ERROR, "Container not Storage Unit"
@@ -71,22 +59,12 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
     }
 
     @Override
-    public void transfer(final ProductContainer from, final ProductContainer to) 
-            throws HITException {
-        super.removeFrom(from);
-        super.putIn(to);
-        this.removeFrom(from);
-        this.putIn(to);
-    }
-
-    @Override
     public void removeFrom(final ProductContainer container) throws HITException {
         if(container instanceof Category){
-            categories.remove((Category)container);
-            units.remove(((Category)container).getStorageUnit());
+            containers.remove(((Category)container).getStorageUnit());
         }
         else if(container instanceof StorageUnit){
-            units.remove((StorageUnit)container);
+            containers.remove((StorageUnit)container);
         }
         else{
             throw new HITException(Severity.ERROR, "Container not Storage Unit"
@@ -94,13 +72,12 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
         }
         super.removeFrom(container);
     }
-
+   
     @Override
     public boolean isContainedIn(final ProductContainer container) {
         super.isContainedIn(container);
-        Iterator containerIterator = categories.iterator();
-        while(containerIterator.hasNext()){
-            if(container.equals(containerIterator.next())){
+        for(ProductContainer myContainer : containers.values()){
+            if(container.equals(myContainer)){
                 return true;
             }
         }
@@ -169,29 +146,25 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
     @Override
     public Iterable<StorageUnit> getStorageUnits() {
         assert true;
-        return units;
+        return containers.keySet();
     }
 
     @Override
-    public Iterable<Category> getCategories() {
+    public Iterable<ProductContainer> getProductContainers() {
         assert true;
-        return Collections.unmodifiableList(this.categories);
+        return containers.values();
     }
 
     @Override
     public ProductContainer getProductContainer(StorageUnit unit) throws HITException{
-        if(!units.contains(unit)){
-            throw new HITException(Severity.ERROR, "This product doesn't exist "
+        if (unit == null){
+            throw new HITException(Severity.ERROR, "Null unit");
+        }
+        else if(!containers.containsKey(unit)){
+            throw new HITException(Severity.ERROR, "This product doesn't exist in"
                     + "the given storage unit");
         }
-        Iterator categoryIterator = categories.iterator();
-        while(categoryIterator.hasNext()){
-            Category category = (Category) categoryIterator.next();
-            if(unit.equals(category.getStorageUnit())){
-                return category;
-            }
-        }
-        return unit;
+        return containers.get(unit);
     }
     
 }
