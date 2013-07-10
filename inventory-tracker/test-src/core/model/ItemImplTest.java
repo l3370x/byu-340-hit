@@ -28,6 +28,18 @@ public class ItemImplTest {
 		BarCode b2 = BarCode.generateItemBarCode();
 		Product p = Product.Factory.newProduct(b2);
 		Item i = new ItemImpl(d, d, p, b);
+		if(!i.getProduct().equals(p)){
+			fail();
+		}
+		if(!i.getEntryDate().equals(d)){
+			fail();
+		}
+		if(!i.getExpirationDate().equals(d)){
+			fail();
+		}
+		if(!i.getBarCode().equals(b)){
+			fail();
+		}
 	}
 
 	/**
@@ -41,7 +53,9 @@ public class ItemImplTest {
 		BarCode b2 = BarCode.generateItemBarCode();
 		Product p = Product.Factory.newProduct(b2);
 		Item i = new ItemImpl(d, d, p, b);
-		i.getProduct();
+		if(!i.getProduct().equals(p)){
+			fail();
+		}
 	}
 
 	/**
@@ -55,7 +69,9 @@ public class ItemImplTest {
 		BarCode b2 = BarCode.generateItemBarCode();
 		Product p = Product.Factory.newProduct(b2);
 		Item i = new ItemImpl(d, d, p, b);
-		i.getBarCode();
+		if(!i.getBarCode().equals(b)){
+			fail();
+		}
 	}
 
 	/**
@@ -69,7 +85,9 @@ public class ItemImplTest {
 		BarCode b2 = BarCode.generateItemBarCode();
 		Product p = Product.Factory.newProduct(b2);
 		Item i = new ItemImpl(d, d, p, b);
-		i.getEntryDate();
+		if(!i.getEntryDate().equals(d)){
+			fail();
+		}
 	}
 
 	/**
@@ -83,7 +101,10 @@ public class ItemImplTest {
 		BarCode b2 = BarCode.generateItemBarCode();
 		Product p = Product.Factory.newProduct(b2);
 		Item i = new ItemImpl(d, d, p, b);
-		i.getExitDate();
+		i.setExitDate(d);
+		if(!i.getExitDate().equals(d)){
+			fail();
+		}
 	}
 
 	/**
@@ -112,63 +133,9 @@ public class ItemImplTest {
 		BarCode b2 = BarCode.generateItemBarCode();
 		Product p = Product.Factory.newProduct(b2);
 		Item i = new ItemImpl(d, d, p, b);
-		i.getExpirationDate();
-	}
-
-	/**
-	 * Test method for {@link core.model.AbstractContainable#wasAddedTo(core.model.Container)}.
-	 */
-	@Test
-	public void testWasAddedTo() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link core.model.AbstractContainable#wasRemovedFrom(core.model.Container)}.
-	 */
-	@Test
-	public void testWasRemovedFrom() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link core.model.AbstractContainable#transfer(core.model.Container, core.model.Container)}.
-	 */
-	@Test
-	public void testTransfer() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link core.model.AbstractContainable#getContainer()}.
-	 */
-	@Test
-	public void testGetContainer() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link core.model.AbstractContainable#isContainedIn(core.model.Container)}.
-	 */
-	@Test
-	public void testIsContainedIn() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link core.model.AbstractContainable#verifyAddedTo(core.model.Container, core.model.Containable)}.
-	 */
-	@Test
-	public void testVerifyAddedTo() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link core.model.AbstractContainable#verifyRemovedFrom(core.model.Container, core.model.Containable)}.
-	 */
-	@Test
-	public void testVerifyRemovedFrom() {
-		fail("Not yet implemented"); // TODO
+		if(!i.getExpirationDate().equals(d)) {
+			fail();
+		}
 	}
 
 }
