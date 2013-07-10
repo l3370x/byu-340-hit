@@ -97,7 +97,7 @@ public enum PersistenceManager {
 	 * @throws HITException if there was an error performing the update.
 	 */
 	public void update() throws HITException {
-
+		
 	}
 
 }
