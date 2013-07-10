@@ -88,5 +88,5 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
         
         return this;
     }
-    
+
 }

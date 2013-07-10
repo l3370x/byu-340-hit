@@ -15,8 +15,7 @@ import java.util.Iterator;
  * @author kemcqueen
  */
 public interface StorageUnit extends ProductContainer<Category>, Containable<InventoryManager> {
-    
-    
+
     /**
      * The static {@code StorageUnit.Factory} class is used to generate valid
      * StorageUnit instances for use in the system.
