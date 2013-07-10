@@ -16,8 +16,8 @@ import java.util.List;
  */
 abstract class AbstractContainer<T extends Containable> implements Container<T> {
     private final List<T> contents = new ArrayList<>();
-    private final Container<T> proxy;
-    
+    //private final Container<T> proxy;
+    /*
     protected AbstractContainer(Container<T> proxy) {
         this.proxy = proxy;
     }
@@ -25,6 +25,7 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
     protected AbstractContainer() {
         this.proxy = null;
     }
+    */
     
     @Override
     public final Iterable<T> getContents() {
@@ -45,11 +46,11 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
         if (false == this.canAdd(content)) {
             if (this.contains(content)) {
                 throw new HITException(Severity.INFO, 
-                        content + " has already been added to this container");
-            } else {
-                throw new HITException(Severity.ERROR, 
-                        "Can't add content (" + content + ") to this container");
+                        "Container already contains content: " + content);
             }
+
+            throw new HITException(Severity.ERROR, 
+                    "Unable to add content: " + content);
         }
         
         // pass to subclass for overriding behavior
@@ -59,7 +60,8 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
         this.contents.add(content);
         
         // notify the content that it has been added to this container (or proxy)
-        content.wasAddedTo(null != this.proxy ? this.proxy : this);
+        //content.wasAddedTo(null != this.proxy ? this.proxy : this);
+        content.wasAddedTo(this);
     }
     
     @Override
@@ -90,7 +92,8 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
         this.contents.remove(content);
         
         // notify the content that it has been removed from this container (or proxy)
-        content.wasRemovedFrom(null != this.proxy ? this.proxy : this); 
+        //content.wasRemovedFrom(null != this.proxy ? this.proxy : this); 
+        content.wasRemovedFrom(this); 
     }
 
     @Override

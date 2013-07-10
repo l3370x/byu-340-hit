@@ -27,7 +27,7 @@ public class BarCode {
      * @throws HITException if the bar code could not be generated for any 
      * reason
      */
-    public static BarCode generateItemBarCode() throws HITException {
+    public static BarCode generateItemBarCode() {
         // bar code starts with "4" (reserved for local use)
         String prefix = "4";
         
@@ -52,12 +52,15 @@ public class BarCode {
      * @throws HITException if the bar code could not be created for any reason
      */
     public static BarCode getBarCodeFor(String value) throws HITException {
+        checkBarCodeValue(value);
+        
         return new BarCode(value);
     }
 
     private static int computeCheckSum(String codeValue) throws NumberFormatException {
         int odds = 0;
         int evens = 0;
+        
         for (int i = 0; i < codeValue.length(); i++) {
             if (i % 2 == 0) {
                 evens += Integer.valueOf(codeValue.substring(i, i+1));
@@ -65,14 +68,17 @@ public class BarCode {
                 odds += Integer.valueOf(codeValue.substring(i, i + 1));
             }
         }
+        
         int total = evens + (3*odds);
         int mod10 = total % 10;
-        int checkSum = 0;
+        
+        int checkSum;
         if (mod10 == 0) {
             checkSum = 0;
         } else {
             checkSum = 10 - mod10;
         }
+        
         return checkSum;
     }
     
@@ -106,9 +112,7 @@ public class BarCode {
      * 
      * @throws HITException if the bar code could not be created for any reason.
      */
-    private BarCode(String value) throws HITException {
-        checkBarCodeValue(value);
-        
+    private BarCode(String value) {
         this.value = value;
     }
 
