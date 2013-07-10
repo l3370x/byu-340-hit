@@ -58,11 +58,8 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
         // put it in the contents
         this.contents.add(content);
         
-        try {
-            content.putIn(null != this.proxy ? this.proxy : this);
-        } catch (HITException e) {
-            
-        }
+        // notify the content that it has been added to this container (or proxy)
+        content.wasAddedTo(null != this.proxy ? this.proxy : this);
     }
     
     @Override
@@ -92,11 +89,8 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
         // remove it from the contents
         this.contents.remove(content);
         
-        try {
-            content.removeFrom(null != this.proxy ? this.proxy : this); 
-        } catch (HITException e) {
-            
-        }
+        // notify the content that it has been removed from this container (or proxy)
+        content.wasRemovedFrom(null != this.proxy ? this.proxy : this); 
     }
 
     @Override

@@ -12,26 +12,45 @@ import core.model.exception.HITException;
  */
 public interface Containable<T extends Container> {
     /**
-     * Put this item in the given container.
+     * Notify this {@code Containable} that it has been added to the given
+     * container.  This allows the containable to perform any necessary 
+     * housekeeping.
      * 
-     * @param container the target container to which this item will be added
+     * @param container the container to which this containable has been added
      * 
-     * @pre container != null
+     * @pre container != null && container.contains(this)
      * 
      * @post this.getContainer() == container && this.isContainedIn(container) == true
-     * && container.contains(this) == true && container.size() = old(container.size() + 1)
      * 
-     * @throws HITException if this object could not be added to the given 
-     * container for any reason
+     * @throws HITException if this containable was not actually added to the 
+     * given container
      */
-    void putIn(T container) throws HITException;
+    void wasAddedTo(T container) throws HITException;
+    
+    
+    /**
+     * Notify this {@code Containable} that it has been removed from the given
+     * container.  This allows the containable to perform any necessary
+     * housekeeping.
+     * 
+     * @param container the container from which this item has been removed
+     * 
+     * @pre container != null && container == getContainer() 
+     * && false == container.contains(this)
+     * 
+     * @post getContainer() == null
+     * 
+     * @throws HITException if this containable was not actually removed from 
+     * the given container
+     */
+    void wasRemovedFrom(T container) throws HITException;
     
     
     /**
      * Transfer this item from the first container to the second container.
      * This is a convenience method and is equivalent to calling 
-     * {@link #removeFrom(core.model.Container)} followed by 
-     * {@link #putIn(core.model.Container)}.
+     * {@link #wasRemovedFrom(core.model.Container)} followed by 
+     * {@link #wasAddedTo(core.model.Container)}.
      * 
      * @param from the container that currently stores this item
      * @param to the container that will store this item
@@ -47,26 +66,9 @@ public interface Containable<T extends Container> {
     
     
     /**
-     * Remove this item from the given container.
+     * Get the container that currently stores this containable.
      * 
-     * @param container the container from which this item is to be removed
-     * 
-     * @pre container != NULL
-     * 
-     * @post container.contains(Containable) == False
-     * 
-     * @throws HITException if this item could not be removed from the given
-     * container for any reason
-     */
-    void removeFrom(T container) throws HITException;
-    
-    
-    /**
-     * Get the container that currently stores this item.
-     * 
-     * @pre Containable has been saved
-     * 
-     * @post return Container contains(Containable)
+     * @pre none
      * 
      * @return the container that currently stores this item (may be null if
      * this item has not yet been stored, or has been removed)
@@ -75,14 +77,17 @@ public interface Containable<T extends Container> {
     
     
     /**
-     * Determine if this item is stored in the given container.
+     * Determine if this containable is stored in the given container.  This is
+     * a convenience method and is the same as calling 
+     * {@link Container#contains(core.model.Containable)} passing {@code this}
+     * as the argument.
      * 
      * @pre container != null
      * 
-     * @param container the container in which this item may be stored
+     * @param container the container in which this containable may be stored
      * 
-     * @return {@code true} if this item is stored in the given container,
-     * {@code false} otherwise
+     * @return {@code true} if this containable is stored in the given 
+     * container, {@code false} otherwise
      */
     boolean isContainedIn(T container);
 }

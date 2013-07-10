@@ -75,20 +75,6 @@ public class ContainableTests extends AbstractContainmentTests<TestContainer, Te
     }
     
     @Test (expected = HITException.class)
-    public void testAddContentToNullContainer() throws HITException {
-        TestContainable content = this.createContent("Content");
-        
-        this.doAddContentToContainer(null, content);
-    }
-    
-    @Test (expected = HITException.class)
-    public void testRemoveContentFromNullContainer() throws HITException {
-        TestContainable content = this.createContent("Content");
-        
-        this.doRemoveContentFromContainer(null, content);
-    }
-    
-    @Test (expected = HITException.class)
     public void testTransferFromNullToNonNull() throws HITException {
         TestContainer fromA = null;
         TestContainer toB = this.createContainer("To");
@@ -115,14 +101,54 @@ public class ContainableTests extends AbstractContainmentTests<TestContainer, Te
         content.transfer(fromA, toB);
     }
 
+    @Test (expected = HITException.class)
+    public void testWasAddedToNullContainer() throws HITException {
+        TestContainable content = this.createContent("Content");
+        
+        content.wasAddedTo(null);
+    }
+    
+    @Test (expected = HITException.class)
+    public void testWasAddedToWrongContainer() throws HITException {
+        TestContainer container = this.createContainer("Container");
+        TestContainable content = this.createContent("Content");
+        
+        content.wasAddedTo(container);
+    }
+    
+    @Test (expected = HITException.class)
+    public void testWasRemovedFromNullContainer() throws HITException {
+        TestContainable content = this.createContent("Content");
+        
+        content.wasRemovedFrom(null);
+    }
+    
+    @Test (expected = HITException.class)
+    public void testWasRemovedFromWrongContainer() throws HITException {
+        TestContainer container = this.createContainer("Container");
+        TestContainable content = this.createContent("Content");
+        
+        content.wasRemovedFrom(container);
+    }
+    
+    @Test (expected = HITException.class)
+    public void testWasRemovedFromContainerStillContains() throws HITException {
+        TestContainer container = this.createContainer("Container");
+        TestContainable content = this.createContent("Content");
+        
+        container.add(content);
+        
+        content.wasRemovedFrom(container);
+    }
+
     @Override
     protected void doAddContentToContainer(TestContainer container, TestContainable content) throws HITException {
-        content.putIn(container);
+        container.add(content);
     }
 
     @Override
     protected void doRemoveContentFromContainer(TestContainer container, TestContainable content) throws HITException {
-        content.removeFrom(container);
+        container.remove(content);
     }
 
     @Override

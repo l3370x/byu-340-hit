@@ -33,7 +33,7 @@ public class ProductContainerTests {
     }
     
     private static void checkProducts(ProductContainer container, Product product, boolean shouldBeInProducts) {
-        for (Product p : container.getProducts()) {
+        for (Product p : (Iterable<Product>) container.getProducts()) {
             if (p == product) {
                 if (shouldBeInProducts) {
                     return;

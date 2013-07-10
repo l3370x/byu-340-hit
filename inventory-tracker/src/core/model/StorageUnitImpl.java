@@ -16,11 +16,11 @@ import java.util.Map;
  */
 class StorageUnitImpl extends AbstractProductContainer<Category> implements StorageUnit {
     private Map<String, Category> categoriesByName = new HashMap<>();
+    private InventoryManager container;
     
     StorageUnitImpl(String name) {
         super(name);
     }
-    
 
     @Override
     protected void doAdd(Category category) throws HITException {
@@ -48,16 +48,17 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
     }
 
     @Override
-    public void putIn(InventoryManager container) throws HITException {
-        if(container == null){
-            throw new HITException(Severity.ERROR, "Null manager");
-        }
+    public void wasAddedTo(InventoryManager container) throws HITException {
+        AbstractContainable.verifyAddedTo(container, this);
         
-        if(!container.canAdd(this)){
-            throw new HITException(Severity.WARNING, "Can't add to manager");
-        }
+        this.container = container;
+    }
+
+    @Override
+    public void wasRemovedFrom(InventoryManager container) throws HITException {
+        AbstractContainable.verifyRemovedFrom(container, this);
         
-        container.add(this);
+        this.container = container;
     }
 
     @Override
@@ -66,34 +67,19 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
     }
 
     @Override
-    public void removeFrom(InventoryManager container) throws HITException {
-        if(container == null){
-            throw new HITException(Severity.ERROR, "Null manager");
-        }
-        
-        if(!container.canRemove(this)){
-            throw new HITException(Severity.WARNING, "Can't remove from manager");
-        }
-        
-        container.remove(this);
-    }
-
-    @Override
     public InventoryManager getContainer() {
         assert true;
         
-        return InventoryManager.Factory.getInventoryManager();
+        return this.container;
     }
 
     @Override
     public boolean isContainedIn(InventoryManager container) {
-        assert null != container;
-        
-        if(container.contains(this)){
-            return true;
+        if (null == container) {
+            return false;
         }
         
-        return false;
+        return container.contains(this);
     }
 
     @Override

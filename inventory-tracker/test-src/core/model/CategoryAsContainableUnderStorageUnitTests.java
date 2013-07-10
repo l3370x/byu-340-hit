@@ -35,13 +35,13 @@ extends AbstractContainmentTests<StorageUnit, Category> {
     @Override
     protected void doAddContentToContainer(
             StorageUnit container, Category content) throws HITException {
-        content.putIn(container);
+        container.add(content);
     }
 
     @Override
     protected void doRemoveContentFromContainer(
             StorageUnit container, Category content) throws HITException {
-        content.removeFrom(container);
+        container.remove(content);
     }
 
     @Override

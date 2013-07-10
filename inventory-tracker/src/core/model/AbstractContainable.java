@@ -15,14 +15,17 @@ class AbstractContainable<T extends Container> implements Containable<T> {
     private T container;
     
     @Override
-    public void putIn(final T container) throws HITException {
-        if (null == container) {
-            throw new HITException(Severity.WARNING, 
-                    "Container to be added to must not be null");
-        }
+    public void wasAddedTo(final T container) throws HITException {
+        verifyAddedTo(container, this);
         
         this.container = container;
-        container.add(this);
+    }
+
+    @Override
+    public void wasRemovedFrom(final T container) throws HITException {
+        verifyRemovedFrom(container, this);
+        
+        this.container = null;
     }
 
     @Override
@@ -36,21 +39,8 @@ class AbstractContainable<T extends Container> implements Containable<T> {
                     "Container transferring to must not be null");
         }
         
-        this.removeFrom(from);
-        this.putIn(to);
-    }
-
-    @Override
-    public void removeFrom(final T container) throws HITException {
-        if (null == container) {
-            throw new HITException(Severity.WARNING, 
-                    "Container removing from must not be null");
-        }
-        
-        if (container == this.getContainer()) {
-            this.container = null;
-        }
-        container.remove(this);
+        from.remove(this);
+        to.add(this);
     }
 
     @Override
@@ -65,6 +55,35 @@ class AbstractContainable<T extends Container> implements Containable<T> {
         }
         
         return container == this.container && container.contains(this);
+    }
+
+    static <C extends Containable> void verifyAddedTo(final Container<C> container, C content) throws HITException {
+        if (null == container) {
+            throw new HITException(Severity.WARNING, 
+                    "Container must not be null");
+        }
+        
+        if (false == container.contains(content)) {
+            throw new HITException(Severity.WARNING, 
+                    "Container (" + container +") does not contain this containable");
+        }
+    }
+
+    static <C extends Containable> void verifyRemovedFrom(final Container<C> container, C content) throws HITException {
+        if (null == container) {
+            throw new HITException(Severity.WARNING, 
+                    "Container must not be null");
+        }
+        
+        if (content.getContainer() != container) {
+            throw new HITException(Severity.WARNING, 
+                    "Container (" + container + ") is not the current container");
+        }
+        
+        if (container.contains(content)) {
+            throw new HITException(Severity.WARNING, 
+                    "Container (" + container + ") still contains this containable");
+        }
     }
     
 }

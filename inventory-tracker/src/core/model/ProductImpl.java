@@ -33,37 +33,15 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
     }
     
     @Override
-    public void putIn(final ProductContainer container) throws HITException {
-        if (null == container) {
-            throw new HITException(Severity.WARNING, 
-                    "Product container must not be null");
-        }
-        
-        StorageUnit unit = container.getStorageUnit();
-        if (this.isContainedInUnit(unit)) {
-            this.transfer(this.containersByStorageUnit.get(unit), container);
-            return;
-        }
-        
-        super.putIn(container);
+    public void wasAddedTo(final ProductContainer container) throws HITException {
+        super.wasAddedTo(container);
         
         this.containersByStorageUnit.put(container.getStorageUnit(), container);
     }
 
-    /*
     @Override
-    public void transfer(final ProductContainer from, final ProductContainer to) 
-            throws HITException {
-        super.removeFrom(from);
-        super.putIn(to);
-        this.removeFrom(from);
-        this.putIn(to);
-    }
-    */
-
-    @Override
-    public void removeFrom(final ProductContainer container) throws HITException {
-        super.removeFrom(container);
+    public void wasRemovedFrom(final ProductContainer container) throws HITException {
+        super.wasRemovedFrom(container);
 
         this.containersByStorageUnit.remove(container.getStorageUnit());
     }

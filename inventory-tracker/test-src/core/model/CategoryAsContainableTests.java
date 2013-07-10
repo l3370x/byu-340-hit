@@ -22,22 +22,12 @@ public class CategoryAsContainableTests extends CategoryAsContainerTests {
         try {
             this.addContainableToContainer(fromA, content);
         } catch (HITException ex) {
-            fail();
+            fail(ex.getMessage());
         }
         
         content.transfer(fromA, toB);
     }
     
-    @Override
-    protected void doAddContentToContainer(Category container, Category content) throws HITException {
-        content.putIn(container);
-    }
-
-    @Override
-    protected void doRemoveContentFromContainer(Category container, Category content) throws HITException {
-        content.removeFrom(container);
-    }
-
     @Override
     protected Category createContainer(Object arg) {
         return CategoryAsContainerTests.constructCategory(arg);

@@ -71,52 +71,27 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
     }
 
     @Override
-    public void putIn(ProductContainer<Category> container) throws HITException {
+    public void wasAddedTo(ProductContainer<Category> container) throws HITException {
+        AbstractContainable.verifyAddedTo(container, this);
+
+        this.container = container;
+        this.storageUnit = container.getStorageUnit();
+    }
+
+    @Override
+    public void wasRemovedFrom(ProductContainer<Category> container) throws HITException {
+        AbstractContainable.verifyRemovedFrom(container, this);
+        
         ProductContainer<Category> oldContainer = this.getContainer();
         
-        try {
-            this.container = container;
-            this.storageUnit = container.getStorageUnit();
-
-            container.add(this);
-        } catch (HITException ex) {
-            // rollback the change to the container and storage unit
-            /*
-            this.container = 
-                    null != oldContainer ? oldContainer : null;
-            this.storageUnit = 
-                    null != oldContainer ? oldContainer.getStorageUnit() : null;
-            */
-            throw ex;
-        }
+        this.container = null;
+        this.storageUnit = null;
     }
 
     @Override
     public void transfer(ProductContainer<Category> from, ProductContainer<Category> to) throws HITException {
         throw new HITException(Severity.INFO, 
                 "Categories (or product groups) are not transferable");
-    }
-
-    @Override
-    public void removeFrom(ProductContainer<Category> container) throws HITException {
-        ProductContainer<Category> oldContainer = this.getContainer();
-        
-        try {
-            if (container == this.getContainer()) {
-                this.container = null;
-                this.storageUnit = null;
-            }
-            container.remove(this);
-        } catch (HITException ex) {
-            // rollback the changes to the container and storage unit
-            /*
-            this.container = 
-                    null != oldContainer ? oldContainer : null;
-            this.storageUnit = 
-                    null != oldContainer ? oldContainer.getStorageUnit() : null;
-            */
-            throw ex;
-        }
     }
 
     @Override
