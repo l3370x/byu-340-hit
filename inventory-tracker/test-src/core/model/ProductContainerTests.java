@@ -232,7 +232,7 @@ public class ProductContainerTests {
         container.removeItem(null);
     }
     
-    private static void checkProducts(
+    static void checkProducts(
             ProductContainer container, Product product, boolean shouldBeInProducts) {
         for (Product p : (Iterable<Product>) container.getProducts()) {
             if (p == product) {
@@ -249,7 +249,7 @@ public class ProductContainerTests {
         }
     }
 
-    private static void checkItems(
+    static void checkItems(
             ProductContainer container, Item item, boolean shouldBeInItems) {
         for (Item i : (Iterable<Item>) container.getItems()) {
             if (i == item) {

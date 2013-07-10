@@ -16,14 +16,14 @@ class AbstractContainable<T extends Container> implements Containable<T> {
     
     @Override
     public void wasAddedTo(final T container) throws HITException {
-        verifyAddedTo(container, this);
+        verifyContains(container, this);
         
         this.container = container;
     }
 
     @Override
     public void wasRemovedFrom(final T container) throws HITException {
-        verifyRemovedFrom(container, this);
+        verifyDoesNotContain(container, this);
         
         this.container = null;
     }
@@ -57,7 +57,8 @@ class AbstractContainable<T extends Container> implements Containable<T> {
         return container == this.container && container.contains(this);
     }
 
-    static <C extends Containable> void verifyAddedTo(final Container<C> container, C content) throws HITException {
+    static <C extends Containable> void verifyContains
+            (final Container<C> container, C content) throws HITException {
         if (null == container) {
             throw new HITException(Severity.WARNING, 
                     "Container must not be null");
@@ -69,7 +70,7 @@ class AbstractContainable<T extends Container> implements Containable<T> {
         }
     }
 
-    static <C extends Containable> void verifyRemovedFrom(final Container<C> container, C content) throws HITException {
+    static <C extends Containable> void verifyDoesNotContain(final Container<C> container, C content) throws HITException {
         if (null == container) {
             throw new HITException(Severity.WARNING, 
                     "Container must not be null");
