@@ -14,22 +14,34 @@ public class ProductContainerTests {
     @Test
     public void testAddProduct() throws HITException {
         // create the product container
-        TestProductContainer tpc = new TestProductContainer();
+        TestProductContainer container = new TestProductContainer();
         
         // create a product
         Product product = newProduct(generateItemBarCode(), "Test Product");
         
         // add the product to the product container
-        tpc.addProduct(product);
+        container.addProduct(product);
         
-        // make sure the product was added to the product container
-        checkProducts(tpc, product, true);
+        this.assertProductAdded(container, product);
+    }
+    
+    @Test
+    public void testAddDuplicateProduct() throws HITException {
+        // create the product container
+        TestProductContainer container = new TestProductContainer();
         
-        // make sure the product can be removed
-        assertTrue(tpc.canRemoveProduct(product));
+        BarCode code = BarCode.generateItemBarCode();
         
-        // make sure the product can't be added
-        assertFalse(tpc.canAddProduct(product));
+        // create the (duplicate) products
+        Product product1 = newProduct(code, "Test Product");
+        Product product2 = newProduct(code, "Test Product");
+        
+        // add the first product
+        container.addProduct(product1);
+        this.assertProductAdded(container, product1);
+        
+        // add the second product
+        container.addProduct(product2);
     }
     
     private static void checkProducts(ProductContainer container, Product product, boolean shouldBeInProducts) {
@@ -46,5 +58,16 @@ public class ProductContainerTests {
         if (shouldBeInProducts) {
             fail();
         }
+    }
+
+    void assertProductAdded(TestProductContainer container, Product product) {
+        // make sure the product was added to the product container
+        checkProducts(container, product, true);
+        
+        // make sure the product can be removed
+        assertTrue(container.canRemoveProduct(product));
+        
+        // make sure the product can't be added
+        assertFalse(container.canAddProduct(product));
     }
 }

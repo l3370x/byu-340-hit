@@ -1,7 +1,6 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,11 +10,11 @@ import java.util.Map;
  * 
  * @author kemcqueen
  */
-class ItemCollection extends AbstractContainer<Item> {
+class ItemCollection extends AbstractProductContainerProxy<Item> {
     private Map<BarCode, Item> itemsByBarCode = new HashMap<>();
     
-    ItemCollection(ProductContainer proxy) {
-        super(proxy);
+    ItemCollection(ProductContainer delegate) {
+        super(delegate);
     }
 
     @Override
