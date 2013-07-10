@@ -2,6 +2,7 @@ package core.model;
 
 import core.model.exception.HITException;
 import core.model.exception.Severity;
+import static core.model.AbstractContainable.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,7 +73,7 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
 
     @Override
     public void wasAddedTo(ProductContainer<Category> container) throws HITException {
-        AbstractContainable.verifyAddedTo(container, this);
+        verifyContains(container, this);
 
         this.container = container;
         this.storageUnit = container.getStorageUnit();
@@ -80,7 +81,7 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
 
     @Override
     public void wasRemovedFrom(ProductContainer<Category> container) throws HITException {
-        AbstractContainable.verifyRemovedFrom(container, this);
+        verifyDoesNotContain(container, this);
         
         ProductContainer<Category> oldContainer = this.getContainer();
         

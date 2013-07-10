@@ -5,9 +5,7 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
-import java.util.Collections;
-import java.util.Date;
+import static core.model.ProductContainerTests.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert.*;
@@ -44,7 +42,20 @@ public class ProductImplTests {
         Product prod1 = Product.Factory.newProduct(BarCode.generateItemBarCode());
         unit1.addProduct(prod1);
 
-//        assert prod1.isContainedIn(unit1);
+        assertProductAdded(unit1, prod1);
+    }
+    
+    @Test
+    public void testTransferProduct() throws HITException {
+        Product prod1 = Product.Factory.newProduct(BarCode.generateItemBarCode());
+        unit1.addProduct(prod1);
+
+        assertProductAdded(unit1, prod1);
+        
+        prod1.transfer(unit1, unit2);
+        
+        assertProductRemoved(unit1, prod1);
+        assertProductAdded(unit2, prod1);
     }
     
 //    @Override

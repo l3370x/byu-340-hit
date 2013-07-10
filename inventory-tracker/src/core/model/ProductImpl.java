@@ -28,10 +28,6 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
         this.description = description;
     }
     
-    private boolean isContainedInUnit(StorageUnit unit){
-        return this.containersByStorageUnit.containsKey(unit);
-    }
-    
     @Override
     public void wasAddedTo(final ProductContainer container) throws HITException {
         super.wasAddedTo(container);
@@ -44,6 +40,12 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
         super.wasRemovedFrom(container);
 
         this.containersByStorageUnit.remove(container.getStorageUnit());
+    }
+
+    @Override
+    public void transfer(ProductContainer from, ProductContainer to) throws HITException {
+        from.removeProduct(this);
+        to.addProduct(this);
     }
    
     @Override
