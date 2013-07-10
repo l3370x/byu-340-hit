@@ -46,11 +46,11 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
         if (false == this.canAdd(content)) {
             if (this.contains(content)) {
                 throw new HITException(Severity.INFO, 
-                        content + " has already been added to this container");
-            } else {
-                throw new HITException(Severity.ERROR, 
-                        "Can't add content (" + content + ") to this container");
+                        "Container already contains content: " + content);
             }
+
+            throw new HITException(Severity.ERROR, 
+                    "Unable to add content: " + content);
         }
         
         // pass to subclass for overriding behavior

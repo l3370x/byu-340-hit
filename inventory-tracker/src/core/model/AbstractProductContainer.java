@@ -32,18 +32,21 @@ public abstract class AbstractProductContainer<T extends Containable>
 
     @Override
     public void addItem(Item item) throws HITException {
-        if (this.canAddItem(item)) {
-            this.items.add(item);
+        // (try to) add the item
+        this.items.add(item);
         
-            this.addItemToProductIndex(item);
+        // add the product if necessary
+        if (this.products.canAdd(item.getProduct())) {
+            this.products.add(item.getProduct());
         }
+        
+        // add the item to the items-by-product index
+        this.addItemToProductIndex(item);
     }
 
     @Override
     public void addProduct(Product product) throws HITException {
-        if (this.canAddProduct(product)) {
-            this.products.add(product);
-        }
+        this.products.add(product);
     }
 
     @Override
@@ -93,18 +96,13 @@ public abstract class AbstractProductContainer<T extends Containable>
 
     @Override
     public void removeItem(Item item) throws HITException {
-        if (this.canRemoveItem(item)) {
-            this.items.remove(item);
-
-            this.removeItemFromProductIndex(item);
-        }
+        this.items.remove(item);
+        this.removeItemFromProductIndex(item);
     }
 
     @Override
     public void removeProduct(Product product) throws HITException {
-        if (this.canRemoveProduct(product)) {
-            this.products.remove(product);
-        }
+        this.products.remove(product);
     }
     
     @Override
@@ -119,6 +117,8 @@ public abstract class AbstractProductContainer<T extends Containable>
         
         // TODO changing the name may cause integrity violations
     }
+    
+    
 
     protected void removeItemFromProductIndex(Item item) throws HITException {
         assert null != item;
@@ -147,5 +147,4 @@ public abstract class AbstractProductContainer<T extends Containable>
         
         productItems.add(item);
     }
-
 }
