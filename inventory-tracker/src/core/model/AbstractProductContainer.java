@@ -106,7 +106,7 @@ public abstract class AbstractProductContainer<T extends Containable>
             this.products.remove(product);
         }
     }
-
+    
     @Override
     public void setName(String name) throws HITException {
         if (null == name || name.isEmpty()) {

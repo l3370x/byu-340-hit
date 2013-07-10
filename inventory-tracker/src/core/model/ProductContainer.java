@@ -202,5 +202,5 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
      * 
      * @return the storage unit under which this category may be found
      */
-    StorageUnit getStorageUnit();    
+    StorageUnit getStorageUnit();
 }

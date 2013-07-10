@@ -11,11 +11,11 @@ import java.util.Map;
  * 
  * @author kemcqueen
  */
-class ProductCollection extends AbstractContainer<Product> {
+class ProductCollection extends AbstractProductContainerProxy<Product> {
     private final Map<BarCode, Product> productsByBarCode = new HashMap<>();
     
-    ProductCollection(ProductContainer proxy) {
-        super(proxy);
+    ProductCollection(ProductContainer delegate) {
+        super(delegate);
     }
 
     @Override
