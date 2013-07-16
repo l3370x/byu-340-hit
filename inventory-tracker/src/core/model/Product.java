@@ -1,9 +1,8 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
+import core.model.exception.HITException.Severity;
 import java.util.Date;
-import java.util.List;
 
 /**
  * The {@code Product} interface defines the contract for an object that

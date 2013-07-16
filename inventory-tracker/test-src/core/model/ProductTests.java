@@ -5,7 +5,6 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

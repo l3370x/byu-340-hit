@@ -1,7 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
+import core.model.exception.HITException.Severity;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;

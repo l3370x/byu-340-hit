@@ -49,20 +49,6 @@ public enum ContainmentAssertion {
         }
     },
     
-    ASSERT_CONTENT_IS_CONTAINED_IN_CONTAINER_TRUE {
-        @Override
-        public void _assert(Container container, Containable content, int oldSize) {
-            assertTrue(content.isContainedIn(container));
-        }
-    },
-    
-    ASSERT_CONTENT_IS_CONTAINED_IN_CONTAINER_FALSE {
-        @Override
-        public void _assert(Container container, Containable content, int oldSize) {
-            assertFalse(content.isContainedIn(container));
-        }
-    },
-    
     ASSERT_CONTAINER_CONTENTS_INCLUDES_CONTENT_TRUE {
         @Override
         public void _assert(Container container, Containable content, int oldSize) {

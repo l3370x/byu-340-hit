@@ -1,7 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
+import core.model.exception.HITException.Severity;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,21 +48,6 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
         to.addProduct(this);
     }
    
-    @Override
-    public boolean isContainedIn(final ProductContainer container) {
-        // if the super says I'm contained in the container then it must be true
-        if (super.isContainedIn(container)) {
-            return true;
-        }
-        
-        // check to see if the container is one of my categories
-        if (this.containersByStorageUnit.containsValue(container)) {
-            return true;
-        }
-
-        return false;
-    }
-
     @Override
     public Date getCreationDate() {
         assert true;

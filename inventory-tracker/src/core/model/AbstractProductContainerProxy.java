@@ -87,4 +87,9 @@ extends AbstractContainer<T> implements ProductContainer<T> {
     public void setName(String name) throws HITException {
         this.delegate.setName(name);
     }
+    
+    @Override
+    public Product getProduct(BarCode barCode) {
+        return this.delegate.getProduct(barCode);
+    }
 }

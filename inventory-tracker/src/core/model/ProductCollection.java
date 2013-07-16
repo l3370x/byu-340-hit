@@ -1,7 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
+import core.model.exception.HITException.Severity;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,5 +62,10 @@ class ProductCollection extends AbstractProductContainerProxy<Product> {
         assert true;
         
         return false == this.canAdd(product);
+    }
+
+    @Override
+    public Product getProduct(BarCode barCode) {
+        return this.productsByBarCode.get(barCode);
     }
 }

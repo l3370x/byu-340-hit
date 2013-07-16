@@ -1,7 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
+import core.model.exception.HITException.Severity;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -31,18 +31,6 @@ extends AbstractContainmentTests<StorageUnit, Category> {
             }
         }
     }    
-
-    @Override
-    protected void doAddContentToContainer(
-            StorageUnit container, Category content) throws HITException {
-        container.add(content);
-    }
-
-    @Override
-    protected void doRemoveContentFromContainer(
-            StorageUnit container, Category content) throws HITException {
-        container.remove(content);
-    }
 
     @Override
     protected StorageUnit createContainer(Object arg) {

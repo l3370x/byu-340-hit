@@ -165,6 +165,16 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
      * @return the {@link Product}s contained in this product container
      */
     Iterable<Product> getProducts();
+    
+    /**
+     * Get the {@link Product} for the given bar code (if it exists).
+     * 
+     * @param barCode the bar code for which to return the product
+     * 
+     * @return the product whose bar code matches the given bar code, if found;
+     * {@code null} otherwise
+     */
+    Product getProduct(BarCode barCode);
 
     /**
      * Remove the given {@link Item} instance from this product container.

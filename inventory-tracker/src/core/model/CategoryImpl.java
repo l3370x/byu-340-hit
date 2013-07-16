@@ -1,7 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
+import core.model.exception.HITException.Severity;
 import static core.model.AbstractContainable.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,16 +77,18 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
 
         this.container = container;
         this.storageUnit = container.getStorageUnit();
+        
+        this.addObserver(container);
     }
 
     @Override
     public void wasRemovedFrom(ProductContainer<Category> container) throws HITException {
         verifyDoesNotContain(container, this);
         
-        ProductContainer<Category> oldContainer = this.getContainer();
-        
         this.container = null;
         this.storageUnit = null;
+        
+        this.deleteObserver(container);
     }
 
     @Override
@@ -98,14 +100,5 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
     @Override
     public ProductContainer<Category> getContainer() {
         return this.container;
-    }
-
-    @Override
-    public boolean isContainedIn(ProductContainer<Category> container) {
-        if (null == container) {
-            return false;
-        }
-        
-        return container == this.container && container.contains(this);
     }
 }

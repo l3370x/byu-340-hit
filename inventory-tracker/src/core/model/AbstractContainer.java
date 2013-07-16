@@ -1,10 +1,12 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
+import core.model.exception.HITException.Severity;
+import static core.model.ModelNotification.ChangeType.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Observable;
 
 /**
  * The {@code AbstractContainer} class is an abstract implementation of the
@@ -14,18 +16,9 @@ import java.util.List;
  * 
  * @author kemcqueen
  */
-abstract class AbstractContainer<T extends Containable> implements Container<T> {
+abstract class AbstractContainer<T extends Containable> extends Observable implements Container<T> {
+
     private final List<T> contents = new ArrayList<>();
-    //private final Container<T> proxy;
-    /*
-    protected AbstractContainer(Container<T> proxy) {
-        this.proxy = proxy;
-    }
-    
-    protected AbstractContainer() {
-        this.proxy = null;
-    }
-    */
     
     @Override
     public final Iterable<T> getContents() {
@@ -59,9 +52,8 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
         // put it in the contents
         this.contents.add(content);
         
-        // notify the content that it has been added to this container (or proxy)
-        //content.wasAddedTo(null != this.proxy ? this.proxy : this);
-        content.wasAddedTo(this);
+        // perform any necessary follow-up after adding content
+        this.didAdd(content);
     }
     
     @Override
@@ -79,10 +71,10 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
             if (false == this.contains(content)) {
                 throw new HITException(Severity.INFO, 
                         content + " is not contained in this container");
-            } else {
-                throw new HITException(Severity.ERROR, 
-                        "Can't remove content (" + content +") from this container");
             }
+            
+            throw new HITException(Severity.ERROR, 
+                    "Can't remove content (" + content +") from this container");
         }
 
         // pass to the subclass for overriding behavior
@@ -91,9 +83,8 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
         // remove it from the contents
         this.contents.remove(content);
         
-        // notify the content that it has been removed from this container (or proxy)
-        //content.wasRemovedFrom(null != this.proxy ? this.proxy : this); 
-        content.wasRemovedFrom(this); 
+        // perform any necessary follow-up after removing content
+        this.didRemove(content); 
     }
 
     @Override
@@ -116,6 +107,11 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
         return this.contents.size();
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        this.notifyObservers(arg);
+    }
+    
     /**
      * This method is called by the {@link #canAdd(core.model.Containable)} 
      * method after it has performed its initial checks;
@@ -157,4 +153,55 @@ abstract class AbstractContainer<T extends Containable> implements Container<T> 
      * @throws HITException if the content could not be removed for any reason
      */
     protected abstract void doRemove(T content) throws HITException;
+
+    /**
+     * This method is called after content has been added to allow for any kind
+     * of specific follow-up tasks.
+     * 
+     * @param content the content that was added
+     * 
+     * @throws HITException if the follow-up task(s) fail(s) for any reason
+     */
+    protected void didAdd(T content) throws HITException {
+        // notify the content that it has been added to this container
+        content.wasAddedTo(this);
+        
+        // notify observers that content has been added
+        this.notifyObservers(new ModelNotification(CONTENT_ADDED, content));
+        
+        // start observing changes to the content
+        if (content instanceof Observable) {
+            ((Observable) content).addObserver(this);
+        }
+    }
+
+    /**
+     * This method is called after content has been removed to allow for any 
+     * kind of specific follow-up tasks.
+     * 
+     * @param content the content that was removed
+     * 
+     * @throws HITException if the follow-up task(s) fail(s) for any reason
+     */
+    protected void didRemove(T content) throws HITException {
+        // notify the content that it has been removed from this container
+        content.wasRemovedFrom(this);
+        
+        // notify observers that content has been added
+        this.notifyObservers(new ModelNotification(CONTENT_REMOVED, content));
+        
+        // *stop* observing changes to the content
+        if (content instanceof Observable) {
+            ((Observable) content).deleteObserver(this);
+        }
+    }
+
+    @Override
+    public void notifyObservers(Object arg) {
+        this.setChanged();
+        
+        super.notifyObservers(arg);
+    }
+    
+    
 }

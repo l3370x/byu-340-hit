@@ -5,8 +5,7 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
-import java.util.Iterator;
+import core.model.exception.HITException.Severity;
 
 /**
  * The {@code StorageUnit}> class represents an enclosed area where items
@@ -38,19 +37,15 @@ public interface StorageUnit extends ProductContainer<Category>, Containable<Inv
          */
         public static StorageUnit newStorageUnit(String name) throws HITException {
             if(name == null){
-                throw new HITException(Severity.WARNING, "Name cannot be null");
+                throw new HITException(Severity.WARNING, 
+                        "Storage Unit name must not be null");
             }
-            else if(name.isEmpty()){
-                throw new HITException(Severity.WARNING, "Name cannot be Empty");
+            
+            if(name.isEmpty()){
+                throw new HITException(Severity.WARNING, 
+                        "Storage Unit name must not be Empty");
             }
-            InventoryManager manager = InventoryManager.Factory.getInventoryManager();
-            Iterable<StorageUnit> units = manager.getContents();
-            for (StorageUnit unit : units){
-                if(name.equals(unit.getName())){
-                    throw new HITException(Severity.WARNING, "There is already a"
-                            + " Storage Unit named " + name);
-                }
-            }
+
             return new StorageUnitImpl(name);
         }
     }

@@ -1,7 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
+import core.model.exception.HITException.Severity;
 import static core.model.AbstractContainable.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,13 +53,17 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
         verifyContains(container, this);
         
         this.container = container;
+        
+        this.addObserver(container);
     }
 
     @Override
     public void wasRemovedFrom(InventoryManager container) throws HITException {
         verifyDoesNotContain(container, this);
         
-        this.container = container;
+        this.container = null;
+        
+        this.deleteObserver(container);
     }
 
     @Override
@@ -72,15 +76,6 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
         assert true;
         
         return this.container;
-    }
-
-    @Override
-    public boolean isContainedIn(InventoryManager container) {
-        if (null == container) {
-            return false;
-        }
-        
-        return container.contains(this);
     }
 
     @Override

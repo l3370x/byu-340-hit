@@ -1,7 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
+import core.model.exception.HITException.Severity;
 
 /**
  * The {@code AbstractContainable} class is the base class for implementations
@@ -46,15 +46,6 @@ class AbstractContainable<T extends Container> implements Containable<T> {
     @Override
     public T getContainer() {
         return this.container;
-    }
-
-    @Override
-    public boolean isContainedIn(final T container) {
-        if (null == container) {
-            return false;
-        }
-        
-        return container == this.container && container.contains(this);
     }
 
     static <C extends Containable> void verifyContains

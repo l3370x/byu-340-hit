@@ -2,7 +2,11 @@ package core.model;
 
 import core.model.exception.HITException;
 import static core.model.ContainmentAssertion.*;
-import core.model.exception.Severity;
+import core.model.ModelNotification.ChangeType;
+import static core.model.ModelNotification.ChangeType.*;
+import core.model.exception.HITException.Severity;
+import java.util.Observable;
+import java.util.Observer;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -16,12 +20,25 @@ import org.junit.Test;
  */
 public abstract class AbstractContainmentTests<A extends Container, B extends Containable> {
     
-    protected void addContainableToContainer(A container, B content) throws HITException {
+    protected void addContainableToContainer(final A container, final B content) throws HITException {
         // get the size of the container before doing the add
         int oldSize = container.size();
+        
+        // create an observer
+        final TestObserver<A, B> observer = 
+                new TestObserver<>(container, content, CONTENT_ADDED);
+        
+        // add the observer
+        container.addObserver(observer);
 
         // now add the content to the container
         this.doAddContentToContainer(container, content);
+        
+        // delete the observer
+        container.deleteObserver(observer);
+        
+        // make sure the observer was notified
+        assertTrue(observer.wasNotified());
         
         // make sure the content is in the container
         this.assertContentInContainer(container, content, oldSize);
@@ -31,18 +48,35 @@ public abstract class AbstractContainmentTests<A extends Container, B extends Co
         // get the size of the container before doing the remove
         int oldSize = container.size();
         
+        // create an observer
+        final TestObserver<A, B> observer = 
+                new TestObserver<>(container, content, CONTENT_REMOVED);
+        
+        // add the observer
+        container.addObserver(observer);
+
         // now remove the content from the container
         this.doRemoveContentFromContainer(container, content);
+        
+        // delete the observer
+        container.deleteObserver(observer);
+        
+        // make sure the observer was notified
+        assertTrue(observer.wasNotified());
         
         // make sure the content is NOT in the container
         this.assertContentNotInContainer(container, content, oldSize);
     }
     
-    protected abstract void doAddContentToContainer(A container, 
-            B content) throws HITException;
+    protected final void doAddContentToContainer(A container, 
+            B content) throws HITException {
+        container.add(content);
+    }
     
-    protected abstract void doRemoveContentFromContainer(A container, 
-            B content) throws HITException;
+    protected final void doRemoveContentFromContainer(A container, 
+            B content) throws HITException {
+        container.remove(content);
+    }
     
     protected abstract A createContainer(Object arg);
     
@@ -70,7 +104,6 @@ public abstract class AbstractContainmentTests<A extends Container, B extends Co
                 ASSERT_CONTAINER_SIZE_INCREMENTED,
                 ASSERT_CONTAINER_CONTAINS_CONTENT_TRUE,
                 ASSERT_CONTAINER_EQUALS_CONTENT_CONTAINER_TRUE,
-                ASSERT_CONTENT_IS_CONTAINED_IN_CONTAINER_TRUE,
                 ASSERT_CONTAINER_CONTENTS_INCLUDES_CONTENT_TRUE);
     }
 
@@ -79,7 +112,6 @@ public abstract class AbstractContainmentTests<A extends Container, B extends Co
                 ASSERT_CONTAINER_SIZE_DECREMENTED,
                 ASSERT_CONTAINER_CONTAINS_CONTENT_FALSE,
                 ASSERT_CONTAINER_EQUALS_CONTENT_CONTAINER_FALSE,
-                ASSERT_CONTENT_IS_CONTAINED_IN_CONTAINER_FALSE,
                 ASSERT_CONTAINER_CONTENTS_INCLUDES_CONTENT_FALSE);
     }
     
@@ -141,5 +173,36 @@ public abstract class AbstractContainmentTests<A extends Container, B extends Co
         B content = this.createContent("Content");
         // remove the content without having added it first
         this.removeContainableFromContainer(container, content);
+    }
+    
+    private static class TestObserver<A extends Container, B extends Containable> implements Observer {
+        
+        private final ChangeType changeType;
+        private final A container;
+        private final B content;
+        private boolean wasNotified = false;
+        
+        public TestObserver(A container, B content, ChangeType changeType) {
+            this.container = container;
+            this.content = content;
+            this.changeType = changeType;
+        }
+        
+        @Override
+        public void update(Observable o, Object arg) {
+            this.wasNotified = true;
+            
+            assertEquals(container, o);
+            assertNotNull(arg);
+            assertTrue(arg instanceof ModelNotification);
+
+            ModelNotification notification = (ModelNotification) arg;
+            assertEquals(this.changeType, notification.getChangeType());
+            assertEquals(content, notification.getPayload());
+       }
+  
+        public boolean wasNotified() {
+            return this.wasNotified;
+        }
     }
 }

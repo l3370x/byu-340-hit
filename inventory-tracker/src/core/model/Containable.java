@@ -74,20 +74,4 @@ public interface Containable<T extends Container> {
      * this item has not yet been stored, or has been removed)
      */
     T getContainer();
-    
-    
-    /**
-     * Determine if this containable is stored in the given container.  This is
-     * a convenience method and is the same as calling 
-     * {@link Container#contains(core.model.Containable)} passing {@code this}
-     * as the argument.
-     * 
-     * @pre container != null
-     * 
-     * @param container the container in which this containable may be stored
-     * 
-     * @return {@code true} if this containable is stored in the given 
-     * container, {@code false} otherwise
-     */
-    boolean isContainedIn(T container);
 }

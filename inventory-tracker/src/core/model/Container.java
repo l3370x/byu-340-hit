@@ -1,8 +1,9 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
+import core.model.exception.HITException.Severity;
 import java.io.Serializable;
+import java.util.Observer;
 
 /**
  * The {@code Container} interface defines the contract for an object that
@@ -12,7 +13,7 @@ import java.io.Serializable;
  * 
  * @author kemcqueen
  */
-public interface Container<T extends Containable> extends Serializable {
+public interface Container<T extends Containable> extends Serializable, Observer {
     /**
      * Get all of the objects contained by this container.
      * 
@@ -118,4 +119,23 @@ public interface Container<T extends Containable> extends Serializable {
      * {@link #hasContents} returns {@code false})
      */
     int size();
+    
+    
+    /**
+     * Add the given {@code Observer} to this container such that it will be 
+     * notified of changes to this container.  The observer will be notified 
+     * when contents are added to or removed from this container.
+     * 
+     * @param observer the observer to be added
+     */
+    void addObserver(Observer observer);
+    
+    
+    /**
+     * Remove the given {@code Observer} from this container such that it will
+     * no longer be notified of changes to this container.
+     * 
+     * @param observer the observer to be removed
+     */
+    void deleteObserver(Observer observer);
 }

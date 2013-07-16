@@ -25,19 +25,7 @@ public class ContainerTests extends AbstractContainmentTests<TestContainer, Test
         
         this.removeContainableFromContainer(container, null);
     }
-
-    @Override
-    protected void doAddContentToContainer(
-            TestContainer container, TestContainable content) throws HITException {
-        container.add(content);
-    }
-
-    @Override
-    protected void doRemoveContentFromContainer(
-            TestContainer container, TestContainable content) throws HITException {
-        container.remove(content);
-    }
-
+    
     @Override
     protected TestContainer createContainer(Object arg) {
         return new TestContainer();

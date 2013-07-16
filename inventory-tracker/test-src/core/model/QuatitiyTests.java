@@ -5,7 +5,6 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.Severity;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -18,7 +17,7 @@ public class QuatitiyTests {
     @Test (expected = HITException.class)
     public void testBadValue() throws HITException{
         float num = (float) -0.1;
-        Quantity quant = new Quantity(num, QuantityUnit.PINTS);
+        Quantity quant = new Quantity(num, Quantity.Units.PINTS);
     }
     
     @Test (expected = HITException.class)
@@ -30,9 +29,9 @@ public class QuatitiyTests {
     @Test 
     public void testValid() throws HITException{
         float num = (float) 0.1;
-        Quantity quant = new Quantity(num, QuantityUnit.COUNT);
+        Quantity quant = new Quantity(num, Quantity.Units.COUNT);
         assertNotNull(quant);
         assertEquals(quant.getValue(), num, 2);
-        assertEquals(quant.getUnit(), QuantityUnit.COUNT);
+        assertEquals(quant.getUnits(), Quantity.Units.COUNT);
     }
 }

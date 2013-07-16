@@ -2,7 +2,7 @@ package core.model;
 
 import core.model.exception.HITException;
 import static core.model.Category.Factory.newCategory;
-import core.model.exception.Severity;
+import core.model.exception.HITException.Severity;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -52,16 +52,6 @@ public class CategoryAsContainerTests extends AbstractContainmentTests<Category,
             }
         }
     }    
-
-    @Override
-    protected void doAddContentToContainer(Category container, Category content) throws HITException {
-        container.add(content);
-    }
-
-    @Override
-    protected void doRemoveContentFromContainer(Category container, Category content) throws HITException {
-        container.remove(content);
-    }
 
     @Override
     protected Category createContainer(Object arg) {
