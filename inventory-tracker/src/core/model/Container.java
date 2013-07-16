@@ -3,6 +3,7 @@ package core.model;
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Observer;
 
 /**
@@ -138,4 +139,17 @@ public interface Container<T extends Containable> extends Serializable, Observer
      * @param observer the observer to be removed
      */
     void deleteObserver(Observer observer);
+    
+    
+    /**
+     * Get a {@link Comparator} capable of sorting the contents of this 
+     * container.  The comparator will be used to sort the contents before
+     * returning them from the {@link #getContents()} method as needed.  If the
+     * contents should not be sorted this method should return a {@code null}
+     * value.
+     * 
+     * @return a comparator instance capable of sorting the contents, or null if
+     * the contents should not be sorted
+     */
+    Comparator<T> getComparator();
 }

@@ -4,6 +4,7 @@ import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
 import static core.model.ModelNotification.ChangeType.*;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -184,13 +185,24 @@ public abstract class AbstractProductContainer<T extends Containable>
             throw new HITException(Severity.WARNING, "Name must not be empty");
         }
         
-        String oldName = this.getName();
-        
         this.name = name;
-        
-        // TODO changing the name may cause integrity violations
     }
 
+    @Override
+    public Comparator<T> getComparator() {
+        return new Comparator<T>() {
+            @Override
+            public int compare(T o1, T o2) {
+                return o1.toString().compareTo(o2.toString());
+            }
+        };
+    }
+
+    @Override
+    public String toString() {
+        return this.getName();
+    }
+    
     protected void removeItemFromProductIndex(Item item) throws HITException {
         assert null != item;
         

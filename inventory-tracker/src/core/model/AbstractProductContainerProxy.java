@@ -1,6 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
+import java.util.Comparator;
 
 /**
  * The {@code AbstractProductContainerProxy} class is an abstract class that 

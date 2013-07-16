@@ -1,8 +1,8 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.HITException.Severity;
 import static core.model.AbstractContainable.*;
+import core.model.exception.HITException.Severity;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,7 +68,8 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
 
     @Override
     public void transfer(InventoryManager from, InventoryManager to) throws HITException {
-        throw new HITException(Severity.ERROR, "Can't transfer a storage unit");
+        throw new HITException(Severity.ERROR, 
+                "Can't transfer a storage unit");
     }
 
     @Override
@@ -84,5 +85,4 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements Stor
         
         return this;
     }
-
 }

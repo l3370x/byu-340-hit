@@ -5,6 +5,7 @@ import core.model.exception.HITException.Severity;
 import static core.model.ModelNotification.ChangeType.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Observable;
 
@@ -19,9 +20,17 @@ import java.util.Observable;
 abstract class AbstractContainer<T extends Containable> extends Observable implements Container<T> {
 
     private final List<T> contents = new ArrayList<>();
+    private boolean requiresSort;
     
     @Override
     public final Iterable<T> getContents() {
+        if (this.requiresSort) {
+            Comparator<T> comparator = this.getComparator();
+            if (null != comparator) {
+                Collections.sort(this.contents, comparator);
+            }
+            this.requiresSort = false;
+        }
         return Collections.unmodifiableList(this.contents);
     }
     
@@ -51,6 +60,7 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
         
         // put it in the contents
         this.contents.add(content);
+        this.requiresSort = true;
         
         // perform any necessary follow-up after adding content
         this.didAdd(content);
@@ -202,6 +212,4 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
         
         super.notifyObservers(arg);
     }
-    
-    
 }

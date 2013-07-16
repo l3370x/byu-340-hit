@@ -1,6 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,5 +42,10 @@ class ItemCollection extends AbstractProductContainerProxy<Item> {
     @Override
     protected boolean isRemovable(Item item) {
         return false == this.canAdd(item);
+    }
+
+    @Override
+    public Comparator<Item> getComparator() {
+        return null;
     }
 }

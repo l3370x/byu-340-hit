@@ -2,6 +2,7 @@ package core.model;
 
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,5 +68,15 @@ class ProductCollection extends AbstractProductContainerProxy<Product> {
     @Override
     public Product getProduct(BarCode barCode) {
         return this.productsByBarCode.get(barCode);
+    }
+
+    @Override
+    public Comparator<Product> getComparator() {
+        return new Comparator<Product>() {
+            @Override
+            public int compare(Product o1, Product o2) {
+                return o1.getDescription().compareTo(o2.getDescription());
+            }
+        };
     }
 }

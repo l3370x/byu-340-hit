@@ -1,5 +1,11 @@
 package gui.storageunit;
 
+import core.model.InventoryManager;
+import static core.model.InventoryManager.Factory.getInventoryManager;
+import static core.model.StorageUnit.Factory.newStorageUnit;
+import core.model.StorageUnit;
+import core.model.exception.ExceptionHandler;
+import core.model.exception.HITException;
 import gui.common.*;
 
 /**
@@ -47,6 +53,7 @@ public class AddStorageUnitController extends Controller implements
 	 */
 	@Override
 	protected void enableComponents() {
+            this.getView().enableOK(false);
 	}
 
 	/**
@@ -70,6 +77,26 @@ public class AddStorageUnitController extends Controller implements
 	 */
 	@Override
 	public void valuesChanged() {
+            // if the name is null or the name is empty, then we can't create a 
+            // storage unit
+            String name = this.getView().getStorageUnitName();
+            if (null == name || name.isEmpty()) {
+                this.getView().enableOK(false);
+                return;
+            }
+
+            // if the name matches an existing storage unit, then we can't
+            // create a storage unit
+            InventoryManager manager = getInventoryManager();
+            for (StorageUnit unit : manager.getContents()) {
+                if (name.equals(unit.getName())) {
+                    this.getView().enableOK(false);
+                    return;
+                }
+            }
+            
+            // we can create a storage unit
+            this.getView().enableOK(true);
 	}
 	
 	/**
@@ -78,6 +105,17 @@ public class AddStorageUnitController extends Controller implements
 	 */
 	@Override
 	public void addStorageUnit() {
+            try {
+                // create the storage unit
+                final StorageUnit storageUnit = 
+                        newStorageUnit(this.getView().getStorageUnitName());
+                
+                // add the storage unit to the inventory manager
+                getInventoryManager().add(storageUnit);
+            } catch (HITException ex) {
+                ExceptionHandler.TO_USER.reportException(ex, 
+                        "Unable To Create Storage Unit");
+            }
 	}
 
 }

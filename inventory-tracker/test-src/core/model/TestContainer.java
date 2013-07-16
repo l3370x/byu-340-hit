@@ -1,6 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
+import java.util.Comparator;
 
 /**
  * The {@code TestContainer} class is an implementation of the {@link Container}
@@ -25,5 +26,10 @@ public class TestContainer extends AbstractContainer<TestContainable> {
     @Override
     protected boolean isRemovable(TestContainable content) {
         return true == this.contains(content);
+    }
+
+    @Override
+    public Comparator<TestContainable> getComparator() {
+        return null;
     }
 }

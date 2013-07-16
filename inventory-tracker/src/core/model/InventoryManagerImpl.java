@@ -1,6 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
+import java.util.Comparator;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -122,6 +123,4 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> impleme
             // TODO what do I do with this exception
         }
     }
-    
-    
 }
