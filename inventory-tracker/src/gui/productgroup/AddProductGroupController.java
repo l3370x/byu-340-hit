@@ -3,6 +3,8 @@ package gui.productgroup;
 import static core.model.Category.Factory.newCategory;
 import core.model.Container;
 import core.model.Category;
+import core.model.Quantity;
+import core.model.Quantity.Units;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import gui.common.*;
@@ -67,6 +69,8 @@ public class AddProductGroupController extends Controller implements
 	 */
 	@Override
 	protected void loadValues() {
+		this.getView().setSupplyValue("0");
+		this.getView().setSupplyUnit(SizeUnits.Count);
 	}
 
 	//
@@ -85,6 +89,14 @@ public class AddProductGroupController extends Controller implements
         if (null == name || name.isEmpty()) {
             this.getView().enableOK(false);
             return;
+        }
+        
+        // if the count is not a number or is blank, don't allow OK
+        String count = this.getView().getSupplyValue();
+        if (false == count.matches("-?\\d+(\\.\\d+)?") || 
+        		null == count || name.isEmpty()) {
+        	this.getView().enableOK(false);
+        	return;
         }
 
         // if the name matches an existing storage unit, then we can't
@@ -112,8 +124,13 @@ public class AddProductGroupController extends Controller implements
             // create the storage unit
             final Category category = 
                     newCategory(this.getView().getProductGroupName());
-            
+            String  newSupply = this.getView().getSupplyValue();
+    		SizeUnits newSize = this.getView().getSupplyUnit();
+            System.out.println("newSize = " + newSize.toString());
+    		//Quantity newQuantity = new Quantity(Float.parseFloat(newSupply),Quantity.Units(newSize.toString()));
+            //category.set3MonthSupplyQuantity(newQuantity);
             // add the category to the selected container
+            // TODO switch on quantity/sizeunits
             Container selectedContainer = (Container) this.container.getTag();
             selectedContainer.add(category);
             
