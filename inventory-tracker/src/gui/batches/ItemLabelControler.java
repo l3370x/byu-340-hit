@@ -5,14 +5,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.sun.istack.internal.logging.Logger;
 
@@ -21,19 +21,20 @@ import core.model.Item;
 
 public class ItemLabelControler implements IItemLabelController {
 
-    private List<Item> itemList = new ArrayList<Item>();
+    private Iterator<Item> itemList;
     private String fileName = ".";
     private File outFile;
     private static int COLUMNS = 4;
 
     @Override
-    public void createDocument(List<Item> itemList) {
+    public void createDocument(Iterator<Item> itemList) {
 	try {
 	    this.itemList = itemList;
 	    Document document = new Document(PageSize.LETTER);
 	    generateFileName();
-	    PdfWriter.getInstance(document, new FileOutputStream(fileName));
+	    PdfWriter.getInstance(document, new FileOutputStream(outFile));
 	    document.open();
+	    formatDocument(document);
 	    document.close();
 	    displayDocument();
 	} catch (FileNotFoundException | DocumentException e) {
@@ -43,13 +44,16 @@ public class ItemLabelControler implements IItemLabelController {
     }
 
     @Override
-    public void formatDocument() {
-	// TODO Auto-generated method stub
-
+    public void formatDocument(Document document) {
+	PdfPTable table = new PdfPTable(COLUMNS);
+	int row = 1;
+	while(itemList.hasNext()) {
+	    
+	}
     }
 
     @Override
-    public void generateBarCode() {
+    public void generateBarCode(Item item) {
 	// TODO Auto-generated method stub
 
     }

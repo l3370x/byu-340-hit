@@ -1,16 +1,18 @@
 package gui.batches;
 
-import java.util.List;
+import java.util.Iterator;
+
+import com.itextpdf.text.Document;
 
 import core.model.Item;
 
 public interface IItemLabelController {
     
-    public void createDocument(List<Item> itemList);
+    public void createDocument(Iterator<Item> itemList);
     
-    public void formatDocument();
+    public void formatDocument(Document document);
     
-    public void generateBarCode();
+    public void generateBarCode(Item item);
     
     public void generateFileName();
     
