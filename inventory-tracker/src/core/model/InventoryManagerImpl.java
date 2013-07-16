@@ -94,6 +94,10 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> impleme
 
     @Override
     public void update(Observable o, Object arg) {
+        // call the super first, so that notifications will propagate to my 
+        // observers
+        super.update(o, arg);
+        
         if (false == arg instanceof ModelNotification) {
             return;
         }

@@ -1,7 +1,6 @@
 package gui.inventory;
 
 import core.model.Containable;
-import core.model.InventoryManager;
 import gui.common.*;
 import gui.item.*;
 import gui.product.*;
@@ -13,8 +12,6 @@ import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Controller class for inventory view.
