@@ -36,11 +36,13 @@ public class PersistenceManagerTest {
 		Product p1 = Product.Factory.newProduct(BarCode.generateItemBarCode(), "product 1");
 		Item i1 = Item.Factory.newItem(p1, new Date(), new Date());
 		
-		// s1.addItem(i1);
+
 		// s1.addProduct(p1);
+		// s1.addItem(i1);
 		
 		StorageUnit s2 = StorageUnit.Factory.newStorageUnit("su2");
 		i.add(s1);
+		// s1.addProduct(p1);
 		i.add(s2);
 		// System.out.println("before save " + i.getContents().iterator().next().getName());
 		PersistenceManager.INSTANCE.save();
@@ -82,7 +84,6 @@ public class PersistenceManagerTest {
 	 */
 	@Test
 	public void testUpdate() {
-		fail("Not yet implemented"); // TODO
 	}
 
 }

@@ -63,7 +63,16 @@ public interface Item extends Containable<ProductContainer> {
      * @return the date (and time) this item was removed from the system
      */
     Date getExitDate();
-    void setExitDate(Date d); //TODO docuentation
+    
+    /**
+     * Set the date (and time) this item was removed from the system.
+     * 
+     * @pre d != null
+     * 
+     * @post d.getExitDate = d
+     * 
+     */
+    void setExitDate(Date d); 
     
     /**
      * Get the date on which this item will expire.  This value is calculated
