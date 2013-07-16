@@ -1,5 +1,10 @@
 package gui.productgroup;
 
+import static core.model.Category.Factory.newCategory;
+import core.model.Container;
+import core.model.Category;
+import core.model.exception.ExceptionHandler;
+import core.model.exception.HITException;
 import gui.common.*;
 import gui.inventory.*;
 
@@ -8,6 +13,7 @@ import gui.inventory.*;
  */
 public class AddProductGroupController extends Controller implements
 		IAddProductGroupController {
+	private final ProductContainerData container;
 	
 	/**
 	 * Constructor.
@@ -17,7 +23,7 @@ public class AddProductGroupController extends Controller implements
 	 */
 	public AddProductGroupController(IView view, ProductContainerData container) {
 		super(view);
-		
+		this.container = container;
 		construct();
 	}
 
@@ -49,6 +55,7 @@ public class AddProductGroupController extends Controller implements
 	 */
 	@Override
 	protected void enableComponents() {
+		this.getView().enableOK(false);
 	}
 
 	/**
@@ -72,6 +79,27 @@ public class AddProductGroupController extends Controller implements
 	 */
 	@Override
 	public void valuesChanged() {
+		// if the name is null or the name is empty, then we can't create a 
+        // storage unit
+        String name = this.getView().getProductGroupName();
+        if (null == name || name.isEmpty()) {
+            this.getView().enableOK(false);
+            return;
+        }
+
+        // if the name matches an existing storage unit, then we can't
+        // create a storage unit
+        
+        for (int i = 0 ; i < this.container.getChildCount() ; i++) {
+            if (this.container.getChild(i).getName().equals(
+            		this.getView().getProductGroupName())) {
+                this.getView().enableOK(false);
+                return;
+            }
+        }
+        
+        // we can create a storage unit
+        this.getView().enableOK(true);
 	}
 	
 	/**
@@ -80,6 +108,19 @@ public class AddProductGroupController extends Controller implements
 	 */
 	@Override
 	public void addProductGroup() {
+		try {
+            // create the storage unit
+            final Category category = 
+                    newCategory(this.getView().getProductGroupName());
+            
+            // add the category to the selected container
+            Container selectedContainer = (Container) this.container.getTag();
+            selectedContainer.add(category);
+            
+        } catch (HITException ex) {
+            ExceptionHandler.TO_USER.reportException(ex, 
+                    "Unable To Create Product Group");
+        }
 	}
 
 }

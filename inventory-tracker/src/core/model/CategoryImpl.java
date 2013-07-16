@@ -32,7 +32,6 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
     @Override
     protected void doAdd(Category category) throws HITException {
         assert null != category;
-        
         this.categoriesByName.put(category.getName(), category);
     }
 

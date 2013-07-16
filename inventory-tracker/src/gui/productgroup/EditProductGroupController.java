@@ -1,14 +1,24 @@
 package gui.productgroup;
 
+import static core.model.InventoryManager.Factory.getInventoryManager;
+
+import java.util.Iterator;
+
+import core.model.Category;
+import core.model.Quantity;
+import core.model.Quantity.Units;
 import gui.common.*;
 import gui.inventory.*;
+import core.model.Container;
+import core.model.exception.ExceptionHandler;
+import core.model.exception.HITException;
 
 /**
  * Controller class for the edit product group view.
  */
 public class EditProductGroupController extends Controller 
 										implements IEditProductGroupController {
-	
+	private final ProductContainerData target;
 	/**
 	 * Constructor.
 	 * 
@@ -17,7 +27,7 @@ public class EditProductGroupController extends Controller
 	 */
 	public EditProductGroupController(IView view, ProductContainerData target) {
 		super(view);
-
+		this.target = target;
 		construct();
 	}
 
@@ -49,6 +59,7 @@ public class EditProductGroupController extends Controller
 	 */
 	@Override
 	protected void enableComponents() {
+		this.getView().enableOK(false);
 	}
 
 	/**
@@ -60,6 +71,15 @@ public class EditProductGroupController extends Controller
 	 */
 	@Override
 	protected void loadValues() {
+		final IEditProductGroupView view = this.getView();
+        final String name = this.target.getName();
+        final Category category = (Category) this.target.getTag();
+        final String supply = category.get3MonthSupplyQuantity().toString();
+        // final SizeUnits size = category.get3MonthSupplyQuantity().getUnits()
+        view.setProductGroupName(name);
+        // view.setSupplyUnit(size);
+        // TODO check this
+        view.setSupplyValue(supply);
 	}
 
 	//
@@ -72,6 +92,28 @@ public class EditProductGroupController extends Controller
 	 */
 	@Override
 	public void valuesChanged() {
+		// if the name is null or the name is empty, then we can't create a 
+        // storage unit
+        String name = this.getView().getProductGroupName();
+        if (null == name || name.isEmpty()) {
+            this.getView().enableOK(false);
+            return;
+        }
+
+        // if the name matches an existing container, then we can't
+        // create a container
+        Iterator<Category> parentContents = ((Category) target.getTag()).getContainer().getContents().iterator();
+        while (parentContents.hasNext()) {
+        	Category c = parentContents.next();
+            if (c.getName().equals(
+            		this.getView().getProductGroupName())) {
+                this.getView().enableOK(false);
+                return;
+            }
+        }
+
+        // we can create a storage unit
+        this.getView().enableOK(true);
 	}
 	
 	/**
@@ -80,6 +122,33 @@ public class EditProductGroupController extends Controller
 	 */
 	@Override
 	public void editProductGroup() {
+		String newName = this.getView().getProductGroupName();
+		String  newSupply = this.getView().getSupplyValue();
+		SizeUnits newSize = this.getView().getSupplyUnit();
+        try {
+            // get the StorageUnit "tag" from the data
+            final Category category = (Category) this.target.getTag();
+            
+            // get the category's container
+            Container container = category.getContainer();
+            
+            // remove the storage unit from its container
+            container.remove(category);
+            
+            // set the category's new info
+            category.setName(newName);
+            
+            Quantity newQuantity = new Quantity(Integer.getInteger(newSupply), Units.valueOf(newSize.toString()));
+            // TODO check this
+            category.set3MonthSupplyQuantity(newQuantity);
+            
+            // put the storage unit back into the container
+            container.add(category);
+            
+        } catch (HITException ex) {
+            ExceptionHandler.TO_USER.reportException(ex, 
+                    "Unable To Edit Product Group");
+        }
 	}
 
 }
