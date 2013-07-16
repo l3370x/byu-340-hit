@@ -3,8 +3,6 @@ package core.model;
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
 import static core.model.AbstractContainable.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The {@code CategoryImpl} class is the default implementation of the 
@@ -17,7 +15,6 @@ import java.util.Map;
  * @author kemcqueen
  */
 class CategoryImpl extends AbstractProductContainer<Category> implements Category {
-    private Map<String, Category> categoriesByName = new HashMap<>();
     private ProductContainer<Category> container;
     private StorageUnit storageUnit;
     private Quantity threeMonthSupply;
@@ -27,32 +24,6 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
      */
     CategoryImpl(String name) {
         super(name);
-    }
-
-    @Override
-    protected void doAdd(Category category) throws HITException {
-        assert null != category;
-        this.categoriesByName.put(category.getName(), category);
-    }
-
-    @Override
-    protected void doRemove(Category category) throws HITException {
-        assert null != category;
-        
-        this.categoriesByName.remove(category.getName());
-    }
-
-    @Override
-    protected boolean isAddable(Category category) {
-        assert null != category;
-        
-        return false == this.contains(category) && 
-                false == this.categoriesByName.containsKey(category.getName());
-    }
-
-    @Override
-    protected boolean isRemovable(Category category) {
-        return false == this.canAdd(category);
     }
 
     @Override

@@ -1,11 +1,8 @@
 package core.model;
 
 import core.model.exception.HITException;
-import java.util.Comparator;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Observable;
 
 /**
@@ -20,8 +17,6 @@ import java.util.Observable;
  */
 class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> implements InventoryManager {
     private final Container<Item> removedItems = new ItemCollection(null);
-    
-    Map<String, StorageUnit> storageUnitsByName = new HashMap<>();
     
     /**
      * Hidden (mostly) constructor.
@@ -48,26 +43,6 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> impleme
         });
     }
 
-    @Override
-    protected void doAdd(StorageUnit unit) throws HITException {
-        this.storageUnitsByName.put(unit.getName(), unit);
-    }
-
-    @Override
-    protected void doRemove(StorageUnit unit) throws HITException {
-        this.storageUnitsByName.remove(unit.getName());
-    }
-
-    @Override
-    protected boolean isAddable(StorageUnit unit) {
-        return false == this.storageUnitsByName.containsKey(unit.getName());
-    }
-
-    @Override
-    protected boolean isRemovable(StorageUnit unit) {
-        return false == this.canAdd(unit);
-    }
-    
     @Override
     public Iterable<Item> getRemovedItems() {
         return this.removedItems.getContents();
@@ -103,7 +78,7 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> impleme
         }
         
         ModelNotification notification = (ModelNotification) arg;
-        Object payload = notification.getPayload();
+        Object payload = notification.getContent();
         
         try {
             switch (notification.getChangeType()) {

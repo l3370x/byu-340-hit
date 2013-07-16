@@ -2,11 +2,14 @@ package gui.storageunit;
 
 import core.model.InventoryManager;
 import static core.model.InventoryManager.Factory.getInventoryManager;
+import static core.model.ModelNotification.ChangeType.*;
+import core.model.ModelNotification;
 import core.model.StorageUnit;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import gui.common.*;
 import gui.inventory.*;
+import java.util.Observable;
 
 /**
  * Controller class for the edit storage unit view.
@@ -125,18 +128,13 @@ public class EditStorageUnitController extends Controller
             // get the StorageUnit "tag" from the data
             final StorageUnit unit = (StorageUnit) this.target.getTag();
             
-            // get the storage unit's container
-            InventoryManager container = unit.getContainer();
-            
-            // remove the storage unit from its container
-            container.remove(unit);
-            
             // set the unit's new name
             unit.setName(newName);
             
-            // put the storage unit back into the container
-            container.add(unit);
-            
+            // the unit should notify its observers of the change
+            if (unit instanceof Observable) {
+                ((Observable) unit).notifyObservers(new ModelNotification(CONTENT_UPDATED, unit.getContainer(), unit));
+            }
         } catch (HITException ex) {
             ExceptionHandler.TO_USER.reportException(ex, 
                     "Unable To Edit Storage Unit");
