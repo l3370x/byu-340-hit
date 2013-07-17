@@ -1,4 +1,4 @@
-package gui.batches;
+package core.model;
 
 import static org.junit.Assert.*;
 
