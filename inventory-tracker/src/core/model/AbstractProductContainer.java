@@ -146,7 +146,17 @@ public abstract class AbstractProductContainer<T extends Containable>
         
         return Collections.unmodifiableSet(itemSet);
     }
+    
+    public int getItemsCount(Product product) {
+        Set<Item> itemSet = this.itemsByProduct.get(product);
+        if (null == itemSet) {
+            return 0;
+        }
+        
+        return itemSet.size();
+    }
 
+    
     @Override
     public String getName() {
         return this.name;
