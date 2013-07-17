@@ -9,10 +9,19 @@ import core.model.exception.HITException.Severity;
 import gui.common.SizeUnits;
 
 /**
+ * Class to enable simple conversion between the gui's and model's units.
+ * 
  * @author aaron
  *
  */
 public class UnitController {
+	
+	/**
+	 * 
+	 * @param su	The SizeUnits to convert from
+	 * @return		The Units that corresponds to the given SizeUnits
+	 * @throws HITException if the conversion failed
+	 */
 	public static Units sizeUnitsToUnits(SizeUnits su) throws HITException {
 		switch(su) {
 		case Pounds :
@@ -41,6 +50,12 @@ public class UnitController {
 		throw new HITException(Severity.WARNING, "Couldn't convert from Quantity.Units to SizeUnits.");
 	}
 
+	/**
+	 * 
+	 * @param u		The Units to convert from
+	 * @return		The SizeUnits equivalent from the given Units
+	 * @throws HITException if the conversion failed.
+	 */
 	public static SizeUnits unitsToSizeUnits(Units u) throws HITException {
 		switch(u) {
 		case COUNT :
