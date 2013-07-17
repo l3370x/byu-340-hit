@@ -105,13 +105,17 @@ public interface Item extends Containable<ProductContainer> {
          * 
          * @throws HITException if the item could not be created for any reason
          */
-        public static Item newItem(Product product, Date entryDate, Date expirationDate) throws HITException {
+        public static Item newItem(Product product, 
+                Date entryDate, 
+                Date expirationDate) throws HITException {
             if (product == null) {
-            	throw new HITException(Severity.WARNING, "Can't add item to null product.");
+            	throw new HITException(Severity.WARNING, 
+                        "Can't add item to null product.");
             } 
             
             if (entryDate == null) {
-            	throw new HITException(Severity.WARNING, "Date missing.");
+            	throw new HITException(Severity.WARNING, 
+                        "Date missing.");
             }
             
             Item item = new ItemImpl(entryDate, 

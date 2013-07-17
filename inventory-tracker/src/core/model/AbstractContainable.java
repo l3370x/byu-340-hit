@@ -61,7 +61,8 @@ class AbstractContainable<T extends Container> implements Containable<T> {
         }
     }
 
-    static <C extends Containable> void verifyDoesNotContain(final Container<C> container, C content) throws HITException {
+    static <C extends Containable> void verifyDoesNotContain(
+            final Container<C> container, C content) throws HITException {
         if (null == container) {
             throw new HITException(Severity.WARNING, 
                     "Container must not be null");
