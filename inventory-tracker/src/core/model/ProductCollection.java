@@ -79,4 +79,10 @@ class ProductCollection extends AbstractProductContainerProxy<Product> {
             }
         };
     }
+
+	@Override
+	public int getItemsCount(Product product) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

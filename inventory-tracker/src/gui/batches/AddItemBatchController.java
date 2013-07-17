@@ -105,7 +105,11 @@ public class AddItemBatchController extends Controller implements
 		
 		if (!this.getView().getUseScanner())
 		{
-			 this.getView().enableItemAction(true);
+			if (this.getView().getBarcode()!="")
+			{
+				this.getView().enableItemAction(true);
+				
+			}
 			 
 		}
 		
@@ -144,11 +148,23 @@ public class AddItemBatchController extends Controller implements
 	    
 		if (prod == null)
 		{
+			this.getView().displayAddProductView();
+			StorageUnit unit1 = tag.getStorageUnit();
 			
-			unit.addProduct(product);
+			if (unit1.getProduct(new BarCode(this.getView().getBarcode())) != null)
+			{ 
+				this.getView().displayInformationMessage("FOund product");
+				
+				
+				prod=unit1.getProduct(new BarCode(this.getView().getBarcode()));
+			}
+			else
+			{
+				 this.getView().enableItemAction(false);
+				 return ;
+			}
 		}
-		else
-		{
+		
 			
 			Calendar expiryDate = Calendar.getInstance();
 			expiryDate.setTime(this.getView().getEntryDate());
@@ -166,7 +182,7 @@ public class AddItemBatchController extends Controller implements
 			
 			ProductsView.add(new ProductData(prod));
 			this.getView().setProducts((ProductData[]) ProductsView.toArray());
-		}
+		
 		
 		
 		

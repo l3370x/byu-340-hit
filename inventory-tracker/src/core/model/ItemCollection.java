@@ -48,4 +48,10 @@ class ItemCollection extends AbstractProductContainerProxy<Item> {
     public Comparator<Item> getComparator() {
         return null;
     }
+
+	@Override
+	public int getItemsCount(Product product) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
