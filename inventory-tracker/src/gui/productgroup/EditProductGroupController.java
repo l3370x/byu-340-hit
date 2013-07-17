@@ -1,7 +1,5 @@
 package gui.productgroup;
 
-import static core.model.InventoryManager.Factory.getInventoryManager;
-
 import java.util.Iterator;
 
 import core.model.Category;
@@ -74,11 +72,15 @@ public class EditProductGroupController extends Controller
 		final IEditProductGroupView view = this.getView();
         final String name = this.target.getName();
         final Category category = (Category) this.target.getTag();
-        final String supply = category.get3MonthSupplyQuantity().toString();
-        // final SizeUnits size = category.get3MonthSupplyQuantity().getUnits()
+        final String supply = String.valueOf(category.get3MonthSupplyQuantity().getValue());
+        SizeUnits size;
+        try {
+			size = UnitController.unitsToSizeUnits(category.get3MonthSupplyQuantity().getUnits());
+		} catch (HITException e) {
+			size = SizeUnits.Count;
+		}
         view.setProductGroupName(name);
-        // view.setSupplyUnit(size);
-        // TODO check this
+        view.setSupplyUnit(size);
         view.setSupplyValue(supply);
 	}
 
@@ -93,7 +95,7 @@ public class EditProductGroupController extends Controller
 	@Override
 	public void valuesChanged() {
 		// if the name is null or the name is empty, then we can't create a 
-        // storage unit
+        // Product Group
         String name = this.getView().getProductGroupName();
         if (null == name || name.isEmpty()) {
             this.getView().enableOK(false);

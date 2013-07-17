@@ -24,13 +24,8 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
     
     @Override
     public final Iterable<T> getContents() {
-        if (this.requiresSort) {
-            Comparator<T> comparator = this.getComparator();
-            if (null != comparator) {
-                Collections.sort(this.contents, comparator);
-            }
-            this.requiresSort = false;
-        }
+        this.sortContentsIfNecessary();
+        
         return Collections.unmodifiableList(this.contents);
     }
     
@@ -60,7 +55,7 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
         
         // put it in the contents
         this.contents.add(content);
-        this.requiresSort = true;
+        this.requiresSort(true);
         
         // perform any necessary follow-up after adding content
         this.didAdd(content);
@@ -108,6 +103,13 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
     }
 
     @Override
+    public int indexOf(T content) {
+        this.sortContentsIfNecessary();
+        
+        return this.contents.indexOf(content);
+    }
+
+    @Override
     public final boolean hasContent() {
         return this.size() > 0;
     }
@@ -119,6 +121,10 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
 
     @Override
     public void update(Observable o, Object arg) {
+        if (arg instanceof ModelNotification) {
+            this.handleModelNotification((ModelNotification) arg);
+        }
+        
         this.notifyObservers(arg);
     }
     
@@ -177,7 +183,7 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
         content.wasAddedTo(this);
         
         // notify observers that content has been added
-        this.notifyObservers(new ModelNotification(CONTENT_ADDED, content));
+        this.notifyObservers(new ModelNotification(CONTENT_ADDED, this, content));
         
         // start observing changes to the content
         if (content instanceof Observable) {
@@ -198,7 +204,7 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
         content.wasRemovedFrom(this);
         
         // notify observers that content has been added
-        this.notifyObservers(new ModelNotification(CONTENT_REMOVED, content));
+        this.notifyObservers(new ModelNotification(CONTENT_REMOVED, this, content));
         
         // *stop* observing changes to the content
         if (content instanceof Observable) {
@@ -211,5 +217,83 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
         this.setChanged();
         
         super.notifyObservers(arg);
+    }
+
+    private void sortContentsIfNecessary() {
+        if (this.requiresSort) {
+            Comparator<T> comparator = this.getComparator();
+            if (null != comparator) {
+                Collections.sort(this.contents, comparator);
+            }
+            this.requiresSort(false);
+        }
+    }
+
+    private void handleModelNotification(ModelNotification notification) {
+        assert null != notification;
+        
+        if (this != notification.getContainer()) {
+            return;
+        }
+        
+        switch (notification.getChangeType()) {
+            case CONTENT_ADDED:
+                this.contentWasAdded((T) notification.getContent());
+                break;
+                
+            case CONTENT_REMOVED:
+                this.contentWasRemoved((T) notification.getContent());
+                break;
+                
+            case CONTENT_UPDATED:
+                this.contentWasUpdated((T) notification.getContent());
+                break;
+        }
+    }
+    
+    /**
+     * Notifies this container that the given content was added to this 
+     * container.  This method differs from the 
+     * {@link #didAdd(core.model.Containable)} method in that this method is 
+     * called as a result of receiving a {@code CONTENT_ADDED} update message.
+     * This implementation does nothing.  Subclasses should not really need to
+     * override this method as they will most likely override the {@code didAdd}
+     * method instead.
+     * 
+     * @param content the content that was added
+     */
+    protected void contentWasAdded(T content) {
+        // no op
+    }
+    
+    /**
+     * Notifies this container that the given content was removed from this 
+     * container.  This method differs from the 
+     * {@link #didRemove(core.model.Containable)} method in that this method is 
+     * called as a result of receiving a {@code CONTENT_REMOVED} update message.
+     * This implementation does nothing.  Subclasses should not really need to
+     * override this method as they will most likely override the 
+     * {@code didRemove} method instead.
+     * 
+     * @param content the content that was removed
+     */
+    protected void contentWasRemoved(T content) {
+        // no op
+    }
+    
+    /**
+     * Notifies this container that the given content has been updated.  This 
+     * indicates that some internal state has changed which this container needs
+     * to be aware of.  This implementation does nothing, leaving it to
+     * subclasses to override as necessary.
+     * 
+     * @param content the content that was updated
+     */
+    protected void contentWasUpdated(T content) {
+        
+    }
+
+    protected void requiresSort(boolean requiresSort) {
+        this.requiresSort = requiresSort;
     }
 }

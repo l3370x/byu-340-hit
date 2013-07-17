@@ -3,14 +3,18 @@ package core.model;
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
 import static core.model.ModelNotification.ChangeType.*;
+import core.model.exception.ExceptionHandler;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The {@code AbstractProductContainer} class is the base class for 
@@ -23,6 +27,7 @@ import java.util.Set;
 public abstract class AbstractProductContainer<T extends Containable> 
     extends AbstractContainer<T> implements ProductContainer<T> {
     
+    private final Map<String, T> contentsByString = new HashMap<>();
     private final Container<Item> items;
     private final Container<Product> products;
     
@@ -42,13 +47,15 @@ public abstract class AbstractProductContainer<T extends Containable>
                             (ModelNotification) arg;
                     switch (notification.getChangeType()) {
                         case CONTENT_ADDED:
-                            notifyObservers(new ModelNotification(ITEM_ADDED, 
-                                    notification.getPayload()));
+                            notifyObservers(new ModelNotification(ITEM_ADDED,
+                                    AbstractProductContainer.this,
+                                    notification.getContent()));
                             break;
                             
                         case CONTENT_REMOVED:
                             notifyObservers(new ModelNotification(ITEM_REMOVED, 
-                                    notification.getPayload()));
+                                    AbstractProductContainer.this,
+                                    notification.getContent()));
                             break;
                             
                         default:
@@ -68,12 +75,14 @@ public abstract class AbstractProductContainer<T extends Containable>
                     switch (notification.getChangeType()) {
                         case CONTENT_ADDED:
                             notifyObservers(new ModelNotification(PRODUCT_ADDED, 
-                                    notification.getPayload()));
+                                    AbstractProductContainer.this,
+                                    notification.getContent()));
                             break;
                             
                         case CONTENT_REMOVED:
                             notifyObservers(new ModelNotification(PRODUCT_REMOVED, 
-                                    notification.getPayload()));
+                                    AbstractProductContainer.this,
+                                    notification.getContent()));
                             break;
                             
                         default:
@@ -239,5 +248,65 @@ public abstract class AbstractProductContainer<T extends Containable>
         }
         
         productItems.add(item);
+    }
+
+    @Override
+    protected boolean isAddable(T content) {
+        assert null != content;
+        
+        return false == this.contains(content) &&
+                false == this.contentsByString.containsKey(content.toString());
+    }
+
+    @Override
+    protected void doAdd(T content) throws HITException {
+        assert null != content;
+        this.contentsByString.put(content.toString(), content);
+    }
+
+    @Override
+    protected boolean isRemovable(T content) {
+        return false == this.canAdd(content);
+    }
+
+    @Override
+    protected void doRemove(T content) throws HITException {
+        assert null != content;
+        this.contentsByString.remove(content.toString());
+    }
+
+    @Override
+    protected void contentWasUpdated(final T content) {
+        assert null != content;
+
+        // if the content was changed, it is likely that the key by which it
+        // is stored has changed, so we'll need to re-key the content
+        
+        // if the content is still properly keyed, then we don't really need to
+        // do anything
+        if (content == this.contentsByString.get(content.toString())) {
+            return;
+        }
+        
+        // if we don't have the content, then we don't need to do anything
+        if (false == this.contentsByString.containsValue(content)) {
+            return;
+        }
+        
+        // see if we can find the content in the values, if so, remove it
+        Iterator<T> iter = this.contentsByString.values().iterator();
+        while (iter.hasNext()) {
+            if (content == iter.next()) {
+                iter.remove();
+                break;
+            }
+        }
+        try {
+            // add the content back in so it will be properly keyed
+            this.doAdd(content);
+            this.requiresSort(true);
+        } catch (HITException ex) {
+            ExceptionHandler.TO_LOG.reportException(ex, "Unable to update content");
+        }
     }
 }

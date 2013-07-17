@@ -2,33 +2,40 @@ package core.model;
 
 /**
  * The {@code ModelNotification} class is used to encapsulate information about 
- * a change to the model.  The notification consists of two (2) parts:
+ * a change to the model.  The notification consists of two (3) parts:
  * <ol>
  * <li>The type of the change</li>
- * <li>The payload of the change</li>
+ * <li>The container where the change occurred</li>
+ * <li>The content that was added/removed/updated</li>
  * </ol>
  * <p>
  * For instance, if content was added to a container, the change type will be 
- * {@link ChangeType#CONTENT_ADDED} and the payload will be the content object
- * that was added.
+ * {@link ChangeType#CONTENT_ADDED} and the content will be the content object
+ * that was added and the container will be where the content was added.
  * 
  * @author kmcqueen
  */
 public class ModelNotification {
     private final ChangeType changeType;
-    private final Object payload;
+    private final Container container;
+    private final Containable content;
     
-    public ModelNotification(ChangeType changeType, Object payload) {
+    public ModelNotification(ChangeType changeType, Container container, Containable content) {
         this.changeType = changeType;
-        this.payload = payload;
+        this.container = container;
+        this.content = content;
     }
     
     public ChangeType getChangeType() {
         return this.changeType;
     }
     
-    public Object getPayload() {
-        return this.payload;
+    public Container getContainer() {
+        return this.container;
+    }
+    
+    public Containable getContent() {
+        return this.content;
     }
     
     /**
@@ -37,57 +44,57 @@ public class ModelNotification {
      */
     public static enum ChangeType {
         /**
-         * Indicates that content was added.  The payload will be the content
+         * Indicates that content was added.  The content will be the content
          * that was added.
          */
         CONTENT_ADDED,
         
         /**
-         * Indicates that content was removed.  The payload will be the content
+         * Indicates that content was removed.  The content will be the content
          * that was removed.
          */
         CONTENT_REMOVED,
         
         /**
-         * Indicates that one of the content objects was updated.  The payload
+         * Indicates that one of the content objects was updated.  The content
          * will be the content object that was updated.
          */
-        //CONTENT_UPDATED,
+        CONTENT_UPDATED,
         
         /**
-         * Indicates that a {@link Product} was added.  The payload will be the
+         * Indicates that a {@link Product} was added.  The content will be the
          * added product.
          */
         PRODUCT_ADDED,
         
         /**
-         * Indicates that a {@link Product} was removed.  The payload will be
+         * Indicates that a {@link Product} was removed.  The content will be
          * the removed product.
          */
         PRODUCT_REMOVED,
         
         /**
-         * Indicates that a {@link Product} was updated.  The payload will be
+         * Indicates that a {@link Product} was updated.  The content will be
          * the updated product.
          */
-        //PRODUCT_UPDATED,
+        PRODUCT_UPDATED,
 
         /**
-         * Indicates that an {@link Item} was added.  The payload will be the
+         * Indicates that an {@link Item} was added.  The content will be the
          * added item.
          */
         ITEM_ADDED,
         
         /**
-         * Indicates that an {@link Item} was removed.  The payload will be
+         * Indicates that an {@link Item} was removed.  The content will be
          * the removed item.
          */
         ITEM_REMOVED,
         
         /**
-         * Indicates that an {@link Item} was updated.  The payload will be
+         * Indicates that an {@link Item} was updated.  The content will be
          * the updated item.
          */
-        //ITEM_UPDATED;
+        ITEM_UPDATED;
     }
 }

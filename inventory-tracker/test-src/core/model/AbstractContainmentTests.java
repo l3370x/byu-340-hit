@@ -198,7 +198,7 @@ public abstract class AbstractContainmentTests<A extends Container, B extends Co
 
             ModelNotification notification = (ModelNotification) arg;
             assertEquals(this.changeType, notification.getChangeType());
-            assertEquals(content, notification.getPayload());
+            assertEquals(content, notification.getContent());
        }
   
         public boolean wasNotified() {

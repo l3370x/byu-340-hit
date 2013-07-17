@@ -8,3 +8,9 @@ inventory-tracker/doc
 inventory-tracker.zip
 doc.zip
 inventory-tracker/save.data
+inventory-tracker/coverage-reports
+inventory-tracker/coverage-build
+inventory-tracker/test-build
+inventory-tracker/test-reports
+inventory-tracker/style-reports
+

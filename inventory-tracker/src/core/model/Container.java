@@ -152,4 +152,17 @@ public interface Container<T extends Containable> extends Serializable, Observer
      * the contents should not be sorted
      */
     Comparator<T> getComparator();
+    
+    
+    /**
+     * Return the index (position) of the given content within this container.
+     * The returned position is relative to the other content of this container
+     * when sorted by the container's {@link #getComparator() comparator}.
+     * 
+     * @param content the content whose position should be found
+     * 
+     * @return the relative position of the given content within the sorted
+     * contents of this container, or -1 if the content is not in this container
+     */
+    int indexOf(T content);
 }
