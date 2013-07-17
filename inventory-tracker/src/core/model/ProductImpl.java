@@ -71,8 +71,13 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
         assert true;
         return this.size;
     }
-
+    
     @Override
+    public void setSize(Quantity size) {
+		this.size = size;
+	}
+
+	@Override
     public int getShelfLifeInMonths() {
         assert true;
         return this.shelfLife;

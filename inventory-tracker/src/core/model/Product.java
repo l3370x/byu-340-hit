@@ -72,6 +72,7 @@ public interface Product extends Containable<ProductContainer> {
      */
     Quantity getSize();
     
+    void setSize(Quantity quantity);
     
     /**
      * Get the shelf life of this product measured in months.  A value of zero

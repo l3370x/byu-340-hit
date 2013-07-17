@@ -7,7 +7,7 @@ import gui.common.*;
  */
 public class EditProductController extends Controller 
 										implements IEditProductController {
-	
+	ProductData target;
 	/**
 	 * Constructor.
 	 * 
@@ -16,7 +16,7 @@ public class EditProductController extends Controller
 	 */
 	public EditProductController(IView view, ProductData target) {
 		super(view);
-
+        this.target = target;
 		construct();
 	}
 
