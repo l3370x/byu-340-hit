@@ -155,7 +155,7 @@ public class AddProductController extends Controller implements
 	public void addProduct() {
 		try {
 			// Make new product
-			final Product product = newProduct(BarCode.getBarCodeFor(this.getView().getBarcode()),
+			final Product product = newProduct(new BarCode(this.getView().getBarcode()),
 											   this.getView().getDescription());
 			
 			product.setShelfLifeInMonths(Integer.parseInt(this.getView().getShelfLife()));
@@ -165,6 +165,8 @@ public class AddProductController extends Controller implements
             
             // add the product to the inventory manager
             getInventoryManager().addProduct(product);
+            //Notify the Add Item View
+            
             
         } catch (HITException ex) {
             ExceptionHandler.TO_USER.reportException(ex, 

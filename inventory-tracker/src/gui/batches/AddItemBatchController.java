@@ -1,14 +1,29 @@
 package gui.batches;
 
+import static core.model.InventoryManager.Factory.getInventoryManager;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import core.model.*;
+import core.model.exception.HITException;
 import gui.common.*;
 import gui.inventory.*;
+import gui.item.ItemData;
 import gui.product.*;
+import gui.storageunit.IAddStorageUnitView;
 
 /**
  * Controller class for the add item batch view.
  */
 public class AddItemBatchController extends Controller implements
 		IAddItemBatchController {
+	
+	private ProductContainerData source;
+	private StorageUnit targetUnit; 
+	private ArrayList<ProductData> ProductsView = new ArrayList<ProductData> ();
+	private ArrayList<ItemData> ItemsView = new ArrayList<ItemData> ();
 
 	/**
 	 * Constructor.
@@ -18,7 +33,7 @@ public class AddItemBatchController extends Controller implements
 	 */
 	public AddItemBatchController(IView view, ProductContainerData target) {
 		super(view);
-		
+		source=target;
 		construct();
 	}
 
@@ -39,6 +54,13 @@ public class AddItemBatchController extends Controller implements
 	 */
 	@Override
 	protected void loadValues() {
+		 this.getView().setCount("1");
+		 
+		 //Just to test
+		// this.getView().displayInformationMessage(source.getName());
+		 
+		
+		 
 	}
 
 	/**
@@ -53,6 +75,9 @@ public class AddItemBatchController extends Controller implements
 	 */
 	@Override
 	protected void enableComponents() {
+		 this.getView().enableItemAction(false);
+		 this.getView().enableUndo(false);
+		 this.getView().enableRedo(false);
 	}
 
 	/**
@@ -77,6 +102,17 @@ public class AddItemBatchController extends Controller implements
 	 */
 	@Override
 	public void barcodeChanged() {
+		
+		if (!this.getView().getUseScanner())
+		{
+			if (this.getView().getBarcode()!="")
+			{
+				this.getView().enableItemAction(true);
+				
+			}
+			 
+		}
+		
 	}
 
 	/**
@@ -93,6 +129,7 @@ public class AddItemBatchController extends Controller implements
 	 */
 	@Override
 	public void selectedProductChanged() {
+		//Display the items
 	}
 
 	/**
@@ -101,6 +138,57 @@ public class AddItemBatchController extends Controller implements
 	 */
 	@Override
 	public void addItem() {
+		
+		//First check if barcode exists. 
+		
+			//Get the Storage unit Name from the view
+		ProductContainer tag= (ProductContainer) source.getTag();
+		StorageUnit unit = tag.getStorageUnit();
+		Product prod =unit.getProduct(new BarCode(this.getView().getBarcode()));    
+	    
+		if (prod == null)
+		{
+			this.getView().displayAddProductView();
+			StorageUnit unit1 = tag.getStorageUnit();
+			
+			if (unit1.getProduct(new BarCode(this.getView().getBarcode())) != null)
+			{ 
+				this.getView().displayInformationMessage("FOund product");
+				
+				
+				prod=unit1.getProduct(new BarCode(this.getView().getBarcode()));
+			}
+			else
+			{
+				 this.getView().enableItemAction(false);
+				 return ;
+			}
+		}
+		
+			
+			Calendar expiryDate = Calendar.getInstance();
+			expiryDate.setTime(this.getView().getEntryDate());
+			expiryDate.add(Calendar.MONTH, prod.getShelfLifeInMonths());
+
+			try {
+				Item itemtoadd = new Item.Factory().newItem(prod, this.getView().getEntryDate(), expiryDate.getTime());
+				unit.addItem(itemtoadd);
+				
+				
+			} catch (HITException e) {
+				// TODO Auto-generated catch block
+				this.getView().displayErrorMessage(e.getMessage());
+			}
+			
+			ProductsView.add(new ProductData(prod));
+			this.getView().setProducts((ProductData[]) ProductsView.toArray());
+		
+		
+		
+		
+		//Update the Main View
+		//Also show the product in the list of Products as well as add the item in the list of items
+		//for this session, so that once the user clicks on the product, he can also see the list of items added
 	}
 	
 	/**

@@ -562,7 +562,7 @@ public class InventoryController extends Controller
     }
     
     private static ProductData createProductData(Product product) {
-        ProductData data = new ProductData();
+        ProductData data = new ProductData(product);
         
         data.setBarcode(product.getBarCode().getValue());
         data.setDescription(product.getDescription());

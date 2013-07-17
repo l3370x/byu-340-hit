@@ -1,5 +1,6 @@
 package gui.product;
 
+import core.model.Product;
 import gui.common.Tagable;
 
 /**
@@ -49,13 +50,14 @@ public class ProductData extends Tagable {
 	 * {@post getSupply() == ""}
 	 * {@post getBarcode() == ""}
 	 */
-	public ProductData() {
-		_description = "";
-		_size = "";
-		_count = "";
-		_shelfLife = "";
-		_supply = "";
-		_barcode = "";
+	public ProductData(Product prod) {
+		setTag(prod);
+		_description = prod.getDescription();
+		_size = Float.toString(prod.getSize().getValue()) + prod.getSize().getUnits().toString();
+		_count = Integer.toString(prod.getContainer().getItemsCount(prod));
+		_shelfLife = Integer.toString(prod.getShelfLifeInMonths());
+		_supply = Integer.toString(prod.get3MonthSupplyQuota());;
+		_barcode = prod.getBarCode().toString();
 	}
 
 	/**

@@ -33,6 +33,7 @@ public class AddProductView extends ProductView implements IAddProductView {
 	@Override
 	protected void ok() {
 		getController().addProduct();
+		
 	}
 
 }
