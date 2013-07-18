@@ -17,11 +17,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Pattern;
 import javax.swing.Timer;
 
 /**
@@ -29,7 +28,8 @@ import javax.swing.Timer;
  */
 public class AddItemBatchController extends Controller implements
         IAddItemBatchController {
-    public static final int TIMER_DELAY = 1000;
+    private static final int TIMER_DELAY = 1000;
+    private static final Pattern POSITIVE_INTEGER_PATTERN = Pattern.compile("-?\\d+(\\.\\d+)?");
 
     private Timer timer;
 
@@ -111,6 +111,8 @@ public class AddItemBatchController extends Controller implements
      */
     @Override
     public void countChanged() {
+        this.getView().enableItemAction(POSITIVE_INTEGER_PATTERN.matcher(
+                this.getView().getCount()).matches());
     }
     
     /**
@@ -261,6 +263,13 @@ public class AddItemBatchController extends Controller implements
     @Override
     public void done() {
         getView().close();
+        
+        List<Item> allAddedItems = new ArrayList<>();
+        for (List<Item> addedItems : this.addedItemsByProduct.values()) {
+            allAddedItems.addAll(addedItems);
+        }
+        
+        ItemLabelController.createDocument(allAddedItems.toArray(new Item[allAddedItems.size()]));
     }
 
     private void initTimer() {
@@ -286,7 +295,7 @@ public class AddItemBatchController extends Controller implements
         List<ProductData> productList = new ArrayList<>();
         for (Product p : this.addedProducts) {
             ProductData data = new ProductData(p);
-            data.setCount(Integer.toString(container.getItemsCount(product)));
+            data.setCount(Integer.toString(container.getItemCount(p)));
             productList.add(data);
             if (p == product) {
                 selected = data;
@@ -304,7 +313,7 @@ public class AddItemBatchController extends Controller implements
     }
 
     private void prepareForEntry() {
-        this.getView().setCount("1");
+        //this.getView().setCount("1");
         this.getView().setEntryDate(new Date());
         this.getView().giveBarcodeFocus();
     }

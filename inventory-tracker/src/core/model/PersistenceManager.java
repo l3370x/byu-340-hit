@@ -3,7 +3,6 @@ package core.model;
 import core.model.exception.HITException;
 import static core.model.exception.HITException.Severity.*;
 import static core.model.InventoryManager.Factory.getInventoryManager;
-import java.util.*;
 import java.io.*;
 
 /**
@@ -66,10 +65,9 @@ public enum PersistenceManager {
             in.readObject();
             in.close();
             fileIn.close();
+        } catch (EOFException eof) {
         } catch (Exception e) {
-            if (!e.getClass().equals(EOFException.class)) {
-                throw new HITException(WARNING, e.getMessage());
-            }
+            throw new HITException(WARNING, e.getMessage());
         }
     }
 

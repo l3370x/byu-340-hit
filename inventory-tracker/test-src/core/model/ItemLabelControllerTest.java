@@ -66,18 +66,9 @@ public class ItemLabelControllerTest {
     public void tearDown() throws Exception {
     }
 
-    //@Test
-    public void testGetInstance() {
-	ItemLabelController ilcOne = new ItemLabelController();
-	String stringOne = ilcOne.toString();
-	ItemLabelController ilcTwo = new ItemLabelController();
-	String stringTwo = ilcTwo.toString();
-	assertEquals(stringOne, stringTwo);
-    }
-
     @Test
     public void testCreateDocument() {
-	new ItemLabelController().createDocument(itemList.iterator());
+	ItemLabelController.createDocument(itemList.toArray(new Item[itemList.size()]));
     }
 /*
     @Test

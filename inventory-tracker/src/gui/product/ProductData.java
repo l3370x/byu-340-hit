@@ -63,7 +63,7 @@ public class ProductData extends Tagable {
         _barcode = prod.getBarCode().getValue();
         
         final ProductContainer container = prod.getContainer();
-        int itemCount = null != container ? container.getItemsCount(prod) : 0;
+        int itemCount = null != container ? container.getItemCount(prod) : 0;
         this._count = Integer.toString(itemCount);
     }
 

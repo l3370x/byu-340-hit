@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Iterator;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
@@ -15,44 +14,35 @@ import common.util.DateUtils;
 import core.model.Item;
 import core.model.exception.ExceptionHandler;
 
-public class ItemLabelController implements IItemLabelController {
-
-    private static final int COLUMNS = 4;
-    private String fileName = getClass().getClassLoader().getResource(".")
-	    .getPath();
-    private Iterator<Item> itemList;
-    private File outFile;
-    private PdfWriter pdfWriter;
+public class ItemLabelController {
     private static int printCount = 1;
 
-    public ItemLabelController() {
+    private static final int COLUMNS = 4;
+    private static final String BASE_FILE_NAME = 
+            ItemLabelController.class .getClassLoader().getResource(".").getPath();
 
-    }
-
-    @Override
-    public void createDocument(Iterator<Item> itemList) {
+    public static void createDocument(Item... items) {
 	try {
-	    this.itemList = itemList;
-	    generateFileName();
+	    File outFile = initOutputFile();
 	    Document document = new Document(PageSize.LETTER);
-	    pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(
-		    outFile, true));
+            PdfWriter pdfWriter = 
+                    PdfWriter.getInstance(document, new FileOutputStream(outFile, true));
 	    document.open();
-	    formatDocument(document);
+	    formatDocument(document, pdfWriter.getDirectContent(), items);
 	    document.close();
-	    displayDocument();
+	    displayDocument(outFile);
 	} catch (FileNotFoundException | DocumentException e) {
             ExceptionHandler.TO_USER.reportException(e, "Can't print bar code labels");
             ExceptionHandler.TO_LOG.reportException(e, "Can't print bar code labels");
 	}
     }
 
-    private void formatDocument(Document document) {
+    private static void formatDocument(Document document, PdfContentByte contentByte, Item... items) {
 	try {
 	    PdfPTable table = new PdfPTable(COLUMNS);
-	    if (itemList.hasNext()) {
-		generateBarCode(itemList.next(), table);
-	    }
+            for (Item item : items) {
+                renderBarCode(item, table, contentByte);
+            }
 	    document.add(table);
 	} catch (DocumentException e) {
             ExceptionHandler.TO_USER.reportException(e, "Can't print bar code labels");
@@ -60,45 +50,55 @@ public class ItemLabelController implements IItemLabelController {
 	}
     }
 
-    private void generateBarCode(Item item, PdfPTable table) {
+    private static void renderBarCode(Item item, PdfPTable table, PdfContentByte contentByte) {
 	BarcodeEAN barCode = new BarcodeEAN();
 	barCode.setCodeType(Barcode.UPCA);
 	barCode.setCode(item.getBarCode().getValue());
 	barCode.setAltText(item.getProduct().getDescription());
 	Image img = barCode.createImageWithBarcode(
-		pdfWriter.getDirectContent(), null, null);
+		contentByte, null, null);
 	PdfPCell cell = new PdfPCell(img);
 	table.addCell(cell);
     }
 
-    private void generateFileName() {
+    private static File initOutputFile() {
+        File outFile = null;
 	try {
 	    Date date = DateUtils.removeTimeFromDate(DateUtils.currentDate());
 	    String dateString = DateUtils.formatDate(date);
 	    dateString = dateString.replace("/", "_");
-	    fileName = fileName.replace("build/", "");
-	    outFile = new File(fileName + "printouts/labels/", dateString
-		    + "_" + printCount + ".pdf");
+	    
+            String fileName = BASE_FILE_NAME.replace("build/", "");
+	    outFile = new File(fileName + "printouts/labels/", 
+                    dateString + "_" + printCount + ".pdf");
 	    outFile.getParentFile().mkdirs();
-	    System.out.println(outFile);
-	    if (!outFile.exists()) {
-		System.out.println("File DNE. Create " + outFile);
+
+            if (!outFile.exists()) {
 		outFile.createNewFile();
 	    }
+            
 	    printCount++;
 	} catch (IOException e) {
             ExceptionHandler.TO_USER.reportException(e, "Can't print bar code labels");
             ExceptionHandler.TO_LOG.reportException(e, "Can't print bar code labels");
 	}
+        
+        return outFile;
     }
 
-    private void displayDocument() {
+    private static void displayDocument(File file) {
 	try {
-	    Desktop.getDesktop().open(new File(fileName));
+	    Desktop.getDesktop().open(file);
 	} catch (IOException e) {
             ExceptionHandler.TO_USER.reportException(e, "Can't print bar code labels");
             ExceptionHandler.TO_LOG.reportException(e, "Can't print bar code labels");
 	}
     }
 
+    /**
+     * Don't allow construction
+     */
+    private ItemLabelController(){
+        
+    }
 }

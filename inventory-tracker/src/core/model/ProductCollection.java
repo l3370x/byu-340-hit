@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @author kemcqueen
  */
-class ProductCollection extends AbstractProductContainerProxy<Product> {
+public class ProductCollection extends AbstractProductContainerProxy<Product> {
 
     private final Map<BarCode, Product> productsByBarCode = new HashMap<>();
 
@@ -79,11 +79,5 @@ class ProductCollection extends AbstractProductContainerProxy<Product> {
                 return o1.getDescription().compareTo(o2.getDescription());
             }
         };
-    }
-
-    @Override
-    public int getItemsCount(Product product) {
-        // TODO Auto-generated method stub
-        return 0;
     }
 }

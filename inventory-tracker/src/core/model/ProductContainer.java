@@ -128,7 +128,7 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
      * @return a collection of items for the given product
      */
     Iterable<Item> getItems(Product product);
-    int getItemsCount(Product product);
+    int getItemCount(Product product);
 
     /**
      * Get the name of this product container.

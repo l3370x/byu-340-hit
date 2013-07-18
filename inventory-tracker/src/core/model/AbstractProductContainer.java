@@ -4,15 +4,12 @@ import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
 import static core.model.ModelNotification.ChangeType.*;
 import core.model.exception.ExceptionHandler;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
 
 /**
  * The {@code AbstractProductContainer} class is the base class for 
@@ -26,11 +23,9 @@ public abstract class AbstractProductContainer<T extends Containable>
     extends AbstractContainer<T> implements ProductContainer<T> {
     
     private final Map<String, T> contentsByString = new HashMap<>();
-    private Container<Item> items;
-    private Container<Product> products;
+    private ItemCollection items;
+    private ProductCollection products;
     
-    private Map<Product, Set<Item>> itemsByProduct = new HashMap<>();
-        
     private String name;
     
     protected AbstractProductContainer(String name) {
@@ -40,14 +35,13 @@ public abstract class AbstractProductContainer<T extends Containable>
     }
     
     protected AbstractProductContainer(String name, 
-            Container<Item> item, 
-            Container<Product> products) {
+            ItemCollection item, ProductCollection products) {
         this.name = name;
         
         this.initCollections(item, products);
     }
     
-    private void initCollections(Container<Item> items, Container<Product> products) {
+    private void initCollections(ItemCollection items, ProductCollection products) {
         this.items = items;
         this.items.addObserver(new Observer() {
             @Override
@@ -114,9 +108,6 @@ public abstract class AbstractProductContainer<T extends Containable>
         
         // (try to) add the item
         this.items.add(item);
-        
-        // add the item to the items-by-product index
-        this.addItemToProductIndex(item);
     }
 
     @Override
@@ -151,24 +142,13 @@ public abstract class AbstractProductContainer<T extends Containable>
 
     @Override
     public Iterable<Item> getItems(Product product) {
-        Set<Item> itemSet = this.itemsByProduct.get(product);
-        if (null == itemSet) {
-            return Collections.emptySet();
-        }
-        
-        return Collections.unmodifiableSet(itemSet);
+        return this.items.getItems(product);
     }
     
     @Override
-    public int getItemsCount(Product product) {
-        Set<Item> itemSet = this.itemsByProduct.get(product);
-        if (null == itemSet) {
-            return 0;
-        }
-        
-        return itemSet.size();
+    public int getItemCount(Product product) {
+        return this.items.getItemCount(product);
     }
-
     
     @Override
     public String getName() {
@@ -194,7 +174,6 @@ public abstract class AbstractProductContainer<T extends Containable>
     @Override
     public void removeItem(Item item) throws HITException {
         this.items.remove(item);
-        this.removeItemFromProductIndex(item);
     }
 
     @Override
@@ -226,34 +205,6 @@ public abstract class AbstractProductContainer<T extends Containable>
         return this.getName();
     }
     
-    protected void removeItemFromProductIndex(Item item) throws HITException {
-        assert null != item;
-        
-        final Product product = item.getProduct();
-
-        Set<Item> productItems = this.itemsByProduct.get(product);
-        if (null == productItems) {
-            throw new HITException(Severity.WARNING, 
-                    "Unable to remove item: item's product not found");
-        }
-
-        productItems.remove(item);
-    }
-
-    protected void addItemToProductIndex(Item item) {
-        assert null != item;
-        
-        final Product product = item.getProduct();
-        
-        Set<Item> productItems = this.itemsByProduct.get(product);
-        if (null == productItems) {
-            productItems = new HashSet<>();
-            this.itemsByProduct.put(product, productItems);
-        }
-        
-        productItems.add(item);
-    }
-
     @Override
     protected boolean isAddable(T content) {
         assert null != content;

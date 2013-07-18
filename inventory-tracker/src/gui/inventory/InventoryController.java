@@ -550,7 +550,7 @@ public class InventoryController extends Controller
 
     private static ProductData createProductData(Product product, ProductContainer container) {
         final ProductData productData = new ProductData(product);
-        productData.setCount(Integer.toString(container.getItemsCount(product)));
+        productData.setCount(Integer.toString(container.getItemCount(product)));
         
         return productData;
     }

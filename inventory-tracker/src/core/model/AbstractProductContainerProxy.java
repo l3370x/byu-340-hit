@@ -1,7 +1,6 @@
 package core.model;
 
 import core.model.exception.HITException;
-import java.util.Comparator;
 
 /**
  * The {@code AbstractProductContainerProxy} class is an abstract class that 
@@ -92,5 +91,10 @@ extends AbstractContainer<T> implements ProductContainer<T> {
     @Override
     public Product getProduct(BarCode barCode) {
         return this.delegate.getProduct(barCode);
+    }
+
+    @Override
+    public int getItemCount(Product product) {
+        return this.delegate.getItemCount(product);
     }
 }
