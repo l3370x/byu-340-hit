@@ -105,13 +105,15 @@ public abstract class AbstractProductContainer<T extends Containable>
     
     @Override
     public void addItem(Item item) throws HITException {
-        // (try to) add the item
-        this.items.add(item);
+        assert null != item;
         
         // add the product if necessary
         if (this.products.canAdd(item.getProduct())) {
             this.products.add(item.getProduct());
         }
+        
+        // (try to) add the item
+        this.items.add(item);
         
         // add the item to the items-by-product index
         this.addItemToProductIndex(item);
@@ -157,6 +159,7 @@ public abstract class AbstractProductContainer<T extends Containable>
         return Collections.unmodifiableSet(itemSet);
     }
     
+    @Override
     public int getItemsCount(Product product) {
         Set<Item> itemSet = this.itemsByProduct.get(product);
         if (null == itemSet) {

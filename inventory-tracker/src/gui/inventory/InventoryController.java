@@ -11,6 +11,9 @@ import gui.product.*;
 import static core.model.InventoryManager.Factory.getInventoryManager;
 import core.model.Item;
 import core.model.ModelNotification;
+import static core.model.ModelNotification.ChangeType.ITEM_ADDED;
+import static core.model.ModelNotification.ChangeType.ITEM_REMOVED;
+import static core.model.ModelNotification.ChangeType.PRODUCT_REMOVED;
 import core.model.Product;
 import core.model.ProductContainer;
 import core.model.Quantity;
@@ -420,24 +423,28 @@ public class InventoryController extends Controller
         }
         
         final Containable content = notification.getContent();
-        if (false == content instanceof ProductContainer) {
-            return;
-        }
+        ProductContainer productContainer = 
+                content instanceof ProductContainer ? (ProductContainer) content : null;
         
         switch (notification.getChangeType()) {
             case CONTENT_REMOVED:
-                this.contentWasRemoved((ProductContainer) container, 
-                        (ProductContainer) content);
+                this.contentWasRemoved((ProductContainer) container, productContainer);
                 break;
                 
             case CONTENT_ADDED:
-                this.contentWasAdded((ProductContainer) container, 
-                        (ProductContainer) content);
+                this.contentWasAdded((ProductContainer) container, productContainer);
                 break;
                 
             case CONTENT_UPDATED:
-                this.contentWasUpdated((ProductContainer) container, 
-                        (ProductContainer) content);
+                this.contentWasUpdated((ProductContainer) container, productContainer);
+                break;
+                
+            case PRODUCT_ADDED:
+            case PRODUCT_REMOVED:
+            case ITEM_ADDED:
+            case ITEM_REMOVED:
+                this.productContainerSelectionChanged();
+                this.productSelectionChanged();
                 break;
         }
     }
@@ -498,37 +505,11 @@ public class InventoryController extends Controller
     }
     
     private static void updateProductsPane(IInventoryView view) {
-        ProductContainer container = getProductContainer(view);
-        if (null == container) {
-            return;
-        }
-        
-        List<ProductData> productList = new ArrayList<>();
-        
-        for (Product product : (Iterable<Product>) container.getProducts()) {
-            productList.add(createProductData(product));
-        }
-
-        view.setProducts(productList.toArray(new ProductData[productList.size()]));
+        view.setProducts(getProducts(view));
     }
 
     private static void updateItemsPane(IInventoryView view) {
-        ProductContainer container = getProductContainer(view);
-        if (null == container) {
-            return;
-        }
-        
-        Product product = getProduct(view);
-        if (null == product) {
-            return;
-        }
-        
-        List<ItemData> itemList = new ArrayList<>();
-        for (Item item : (Iterable<Item>) ((ProductContainer) container).getItems(product)) {
-            itemList.add(createItemData(item));
-        }
-
-        view.setItems(itemList.toArray(new ItemData[itemList.size()]));
+        view.setItems(getItems(view));
     }
     
     private static ProductContainer getProductContainer(IInventoryView view) {
@@ -567,14 +548,50 @@ public class InventoryController extends Controller
         return (Product) tag;
     }
 
-    private static ProductData createProductData(Product product) {
-        return new ProductData(product);
+    private static ProductData createProductData(Product product, ProductContainer container) {
+        final ProductData productData = new ProductData(product);
+        productData.setCount(Integer.toString(container.getItemsCount(product)));
+        
+        return productData;
     }
     
     private static ItemData createItemData(Item item) {
         return new ItemData(item);
     }
+
+    private static ItemData[] getItems(IInventoryView view) {
+        ProductContainer container = getProductContainer(view);
+        if (null == container) {
+            return new ItemData[0];
+        }
+        
+        Product product = getProduct(view);
+        if (null == product) {
+            return new ItemData[0];
+        }
+        
+        List<ItemData> itemList = new ArrayList<>();
+        for (Item item : (Iterable<Item>) ((ProductContainer) container).getItems(product)) {
+            itemList.add(createItemData(item));
+        }
+        
+        return itemList.toArray(new ItemData[itemList.size()]);
+    }
     
+    private static ProductData[] getProducts(IInventoryView view) {
+        ProductContainer container = getProductContainer(view);
+        if (null == container) {
+            return new ProductData[0];
+        }
+        
+        List<ProductData> productList = new ArrayList<>();
+        for (Product product : (Iterable<Product>) container.getProducts()) {
+            productList.add(createProductData(product, container));
+        }
+        
+        return productList.toArray(new ProductData[productList.size()]);
+    }
+
     private static enum ViewUpdater {
         INVENTORY_MANAGER(InventoryManager.class) {
             @Override

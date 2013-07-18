@@ -50,8 +50,8 @@ public class BarCode {
      * 
      * @throws HITException if the bar code could not be created for any reason
      */
-    public static BarCode getBarCodeFor(String value) throws HITException {
-        checkBarCodeValue(value);
+    public static BarCode getBarCodeFor(String value) {
+        //checkBarCodeValue(value);
         
         return new BarCode(value);
     }
