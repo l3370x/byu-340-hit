@@ -1,7 +1,12 @@
 package gui.productgroup;
 
 
+import static core.model.ModelNotification.ChangeType.CONTENT_UPDATED;
+
+import java.util.Observable;
+
 import core.model.Category;
+import core.model.ModelNotification;
 import core.model.Quantity;
 import core.model.Quantity.Units;
 import gui.common.*;
@@ -138,9 +143,6 @@ public class EditProductGroupController extends Controller
             // get the category's container
             Container container = category.getContainer();
 
-            // remove the storage unit from its container
-            container.remove(category);
-
             // set the category's new info
             category.setName(newName);
 
@@ -148,9 +150,12 @@ public class EditProductGroupController extends Controller
             Quantity newQuantity = new Quantity(Float.parseFloat(newSupply), 
                     UnitsConverter.sizeUnitsToUnits(newSize));
             category.set3MonthSupplyQuantity(newQuantity);
-
-            // put the storage unit back into the container
-            container.add(category);
+            
+         // the unit should notify its observers of the change
+            if (category instanceof Observable) {
+                ((Observable) category).notifyObservers(new ModelNotification(CONTENT_UPDATED, 
+                        category.getContainer(), category));
+            }
 
         } catch (HITException ex) {
             ExceptionHandler.TO_USER.reportException(ex,

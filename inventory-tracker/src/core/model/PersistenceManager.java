@@ -28,13 +28,12 @@ public enum PersistenceManager {
      * @throws HITException if saving the data failed for some reason.
      */
     public void save() throws HITException {
-        Iterator<StorageUnit> storageUnits = getInventoryManager().getContents().iterator();
-
+        Iterable<StorageUnit> storageUnits = getInventoryManager().getContents();
         try {
             FileOutputStream fileOut = new FileOutputStream("save.data");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            while (storageUnits.hasNext()) {
-                out.writeObject(storageUnits.next());
+            for (StorageUnit s : storageUnits) {
+                out.writeObject(s);
             }
 
             //TODO save removed items
@@ -60,33 +59,17 @@ public enum PersistenceManager {
      */
     public void load() throws HITException {
         InventoryManager i = InventoryManager.Factory.getInventoryManager();
-        List<StorageUnit> storageUnits = new ArrayList<>();
+        //List<StorageUnit> storageUnits = new ArrayList<>();
         try {
             FileInputStream fileIn = new FileInputStream("save.data");
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            try {
-                while (true) {
-                    storageUnits.add((StorageUnit) in.readObject());
-                }
-            } catch (OptionalDataException e) {
-                if (!e.eof) {
-                    throw e;
-                }
-            } finally {
-                // System.out.println(storageUnits.size());
-                in.close();
-            }
-            // System.out.println(storageUnits.size());
+            in.readObject();
             in.close();
             fileIn.close();
         } catch (Exception e) {
             if (!e.getClass().equals(EOFException.class)) {
                 throw new HITException(WARNING, e.getMessage());
             }
-        }
-        Iterator<StorageUnit> storageUnitIterator = storageUnits.iterator();
-        while (storageUnitIterator.hasNext()) {
-            i.add(storageUnitIterator.next());
         }
     }
 

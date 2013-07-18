@@ -146,6 +146,7 @@ public class EditProductController extends Controller
 
         // If it passes all conditions, enable ok button for adding product
         this.getView().enableOK(true);
+
     }
 
     /**
@@ -162,6 +163,7 @@ public class EditProductController extends Controller
             product.set3MonthSupplyQuota(Integer.parseInt(this.getView().getSupply()));
             product.setSize(new Quantity(Float.parseFloat(this.getView().getSizeValue()),
                     UnitsConverter.sizeUnitsToUnits(this.getView().getSizeUnit())));
+
 
             // add the product to the inventory manager
             getInventoryManager().addProduct(product);

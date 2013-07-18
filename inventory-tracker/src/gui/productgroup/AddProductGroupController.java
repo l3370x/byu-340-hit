@@ -5,6 +5,7 @@ import core.model.Container;
 import core.model.Category;
 import core.model.Quantity;
 import gui.common.UnitsConverter;
+import core.model.Quantity.Units;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import gui.common.*;
