@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Controller class for the add item batch view.
@@ -103,6 +105,8 @@ public class AddItemBatchController extends Controller implements
     @Override
     public void countChanged() {
     }
+    
+    private Timer timer = new Timer();
 
     /**
      * This method is called when the "Product Barcode" field in the add item batch view is changed
@@ -116,7 +120,45 @@ public class AddItemBatchController extends Controller implements
                 this.getView().enableItemAction(true);
             }
         }
+
+        /*
+        if (this.getView().getUseScanner()) {
+            this.ensureProductExists();
+        } else {
+            timer.cancel();
+            timer.schedule(new TimerTask(){
+
+                @Override
+                public void run() {
+                    ensureProductExists();
+                }
+            }, 11000);
+        }
+        */
     }
+    
+    /*
+    private void ensureProductExists() {
+            final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
+
+            // see if the product exists in the InventoryManager
+            Product product = getInventoryManager().getProduct(barcode);
+
+            if (product == null) {
+                // prompt the user to create/add the product
+                this.getView().displayAddProductView();
+
+                // see if the product was added
+                product = getInventoryManager().getProduct(barcode);
+
+                // if the product still doesn't exist, there's nothing more we can do
+                if (null == product) {
+                    this.getView().enableItemAction(false);
+                    return;
+                }
+            }
+    }
+    */
 
     /**
      * This method is called when the "Use Barcode Scanner" setting in the add item batch view is
