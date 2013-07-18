@@ -1,9 +1,9 @@
 package core.model;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
-import java.awt.event.ItemListener;
+import static core.model.Product.Factory.newProduct;
+import static core.model.Item.Factory.newItem;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -17,24 +17,22 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import common.util.DateUtils;
-import core.model.BarCode;
-import core.model.Item;
-import core.model.Product;
+import gui.batches.ItemLabelController;
 
 public class ItemLabelControllerTest {
     
-    static List<Item> itemList = new ArrayList<Item>();
+    static List<Item> itemList = new ArrayList<>();
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-	Product product1 = core.model.Product.Factory.newProduct(new BarCode(
-		"0014700011105"), "Salerno Butter Cookies");
-	Product product2 = core.model.Product.Factory.newProduct(new BarCode(
-		"0758108021563"), "KIDNEY BEANS");
-	Product product3 = core.model.Product.Factory.newProduct(new BarCode(
-		"0012044371503"), "Old Spice Aftershave Original");
-	Product product4 = core.model.Product.Factory.newProduct(new BarCode(
-		"0077260008343"), "I/O HLLW CHOC BUNNY 24PK");
+	Product product1 = newProduct(BarCode.getBarCodeFor("0014700011105"), 
+                "Salerno Butter Cookies");
+	Product product2 = newProduct(BarCode.getBarCodeFor("0758108021563"), 
+                "KIDNEY BEANS");
+	Product product3 = newProduct(BarCode.getBarCodeFor("0012044371503"), 
+                "Old Spice Aftershave Original");
+	Product product4 = newProduct(BarCode.getBarCodeFor("0077260008343"), 
+                "I/O HLLW CHOC BUNNY 24PK");
 
 	Calendar cal = Calendar.getInstance();
 	Date currentDate = DateUtils.currentDate();
@@ -42,21 +40,18 @@ public class ItemLabelControllerTest {
 	cal.add(Calendar.MONTH, 3);
 	Date expirationDate = cal.getTime();
 	for (int i = 0; i < 4; i++) {
-	    itemList.add(core.model.Item.Factory.newItem(product1, currentDate,
-		    expirationDate));
+	    itemList.add(newItem(product1, currentDate, expirationDate));
 	}
 	cal.setTime(currentDate);
 	cal.add(Calendar.YEAR, 2);
 	expirationDate = cal.getTime();
 	for (int i = 0; i < 3; i++) {
-	    itemList.add(core.model.Item.Factory.newItem(product2, currentDate,
-		    expirationDate));
+	    itemList.add(newItem(product2, currentDate, expirationDate));
 	}
 	for (int i = 0; i < 2; i++) {
-	    itemList.add(core.model.Item.Factory.newItem(product3, currentDate,
-		    null));
+	    itemList.add(newItem(product3, currentDate, null));
 	}
-	itemList.add(core.model.Item.Factory.newItem(product4, currentDate, expirationDate));
+	itemList.add(newItem(product4, currentDate, expirationDate));
     }
 
     @AfterClass
@@ -72,19 +67,18 @@ public class ItemLabelControllerTest {
     public void tearDown() throws Exception {
     }
 
-    @Test
+    //@Test
     public void testGetInstance() {
-	ItemLabelController ilcOne = ItemLabelController.getInstance();
+	ItemLabelController ilcOne = new ItemLabelController();
 	String stringOne = ilcOne.toString();
-	ItemLabelController ilcTwo = ItemLabelController.getInstance();
+	ItemLabelController ilcTwo = new ItemLabelController();
 	String stringTwo = ilcTwo.toString();
 	assertEquals(stringOne, stringTwo);
     }
 
     @Test
     public void testCreateDocument() {
-	Iterator<Item> iter = itemList.iterator();
-	ItemLabelController.getInstance().createDocument(iter);
+	new ItemLabelController().createDocument(itemList.iterator());
     }
 /*
     @Test

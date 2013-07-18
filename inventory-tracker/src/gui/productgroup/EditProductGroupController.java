@@ -146,7 +146,7 @@ public class EditProductGroupController extends Controller
 
             // set the new quantity
             Quantity newQuantity = new Quantity(Float.parseFloat(newSupply), 
-                    UnitController.sizeUnitsToUnits(newSize));
+                    UnitsConverter.sizeUnitsToUnits(newSize));
             category.set3MonthSupplyQuantity(newQuantity);
 
             // put the storage unit back into the container

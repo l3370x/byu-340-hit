@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -26,16 +25,8 @@ public class ItemLabelController implements IItemLabelController {
     private PdfWriter pdfWriter;
     private static int printCount = 1;
 
-    private ItemLabelController() {
+    public ItemLabelController() {
 
-    }
-
-    private static ItemLabelController instance;
-
-    public static ItemLabelController getInstance() {
-	if (instance == null)
-	    instance = new ItemLabelController();
-	return instance;
     }
 
     @Override
@@ -56,8 +47,7 @@ public class ItemLabelController implements IItemLabelController {
 	}
     }
 
-    @Override
-    public void formatDocument(Document document) {
+    private void formatDocument(Document document) {
 	try {
 	    PdfPTable table = new PdfPTable(COLUMNS);
 	    if (itemList.hasNext()) {
@@ -70,8 +60,7 @@ public class ItemLabelController implements IItemLabelController {
 	}
     }
 
-    @Override
-    public void generateBarCode(Item item, PdfPTable table) {
+    private void generateBarCode(Item item, PdfPTable table) {
 	BarcodeEAN barCode = new BarcodeEAN();
 	barCode.setCodeType(Barcode.UPCA);
 	barCode.setCode(item.getBarCode().getValue());
@@ -82,8 +71,7 @@ public class ItemLabelController implements IItemLabelController {
 	table.addCell(cell);
     }
 
-    @Override
-    public void generateFileName() {
+    private void generateFileName() {
 	try {
 	    Date date = DateUtils.removeTimeFromDate(DateUtils.currentDate());
 	    String dateString = DateUtils.formatDate(date);
@@ -99,12 +87,12 @@ public class ItemLabelController implements IItemLabelController {
 	    }
 	    printCount++;
 	} catch (IOException e) {
-	    Logger.getLogger(getClass()).logException(e, Level.SEVERE);
+            ExceptionHandler.TO_USER.reportException(e, "Can;t print bar code labels");
+            ExceptionHandler.TO_LOG.reportException(e, "Can't print bar code labels");
 	}
     }
 
-    @Override
-    public void displayDocument() {
+    private void displayDocument() {
 	try {
 	    Desktop.getDesktop().open(new File(fileName));
 	} catch (IOException e) {
