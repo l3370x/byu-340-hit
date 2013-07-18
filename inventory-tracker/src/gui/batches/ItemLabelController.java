@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -18,7 +19,8 @@ import core.model.exception.ExceptionHandler;
 public class ItemLabelController implements IItemLabelController {
 
     private static final int COLUMNS = 4;
-    private String fileName = ".";
+    private String fileName = getClass().getClassLoader().getResource(".")
+	    .getPath();
     private Iterator<Item> itemList;
     private File outFile;
     private PdfWriter pdfWriter;
@@ -30,8 +32,7 @@ public class ItemLabelController implements IItemLabelController {
 
     private static ItemLabelController instance;
 
-    @Override
-    public ItemLabelController getInstance() {
+    public static ItemLabelController getInstance() {
 	if (instance == null)
 	    instance = new ItemLabelController();
 	return instance;
@@ -41,10 +42,10 @@ public class ItemLabelController implements IItemLabelController {
     public void createDocument(Iterator<Item> itemList) {
 	try {
 	    this.itemList = itemList;
-	    Document document = new Document(PageSize.LETTER);
 	    generateFileName();
+	    Document document = new Document(PageSize.LETTER);
 	    pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(
-		    outFile));
+		    outFile, true));
 	    document.open();
 	    formatDocument(document);
 	    document.close();
@@ -83,11 +84,23 @@ public class ItemLabelController implements IItemLabelController {
 
     @Override
     public void generateFileName() {
-	Date date = DateUtils.removeTimeFromDate(DateUtils.currentDate());
-	String dateString = DateUtils.formatDate(date);
-	outFile = new File(fileName, "printouts\\labels\\" + dateString + "_"
-		+ printCount + ".pdf");
-	printCount++;
+	try {
+	    Date date = DateUtils.removeTimeFromDate(DateUtils.currentDate());
+	    String dateString = DateUtils.formatDate(date);
+	    dateString = dateString.replace("/", "_");
+	    fileName = fileName.replace("build/", "");
+	    outFile = new File(fileName, "printouts/labels/" + dateString
+		    + "_" + printCount + ".pdf");
+	    outFile.mkdirs();
+	    System.out.println(outFile);
+	    if (!outFile.exists()) {
+		System.out.println("File DNE. Create " + outFile);
+		outFile.createNewFile();
+	    }
+	    printCount++;
+	} catch (IOException e) {
+	    Logger.getLogger(getClass()).logException(e, Level.SEVERE);
+	}
     }
 
     @Override

@@ -62,7 +62,7 @@ public class EditProductGroupController extends Controller
      */
     @Override
     protected void enableComponents() {
-        this.getView().enableOK(false);
+        this.getView().enableOK(true);
     }
 
     /**
@@ -96,15 +96,15 @@ public class EditProductGroupController extends Controller
     // IEditProductGroupController overrides
     //
     /**
-     * This method is called when any of the fields in the edit product group view is changed by the
-     * user.
+     * This method is called when any of the fields in the edit product group 
+     * view is changed by the user.
      */
     @Override
     public void valuesChanged() {
-        // if the name is null or the name is empty, then we can't create a 
+        // if the name is null or the name is empty, or isn't a number, then we can't create a 
         // Product Group
         String name = this.getView().getProductGroupName();
-        if (null == name || name.isEmpty()) {
+        if (null == name || name.isEmpty() || name.matches("-?\\d+(\\.\\d+)?")) {
             this.getView().enableOK(false);
             return;
         }
@@ -112,7 +112,8 @@ public class EditProductGroupController extends Controller
         // if the name matches an existing container, then we can't
         // create a container
         for (Category c : ((Category) target.getTag()).getContainer().getContents()) {
-            if (c.getName().equals(this.getView().getProductGroupName())) {
+            if (c.getName().equals(this.getView().getProductGroupName()) && 
+            		!c.getName().equals(target.getName())) {
                 this.getView().enableOK(false);
                 return;
             }
@@ -143,9 +144,9 @@ public class EditProductGroupController extends Controller
             // set the category's new info
             category.setName(newName);
 
-            Quantity newQuantity = new Quantity(Integer.getInteger(newSupply), 
-                    Units.valueOf(newSize.toString()));
-            // TODO check this
+            // set the new quantity
+            Quantity newQuantity = new Quantity(Float.parseFloat(newSupply), 
+                    UnitController.sizeUnitsToUnits(newSize));
             category.set3MonthSupplyQuantity(newQuantity);
 
             // put the storage unit back into the container
