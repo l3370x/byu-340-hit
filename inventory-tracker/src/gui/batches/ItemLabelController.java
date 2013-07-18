@@ -7,14 +7,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.logging.Level;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
-import com.sun.istack.internal.logging.Logger;
 
 import common.util.DateUtils;
 import core.model.Item;
+import core.model.exception.ExceptionHandler;
 
 public class ItemLabelController implements IItemLabelController {
 
@@ -51,8 +50,8 @@ public class ItemLabelController implements IItemLabelController {
 	    document.close();
 	    displayDocument();
 	} catch (FileNotFoundException | DocumentException e) {
-	    Logger.getLogger(getClass()).logException(e, Level.SEVERE);
-	    e.printStackTrace();
+            ExceptionHandler.TO_USER.reportException(e, "Can't print bar code labels");
+            ExceptionHandler.TO_LOG.reportException(e, "Can't print bar code labels");
 	}
     }
 
@@ -65,8 +64,8 @@ public class ItemLabelController implements IItemLabelController {
 	    }
 	    document.add(table);
 	} catch (DocumentException e) {
-	    Logger.getLogger(getClass()).logException(e, Level.SEVERE);
-	    e.printStackTrace();
+            ExceptionHandler.TO_USER.reportException(e, "Can;t print bar code labels");
+            ExceptionHandler.TO_LOG.reportException(e, "Can't print bar code labels");
 	}
     }
 
@@ -96,8 +95,8 @@ public class ItemLabelController implements IItemLabelController {
 	try {
 	    Desktop.getDesktop().open(new File(fileName));
 	} catch (IOException e) {
-	    Logger.getLogger(getClass()).logException(e, Level.SEVERE);
-	    e.printStackTrace();
+            ExceptionHandler.TO_USER.reportException(e, "Can't print bar code labels");
+            ExceptionHandler.TO_LOG.reportException(e, "Can't print bar code labels");
 	}
     }
 
