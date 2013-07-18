@@ -107,11 +107,9 @@ public class AddProductController extends Controller implements
         if (su == SizeUnits.Count) {
             this.getView().enableSizeValue(false);
             this.getView().setSizeValue("1");
-            sizeValue = "0";
         } else // Enable Size value textbox and set it to the correct number
         {
             this.getView().enableSizeValue(true);
-            this.getView().setSizeValue(sizeValue);
         }
 
         //Makes sure that the product has a description
