@@ -1,5 +1,7 @@
 package gui.product;
 
+import java.util.regex.Pattern;
+
 import core.model.BarCode;
 import core.model.Product;
 import core.model.Quantity;
@@ -16,6 +18,8 @@ public class AddProductController extends Controller implements
         IAddProductController {
 
     private final String barcode;
+    private static final Pattern POSITIVE_INTEGER_PATTERN = 
+    Pattern.compile("-?\\d+(\\.\\d+)?");
     private String sizeValue = "0";
     private String shelfLife = "0";
     private String monthSupply = "0";
@@ -112,43 +116,27 @@ public class AddProductController extends Controller implements
 
         //Makes sure that the product has a description
         String description = this.getView().getDescription();
-        if (null == description || description.isEmpty()) {
-            this.getView().enableOK(false);
-            return;
-        }
-
         // Makes sure the size value is a number and not blank
         sizeValue = this.getView().getSizeValue();
-        if (false == sizeValue.matches("-?\\d+(\\.\\d+)?")
-                || null == sizeValue || sizeValue.isEmpty()) {
-
-            this.getView().enableOK(false);
-            return;
-        }
-
         // Makes sure the shelf life is a number and not blank
         shelfLife = this.getView().getShelfLife();
-        if (false == shelfLife.matches("-?\\d+(\\.\\d+)?")
-                || null == shelfLife || shelfLife.isEmpty()) {
-
-            this.getView().enableOK(false);
-            return;
-        }
-
         // Makes sure the 3 month supply is a number and not blank
         monthSupply = this.getView().getSupply();
-        if (false == monthSupply.matches("-?\\d+(\\.\\d+)?")
-                || null == monthSupply || monthSupply.isEmpty()) {
-
-            this.getView().enableOK(false);
-            return;
+            
+        if(descriptionIsValid(description) == false 
+           || productSizeIsValid(sizeValue) == false 
+           || shelfLifeIsValid(shelfLife) == false 
+           || monthSupplyIsValid(monthSupply) == false)
+        {
+        	this.getView().enableOK(false);
+        	return;
         }
 
         // If it passes all conditions, enable ok button for adding product
         this.getView().enableOK(true);
 
     }
-
+    
     /**
      * This method is called when the user clicks the "OK" button in the add product view.
      */
@@ -167,12 +155,43 @@ public class AddProductController extends Controller implements
 
             // add the product to the inventory manager
             getInventoryManager().addProduct(product);
-            //Notify the Add Item View
-
-
+           
         } catch (HITException ex) {
             ExceptionHandler.TO_USER.reportException(ex,
                     "Unable To Create Product");
         }
     }
+    
+    private boolean productSizeIsValid(String sizeValue) {
+        if (null == sizeValue || sizeValue.isEmpty()) {
+            return false;
+        }
+
+        return POSITIVE_INTEGER_PATTERN.matcher(sizeValue).matches();
+    }
+    
+    private boolean descriptionIsValid(String description) {
+        if (null == description || description.isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    private boolean shelfLifeIsValid(String shelfLife) {
+        if (null == shelfLife || shelfLife.isEmpty()) {
+            return false;
+        }
+
+        return POSITIVE_INTEGER_PATTERN.matcher(shelfLife).matches();
+    }
+    
+    private boolean monthSupplyIsValid(String monthSupply) {
+        if (null == monthSupply || monthSupply.isEmpty()) {
+            return false;
+        }
+
+        return POSITIVE_INTEGER_PATTERN.matcher(monthSupply).matches();
+    }
+
 }

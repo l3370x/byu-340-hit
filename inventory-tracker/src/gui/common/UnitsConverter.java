@@ -14,7 +14,7 @@ import java.util.Map;
 public class UnitsConverter {
 
     private static final Map<Units, SizeUnits> SIZE_UNITS_BY_UNITS = new HashMap<>();
-
+       
     static {
         SIZE_UNITS_BY_UNITS.put(Units.COUNT, SizeUnits.Count);
         SIZE_UNITS_BY_UNITS.put(Units.FLUID_OUNCES, SizeUnits.FluidOunces);
@@ -42,6 +42,22 @@ public class UnitsConverter {
         UNITS_BY_SIZE_UNITS.put(SizeUnits.Pounds, Units.POUNDS);
         UNITS_BY_SIZE_UNITS.put(SizeUnits.Quarts, Units.QUARTS);
     }
+    
+    private static final Map<String, SizeUnits> SIZE_UNITS_BY_STRING = new HashMap<>();
+    
+    static {
+        SIZE_UNITS_BY_STRING.put("count", SizeUnits.Count);
+        SIZE_UNITS_BY_STRING.put("fluid ounces", SizeUnits.FluidOunces);
+        SIZE_UNITS_BY_STRING.put("gallons", SizeUnits.Gallons);
+        SIZE_UNITS_BY_STRING.put("grams", SizeUnits.Grams);
+        SIZE_UNITS_BY_STRING.put("kilograms", SizeUnits.Kilograms);
+        SIZE_UNITS_BY_STRING.put("liters", SizeUnits.Liters);
+        SIZE_UNITS_BY_STRING.put("ounces", SizeUnits.Ounces);
+        SIZE_UNITS_BY_STRING.put("pints", SizeUnits.Pints);
+        SIZE_UNITS_BY_STRING.put("pounds", SizeUnits.Pounds);
+        SIZE_UNITS_BY_STRING.put("quarts", SizeUnits.Quarts);
+    }
+    
 
     /**
      *
@@ -62,4 +78,14 @@ public class UnitsConverter {
     public static SizeUnits unitsToSizeUnits(Units u) throws HITException {
         return SIZE_UNITS_BY_UNITS.get(u);
     }
+    
+    /**
+    *
+    * @param value The string to convert from
+    * @return The Units that corresponds to the given string
+    * @throws HITException if the conversion failed
+    */
+   public static SizeUnits stringToUnits(String value) throws HITException {
+       return SIZE_UNITS_BY_STRING.get(value.toLowerCase());
+   }
 }

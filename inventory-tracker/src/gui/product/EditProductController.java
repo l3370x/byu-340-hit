@@ -2,6 +2,9 @@ package gui.product;
 
 import static core.model.InventoryManager.Factory.getInventoryManager;
 import static core.model.Product.Factory.newProduct;
+
+import java.util.regex.Pattern;
+
 import core.model.BarCode;
 import core.model.Product;
 import core.model.Quantity;
@@ -19,6 +22,8 @@ public class EditProductController extends Controller
     private String sizeValue;
     private String shelfLife;
     private String monthSupply;
+    private static final Pattern POSITIVE_INTEGER_PATTERN = 
+	Pattern.compile("-?\\d+(\\.\\d+)?");
 
     /**
      * Constructor.
@@ -93,8 +98,12 @@ public class EditProductController extends Controller
         this.getView().setDescription(target.getDescription());
         this.getView().setBarcode(target.getBarcode());
         this.getView().setSizeValue(sizeValue);
-        // TODO: convert from strings to SizeUnits
-        this.getView().setSizeUnit(SizeUnits.Count);
+        try {
+			this.getView().setSizeUnit(UnitsConverter.stringToUnits(target.getCount()));
+		} catch (HITException ex) {
+			 ExceptionHandler.TO_USER.reportException(ex,
+	                    "Unable To Load Product");
+		}
         this.getView().setShelfLife(shelfLife);
         this.getView().setSupply(monthSupply);
     }
@@ -107,49 +116,34 @@ public class EditProductController extends Controller
      */
     @Override
     public void valuesChanged() {
-        // If size units is Count, disable the size values text field and set it as one
+    	  // If size units is Count, disable the size values text field and set it as one
         SizeUnits su = this.getView().getSizeUnit();
         if (su == SizeUnits.Count) {
             this.getView().enableSizeValue(false);
             this.getView().setSizeValue("1");
             sizeValue = "0";
-        } else {// Enable Size value textbox and set it to the correct number
+        } else // Enable Size value textbox and set it to the correct number
+        {
             this.getView().enableSizeValue(true);
             this.getView().setSizeValue(sizeValue);
         }
 
         //Makes sure that the product has a description
         String description = this.getView().getDescription();
-        if (null == description || description.isEmpty()) {
-            this.getView().enableOK(false);
-            return;
-        }
-
         // Makes sure the size value is a number and not blank
         sizeValue = this.getView().getSizeValue();
-        if (false == sizeValue.matches("-?\\d+(\\.\\d+)?")
-                || null == sizeValue || sizeValue.isEmpty()) {
-
-            this.getView().enableOK(false);
-            return;
-        }
-
         // Makes sure the shelf life is a number and not blank
         shelfLife = this.getView().getShelfLife();
-        if (false == shelfLife.matches("-?\\d+(\\.\\d+)?")
-                || null == shelfLife || shelfLife.isEmpty()) {
-
-            this.getView().enableOK(false);
-            return;
-        }
-
         // Makes sure the 3 month supply is a number and not blank
         monthSupply = this.getView().getSupply();
-        if (false == monthSupply.matches("-?\\d+(\\.\\d+)?")
-                || null == monthSupply || monthSupply.isEmpty()) {
-
-            this.getView().enableOK(false);
-            return;
+            
+        if(descriptionIsValid(description) == false 
+           || productSizeIsValid(sizeValue) == false 
+           || shelfLifeIsValid(shelfLife) == false 
+           || monthSupplyIsValid(monthSupply) == false)
+        {
+        	this.getView().enableOK(false);
+        	return;
         }
 
         // If it passes all conditions, enable ok button for adding product
@@ -168,7 +162,6 @@ public class EditProductController extends Controller
 
             product.setShelfLifeInMonths(Integer.parseInt(this.getView().getShelfLife()));
             product.set3MonthSupplyQuota(Integer.parseInt(this.getView().getSupply()));
-            // TODO: Conversion from SizeUnits to Units
             product.setSize(new Quantity(Float.parseFloat(this.getView().getSizeValue()),
                     UnitsConverter.sizeUnitsToUnits(this.getView().getSizeUnit())));
 
@@ -180,5 +173,37 @@ public class EditProductController extends Controller
                     "Unable To Edit Product");
         }
 
+    }
+    
+    private boolean productSizeIsValid(String sizeValue) {
+        if (null == sizeValue || sizeValue.isEmpty()) {
+            return false;
+        }
+
+        return POSITIVE_INTEGER_PATTERN.matcher(sizeValue).matches();
+    }
+    
+    private boolean descriptionIsValid(String description) {
+        if (null == description || description.isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    private boolean shelfLifeIsValid(String shelfLife) {
+        if (null == shelfLife || shelfLife.isEmpty()) {
+            return false;
+        }
+
+        return POSITIVE_INTEGER_PATTERN.matcher(shelfLife).matches();
+    }
+    
+    private boolean monthSupplyIsValid(String monthSupply) {
+        if (null == monthSupply || monthSupply.isEmpty()) {
+            return false;
+        }
+
+        return POSITIVE_INTEGER_PATTERN.matcher(monthSupply).matches();
     }
 }
