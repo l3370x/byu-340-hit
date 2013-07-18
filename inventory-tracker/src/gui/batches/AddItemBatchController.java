@@ -1,16 +1,22 @@
 package gui.batches;
 
-
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import core.model.*;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
+import static core.model.InventoryManager.Factory.getInventoryManager;
 import static core.model.Item.Factory.newItem;
 import gui.common.*;
 import gui.inventory.*;
+import gui.item.ItemData;
 import gui.product.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Controller class for the add item batch view.
@@ -19,7 +25,8 @@ public class AddItemBatchController extends Controller implements
         IAddItemBatchController {
 
     private ProductContainerData source;
-    private ArrayList<ProductData> ProductsView = new ArrayList<>();
+    private final Set<ProductData> addedProducts = new HashSet<>();
+    private final Map<Product, Set<Item>> addedItemsByProduct = new HashMap<>();
 
     /**
      * Constructor.
@@ -103,16 +110,12 @@ public class AddItemBatchController extends Controller implements
      */
     @Override
     public void barcodeChanged() {
-
         if (!this.getView().getUseScanner()) {
-            if (this.getView().getBarcode() != null && 
-                    !this.getView().getBarcode().isEmpty()) {
+            if (this.getView().getBarcode() != null
+                    && !this.getView().getBarcode().isEmpty()) {
                 this.getView().enableItemAction(true);
-
             }
-
         }
-
     }
 
     /**
@@ -128,7 +131,27 @@ public class AddItemBatchController extends Controller implements
      */
     @Override
     public void selectedProductChanged() {
-        //Display the items
+        ProductData productData = this.getView().getSelectedProduct();
+        if (null == productData) {
+            return;
+        }
+        
+        Object tag = productData.getTag();
+        if (false == tag instanceof Product) {
+            return;
+        }
+        
+        Set<Item> addedItems = this.addedItemsByProduct.get((Product) tag);
+        if (null == addedItems) {
+            return;
+        }
+        
+        List<ItemData> itemList = new ArrayList<>();
+        for (Item item : addedItems) {
+            itemList.add(new ItemData(item));
+        }
+        
+        this.getView().setItems(itemList.toArray(new ItemData[0]));
     }
 
     /**
@@ -136,60 +159,56 @@ public class AddItemBatchController extends Controller implements
      */
     @Override
     public void addItem() {
-
-        //First check if barcode exists. 
-
-        //Get the Storage unit Name from the view
-        ProductContainer tag = (ProductContainer) source.getTag();
-        StorageUnit unit = tag.getStorageUnit();
-        final BarCode barCodeFor;
         try {
-            barCodeFor = BarCode.getBarCodeFor(this.getView().getBarcode());
-        } catch (HITException ex) {
-            ExceptionHandler.TO_USER.reportException(ex, "Can not create bar code");
-            return;
-        }
-        
-        Product prod = unit.getProduct(barCodeFor);
+            // TODO this code actually belongs in the barcodeChanged() method
+            final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
 
-        if (prod == null) {
-            this.getView().displayAddProductView();
-            StorageUnit unit1 = tag.getStorageUnit();
+            // see if the product exists in the InventoryManager
+            Product product = getInventoryManager().getProduct(barcode);
 
-            if (unit1.getProduct(barCodeFor) != null) {
-                this.getView().displayInformationMessage("FOund product");
+            if (product == null) {
+                // prompt the user to create/add the product
+                this.getView().displayAddProductView();
 
+                // see if the product was added
+                product = getInventoryManager().getProduct(barcode);
 
-                prod = unit1.getProduct(barCodeFor);
-            } else {
-                this.getView().enableItemAction(false);
-                return;
+                // if the product still doesn't exist, there's nothing more we can do
+                if (null == product) {
+                    this.getView().enableItemAction(false);
+                    return;
+                }
             }
-        }
+            
+            Set<Item> addedItems = this.addedItemsByProduct.get(product);
+            if (null == addedItems) {
+                addedItems = new HashSet<>();
+                this.addedItemsByProduct.put(product, addedItems);
+            }
 
+            int count = Integer.valueOf(this.getView().getCount());
+            for (int i = 0; i < count; i++) {
+                // generate data for the Item
+                Calendar expiryDate = Calendar.getInstance();
+                expiryDate.setTime(this.getView().getEntryDate());
+                expiryDate.add(Calendar.MONTH, product.getShelfLifeInMonths());
 
-        Calendar expiryDate = Calendar.getInstance();
-        expiryDate.setTime(this.getView().getEntryDate());
-        expiryDate.add(Calendar.MONTH, prod.getShelfLifeInMonths());
+                // create the item
+                Item itemtoadd = newItem(product, this.getView().getEntryDate(), expiryDate.getTime());
 
-        try {
-            Item itemtoadd = newItem(prod, this.getView().getEntryDate(), expiryDate.getTime());
-            unit.addItem(itemtoadd);
+                // add the item
+                ProductContainer tag = (ProductContainer) source.getTag();
+                tag.getStorageUnit().addItem(itemtoadd);
+                addedItems.add(itemtoadd);
+            }
 
+            // I'm not sure this is right
+            final ProductData productData = new ProductData(product);
+            this.addedProducts.add(productData);
+            this.getView().setProducts(this.addedProducts.toArray(new ProductData[0]));
         } catch (HITException e) {
-            // TODO Auto-generated catch block
-            this.getView().displayErrorMessage(e.getMessage());
+            ExceptionHandler.TO_USER.reportException(e, "Unable To Add Item(s)");
         }
-
-        ProductsView.add(new ProductData(prod));
-        this.getView().setProducts((ProductData[]) ProductsView.toArray());
-
-
-
-
-        //Update the Main View
-        //Also show the product in the list of Products as well as add the item in the list of items
-        //for this session, so that once the user clicks on the product, he can also see the list of items added
     }
 
     /**

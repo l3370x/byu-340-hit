@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The {@code AbstractProductContainer} class is the base class for 
@@ -28,8 +26,8 @@ public abstract class AbstractProductContainer<T extends Containable>
     extends AbstractContainer<T> implements ProductContainer<T> {
     
     private final Map<String, T> contentsByString = new HashMap<>();
-    private final Container<Item> items;
-    private final Container<Product> products;
+    private Container<Item> items;
+    private Container<Product> products;
     
     private Map<Product, Set<Item>> itemsByProduct = new HashMap<>();
         
@@ -38,7 +36,19 @@ public abstract class AbstractProductContainer<T extends Containable>
     protected AbstractProductContainer(String name) {
         this.name = name;
         
-        this.items = new ItemCollection(this);
+        this.initCollections(new ItemCollection(this), new ProductCollection(this));
+    }
+    
+    protected AbstractProductContainer(String name, 
+            Container<Item> item, 
+            Container<Product> products) {
+        this.name = name;
+        
+        this.initCollections(item, products);
+    }
+    
+    private void initCollections(Container<Item> items, Container<Product> products) {
+        this.items = items;
         this.items.addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
@@ -65,7 +75,7 @@ public abstract class AbstractProductContainer<T extends Containable>
             }
         });
         
-        this.products = new ProductCollection(this);
+        this.products = products;
         this.products.addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
@@ -91,15 +101,6 @@ public abstract class AbstractProductContainer<T extends Containable>
                 }
             }
         });
-    }
-    
-    protected AbstractProductContainer(String name, 
-            Container<Item> itemCollection, 
-            Container<Product> productCollection) {
-        this.name = name;
-        
-        this.items = itemCollection;
-        this.products = productCollection;
     }
     
     @Override

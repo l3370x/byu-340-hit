@@ -7,46 +7,47 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The {@code ProductContainer} class is a concrete container class that manages
- * a collection of {@link Product} instances.
- * 
+ * The {@code ProductContainer} class is a concrete container class that manages a collection of
+ * {@link Product} instances.
+ *
  * @author kemcqueen
  */
 class ProductCollection extends AbstractProductContainerProxy<Product> {
+
     private final Map<BarCode, Product> productsByBarCode = new HashMap<>();
-    
+
     ProductCollection(ProductContainer delegate) {
         super(delegate);
     }
 
     @Override
     protected void doAdd(Product product) throws HITException {
-        if(product == null){
+        if (product == null) {
             throw new HITException(Severity.ERROR, "Null Product");
         }
-        
-        if(product.getDescription() == null 
-                || product.getDescription().equals("")){
+
+        if (product.getDescription() == null
+                || product.getDescription().equals("")) {
             throw new HITException(Severity.ERROR, "Invalid Product Description");
         }
-        
-        if(this.canAdd(product)){
+
+        if (this.canAdd(product)) {
             this.productsByBarCode.put(product.getBarCode(), product);
         }
     }
 
     @Override
     protected void doRemove(Product product) throws HITException {
-        if(product == null){
+        if (product == null) {
             throw new HITException(Severity.ERROR, "Null Product");
         }
-        
-        if(product.getDescription() == null 
-                || product.getDescription().equals("")){
+
+        if (product.getDescription() == null
+                || product.getDescription().equals("")) {
             throw new HITException(Severity.ERROR, "Invalid Product Description");
         }
-        
-        if(this.canRemove(product)){
+
+        if (this.canRemove(product)) {
             this.productsByBarCode.remove(product.getBarCode());
         }
     }
@@ -54,14 +55,14 @@ class ProductCollection extends AbstractProductContainerProxy<Product> {
     @Override
     protected boolean isAddable(Product product) {
         assert true;
-        
+
         return false == this.productsByBarCode.containsKey(product.getBarCode());
     }
 
     @Override
     protected boolean isRemovable(Product product) {
         assert true;
-        
+
         return false == this.canAdd(product);
     }
 
@@ -80,9 +81,9 @@ class ProductCollection extends AbstractProductContainerProxy<Product> {
         };
     }
 
-	@Override
-	public int getItemsCount(Product product) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getItemsCount(Product product) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }

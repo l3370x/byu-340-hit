@@ -62,6 +62,13 @@ public class Quantity {
         return this.units;
     }
 
+    @Override
+    public String toString() {
+    	if(value == (int) value)
+    		return String.format("%d %s", (int)value, units.getLabel());
+    	return String.format("%s %s", value, units.toString());
+    }
+
     /**
      * The {@code Quantity.Unit} enumeration is used to designate the unit of 
      * measurement for a particular quantity.
@@ -71,49 +78,52 @@ public class Quantity {
         /**
          * Units count (as in "12 cans")
          */
-        COUNT,
+        COUNT("count"),
         /**
          * Weight in pounds (lbs) (as in "1.5 lbs")
          */
-        POUNDS,
+        POUNDS("pounds"),
         /**
          * Weight in ounces (oz) (as in "6 oz")
          */
-        OUNCES,
+        OUNCES("ounces"),
         /**
          * Mass in grams (g) (as in "675 g")
          */
-        GRAMS,
+        GRAMS("grams"),
         /**
          * Mass in kilograms (kg) (as in "1.2 kg")
          */
-        KILOGRAMS,
+        KILOGRAMS("kilograms"),
         /**
          * Volume in gallons (gal) (as in "1 gal")
          */
-        GALLONS,
+        GALLONS("gallons"),
         /**
          * Volume in quarts (qt) (as in "4 qts = 1 gal")
          */
-        QUARTS,
+        QUARTS("quarts"),
         /**
          * Volume in pints (pt) (as in "0.5 pt")
          */
-        PINTS,
+        PINTS("pints"),
         /**
          * Volume in fluid ounces (fl oz) (as in "12 fl oz")
          */
-        FLUID_OUNCES,
+        FLUID_OUNCES("fluid ounces"),
         /**
          * Volume in liters/litres (lit) (as in "2 liters")
          */
-        LITERS;
-    }
-    
-    @Override
-    public String toString() {
-    	if(value == (int) value)
-    		return String.format("%d %s", (int)value, units.toString());
-    	return String.format("%s %s", value, units.toString());
+        LITERS("liters");
+        
+        private final String label;
+        
+        private Units(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return this.label;
+        }
     }
 }

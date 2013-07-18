@@ -1,6 +1,8 @@
 package core.model;
 
+import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
+import static core.model.ModelNotification.ChangeType.*;
 
 import java.util.Date;
 import java.util.Observable;
@@ -28,18 +30,22 @@ implements InventoryManager {
         super ("Storage Units", new ItemCollection(null){
             @Override
             protected void didAdd(Item content) throws HITException {
+                this.notifyObservers(new ModelNotification(CONTENT_ADDED, this, content));
             }
 
             @Override
             protected void didRemove(Item content) throws HITException {
+                this.notifyObservers(new ModelNotification(CONTENT_REMOVED, this, content));
             }
         }, new ProductCollection(null){
             @Override
             protected void didAdd(Product content) throws HITException {
+                this.notifyObservers(new ModelNotification(CONTENT_ADDED, this, content));
             }
 
             @Override
             protected void didRemove(Product content) throws HITException {
+                this.notifyObservers(new ModelNotification(CONTENT_REMOVED, this, content));
             }
         });
     }
@@ -101,7 +107,12 @@ implements InventoryManager {
                     break;
             }
         } catch (HITException ex) {
-            // TODO what do I do with this exception
+            switch (ex.getSeverity()) {
+                case ERROR:
+                case WARNING:
+                    ExceptionHandler.TO_LOG.reportException(ex, "");
+                    break;
+            }
         }
     }
 }
