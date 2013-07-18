@@ -1,6 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,6 +64,16 @@ public class ItemCollection extends AbstractProductContainerProxy<Item> {
     @Override
     public Comparator<Item> getComparator() {
         return null;
+    }
+
+    @Override
+    public Iterable<Item> getItems(Product product) {
+        Set<Item> items = this.itemsByProduct.get(product);
+        if (null == items) {
+            return Collections.emptySet();
+        }
+        
+        return Collections.unmodifiableSet(items);
     }
 
     @Override
