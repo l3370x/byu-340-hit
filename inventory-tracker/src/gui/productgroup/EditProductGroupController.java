@@ -83,7 +83,7 @@ public class EditProductGroupController extends Controller
         final String supply = String.valueOf(category.get3MonthSupplyQuantity().getValue());
         SizeUnits size;
         try {
-            size = UnitController.unitsToSizeUnits(category.get3MonthSupplyQuantity().getUnits());
+            size = UnitsConverter.unitsToSizeUnits(category.get3MonthSupplyQuantity().getUnits());
         } catch (HITException e) {
             size = SizeUnits.Count;
         }

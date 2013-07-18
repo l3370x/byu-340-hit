@@ -9,6 +9,7 @@ import gui.item.*;
 import gui.product.*;
 
 import static core.model.InventoryManager.Factory.getInventoryManager;
+import core.model.Item;
 import core.model.ModelNotification;
 import core.model.Product;
 import core.model.ProductContainer;
@@ -18,7 +19,6 @@ import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 
 import java.util.*;
-import javax.swing.SwingUtilities;
 
 /**
  * Controller class for inventory view.
@@ -108,7 +108,6 @@ public class InventoryController extends Controller
      */
     @Override
     protected void enableComponents() {
-        return;
     }
 
     //
@@ -203,7 +202,7 @@ public class InventoryController extends Controller
      */
     @Override
     public boolean canDeleteProductGroup() {
-        return true;
+        return this.canDeleteStorageUnit();
     }
 
     /**
@@ -221,52 +220,31 @@ public class InventoryController extends Controller
      */
     @Override
     public void deleteProductGroup() {
-    }
-    private Random rand = new Random();
-
-    private String getRandomBarcode() {
-        Random rand = new Random();
-        StringBuilder barcode = new StringBuilder();
-        for (int i = 0; i < 12; ++i) {
-            barcode.append(((Integer) rand.nextInt(10)).toString());
+        ProductContainerData selected = 
+                this.getView().getSelectedProductContainer();
+        
+        Object tag = selected.getTag();
+        if (false == tag instanceof Category) {
+            return;
         }
-        return barcode.toString();
+        
+        Category category = (Category) tag;
+        
+        try {
+            category.getContainer().remove(category);
+        } catch (HITException ex) {
+            ExceptionHandler.TO_USER.reportException(ex, 
+                    "Unable To Delete Product Group");
+        }
     }
-
+    
     /**
      * This method is called when the selected item container changes.
      */
     @Override
     public void productContainerSelectionChanged() {
-        /*
-        List<ProductData> productDataList = new ArrayList<ProductData>();
-        ProductContainerData selectedContainer = getView().getSelectedProductContainer();
-        if (selectedContainer != null) {
-        int productCount = rand.nextInt(20) + 1;
-        for (int i = 1; i <= productCount; ++i) {
-        ProductData productData = new ProductData();
-        productData.setBarcode(getRandomBarcode());
-        int itemCount = rand.nextInt(25) + 1;
-        productData.setCount(Integer.toString(itemCount));
-        productData.setDescription("Item " + i);
-        productData.setShelfLife("3 months");
-        productData.setSize("1 pounds");
-        productData.setSupply("10 count");
-        productDataList.add(productData);
-        }
-        }
-        getView().setProducts(productDataList.toArray(new ProductData[0]));
-        getView().setItems(new ItemData[0]);
-         */
-        ProductContainerData containerData = 
-                this.getView().getSelectedProductContainer();
-        if (null == containerData) {
-            ContextPaneUpdater.NULL.updateContextPane(this.getView(), null);
-            return;
-        }
-        
-        Object tag = containerData.getTag();
-        ContextPaneUpdater.getContextPaneUpdaterFor(tag).updateContextPane(this.getView(), tag);
+        updateContextPane(this.getView());
+        updateProductsPane(this.getView());
     }
 
     /**
@@ -274,29 +252,7 @@ public class InventoryController extends Controller
      */
     @Override
     public void productSelectionChanged() {
-        /*
-        List<ItemData> itemDataList = new ArrayList<ItemData>();
-        ProductData selectedProduct = getView().getSelectedProduct();
-        if (selectedProduct != null) {
-            Date now = new Date();
-            GregorianCalendar cal = new GregorianCalendar();
-            int itemCount = Integer.parseInt(selectedProduct.getCount());
-            for (int i = 1; i <= itemCount; ++i) {
-                cal.setTime(now);
-                ItemData itemData = new ItemData();
-                itemData.setBarcode(getRandomBarcode());
-                cal.add(Calendar.MONTH, -rand.nextInt(12));
-                itemData.setEntryDate(cal.getTime());
-                cal.add(Calendar.MONTH, 3);
-                itemData.setExpirationDate(cal.getTime());
-                itemData.setProductGroup("Some Group");
-                itemData.setStorageUnit("Some Unit");
-
-                itemDataList.add(itemData);
-            }
-        }
-        getView().setItems(itemDataList.toArray(new ItemData[0]));
-        */
+        updateItemsPane(this.getView());
     }
 
     /**
@@ -304,7 +260,6 @@ public class InventoryController extends Controller
      */
     @Override
     public void itemSelectionChanged() {
-        return;
     }
 
     /**
@@ -561,44 +516,112 @@ public class InventoryController extends Controller
         }
     }
     
-    private static ProductData createProductData(Product product) {
-        ProductData data = new ProductData(product);
-        
-        data.setBarcode(product.getBarCode().getValue());
-        data.setDescription(product.getDescription());
-        data.setShelfLife(String.valueOf(product.getShelfLifeInMonths()));
-        data.setSize(String.valueOf(product.getSize()));
-        data.setSupply(String.valueOf(product.get3MonthSupplyQuota()));
-        
-        // TODO: figure out how to set the count
-        data.setCount("0");
-        
-        return data;
+    private static void updateContextPane(IInventoryView view) {
+        ProductContainer container = getProductContainer(view);
+        ViewUpdater.getUpdaterFor(container).updateContextPane(view, container);
     }
     
-    private static enum ContextPaneUpdater {
+    private static void updateProductsPane(IInventoryView view) {
+        ProductContainer container = getProductContainer(view);
+        if (null == container) {
+            return;
+        }
+        
+        List<ProductData> productList = new ArrayList<>();
+        
+        for (Product product : (Iterable<Product>) container.getProducts()) {
+            productList.add(createProductData(product));
+        }
+
+        view.setProducts(productList.toArray(new ProductData[productList.size()]));
+    }
+
+    private static void updateItemsPane(IInventoryView view) {
+        ProductContainer container = getProductContainer(view);
+        if (null == container) {
+            return;
+        }
+        
+        Product product = getProduct(view);
+        if (null == product) {
+            return;
+        }
+        
+        List<ItemData> itemList = new ArrayList<>();
+        for (Item item : (Iterable<Item>) ((ProductContainer) container).getItems(product)) {
+            itemList.add(createItemData(item));
+        }
+
+        view.setItems(itemList.toArray(new ItemData[itemList.size()]));
+    }
+    
+    private static ProductContainer getProductContainer(IInventoryView view) {
+        if (null == view) {
+            return null;
+        }
+        
+        ProductContainerData containerData = view.getSelectedProductContainer();
+        if (null == containerData) {
+            return null;
+        }
+        
+        Object tag = containerData.getTag();
+        if (false == tag instanceof ProductContainer) {
+            return null;
+        }
+        
+        return (ProductContainer) tag;
+    }
+    
+    private static Product getProduct(IInventoryView view) {
+        if (null == view) {
+            return null;
+        }
+        
+        ProductData productData = view.getSelectedProduct();
+        if (null == productData) {
+            return null;
+        }
+        
+        Object tag = productData.getTag();
+        if (false == tag instanceof Product) {
+            return null;
+        }
+        
+        return (Product) tag;
+    }
+
+    private static ProductData createProductData(Product product) {
+        return new ProductData(product);
+    }
+    
+    private static ItemData createItemData(Item item) {
+        return new ItemData(item);
+    }
+    
+    private static enum ViewUpdater {
         INVENTORY_MANAGER(InventoryManager.class) {
             @Override
-            public void updateContextPane(IInventoryView view, Object obj) {
-                super.updateContextPane(view, obj);
+            public void updateContextPane(IInventoryView view, ProductContainer container) {
+                super.updateContextPane(view, container);
                 view.setContextUnit("ALL");
             }
         },
         STORAGE_UNIT(StorageUnit.class) {
             @Override
-            public void updateContextPane(IInventoryView view, Object obj) {
-                super.updateContextPane(view, obj);
-                view.setContextUnit(((ProductContainer) obj).getName());
+            public void updateContextPane(IInventoryView view, ProductContainer container) {
+                super.updateContextPane(view, container);
+                view.setContextUnit(((ProductContainer) container).getName());
             }
         },
         CATEGORY(Category.class) {
             @Override
-            public void updateContextPane(IInventoryView view, Object obj) {
-                super.updateContextPane(view, obj);
-                view.setContextUnit(((ProductContainer) obj).getStorageUnit().getName());
-                view.setContextGroup(((ProductContainer) obj).getName());
+            public void updateContextPane(IInventoryView view, ProductContainer container) {
+                super.updateContextPane(view, container);
+                view.setContextUnit(((ProductContainer) container).getStorageUnit().getName());
+                view.setContextGroup(((ProductContainer) container).getName());
                 
-                final Quantity supply = ((Category) obj).get3MonthSupplyQuantity();
+                final Quantity supply = ((Category) container).get3MonthSupplyQuantity();
                 if (null != supply) {
                     view.setContextSupply(supply.toString());
                 }
@@ -608,38 +631,28 @@ public class InventoryController extends Controller
         
         private final Class<?> _class;
         
-        private ContextPaneUpdater(Class<?> _class) {
+        private ViewUpdater(Class<?> _class) {
             this._class = _class;
         }
         
-        public void updateContextPane(IInventoryView view, Object obj) {
+        public void updateContextPane(IInventoryView view, ProductContainer container) {
             view.setContextUnit("");
             view.setContextGroup("");
             view.setContextSupply("");
-            
-            List<ProductData> productData = new ArrayList<>();
-            if (obj instanceof ProductContainer) {
-                for (Product product : (Iterable<Product>)((ProductContainer) obj).getProducts()) {
-                    productData.add(createProductData(product));
-                }
-            }
-            view.setProducts(productData.toArray(new ProductData[productData.size()]));
-            
-            view.setItems(new ItemData[0]);
         }
         
-        public static ContextPaneUpdater getContextPaneUpdaterFor(Object obj) {
-            if (null == obj) {
-                return ContextPaneUpdater.NULL;
+        public static ViewUpdater getUpdaterFor(ProductContainer container) {
+            if (null == container) {
+                return ViewUpdater.NULL;
             }
             
-            for (ContextPaneUpdater updater : ContextPaneUpdater.values()) {
-                if (updater._class.isInstance(obj)) {
+            for (ViewUpdater updater : ViewUpdater.values()) {
+                if (updater._class.isInstance(container)) {
                     return updater;
                 }
             }
             
-            return ContextPaneUpdater.NULL;
+            return ViewUpdater.NULL;
         }
     }
 }

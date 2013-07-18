@@ -4,7 +4,7 @@ import static core.model.Category.Factory.newCategory;
 import core.model.Container;
 import core.model.Category;
 import core.model.Quantity;
-import gui.common.UnitController;
+import gui.common.UnitsConverter;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import gui.common.*;
@@ -127,7 +127,7 @@ public class AddProductGroupController extends Controller implements
             String  newSupply = this.getView().getSupplyValue();
     		SizeUnits newSize = this.getView().getSupplyUnit();
             Quantity newQuantity = new Quantity(Float.parseFloat(newSupply),
-                    UnitController.sizeUnitsToUnits(newSize));
+                    UnitsConverter.sizeUnitsToUnits(newSize));
             category.set3MonthSupplyQuantity(newQuantity);
             // add the category to the selected container
             Container selectedContainer = (Container) this.container.getTag();

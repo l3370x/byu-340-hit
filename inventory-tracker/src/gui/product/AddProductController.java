@@ -163,7 +163,7 @@ public class AddProductController extends Controller implements
             product.setShelfLifeInMonths(Integer.parseInt(this.getView().getShelfLife()));
             product.set3MonthSupplyQuota(Integer.parseInt(this.getView().getSupply()));
             product.setSize(new Quantity(Float.parseFloat(this.getView().getSizeValue()),
-                    UnitController.sizeUnitsToUnits(this.getView().getSizeUnit())));
+                    UnitsConverter.sizeUnitsToUnits(this.getView().getSizeUnit())));
 
             // add the product to the inventory manager
             getInventoryManager().addProduct(product);

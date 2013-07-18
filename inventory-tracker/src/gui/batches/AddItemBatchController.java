@@ -20,9 +20,7 @@ public class AddItemBatchController extends Controller implements
         IAddItemBatchController {
 
     private ProductContainerData source;
-    private StorageUnit targetUnit;
     private ArrayList<ProductData> ProductsView = new ArrayList<>();
-    private ArrayList<ItemData> ItemsView = new ArrayList<>();
 
     /**
      * Constructor.
@@ -32,7 +30,7 @@ public class AddItemBatchController extends Controller implements
      */
     public AddItemBatchController(IView view, ProductContainerData target) {
         super(view);
-        source = target;
+        this.source = target;
         construct();
     }
 
