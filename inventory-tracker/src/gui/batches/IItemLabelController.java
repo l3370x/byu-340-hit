@@ -9,8 +9,6 @@ import core.model.Item;
 
 public interface IItemLabelController {
     
-    public ItemLabelController getInstance();
-    
     public void createDocument(Iterator<Item> itemList);
     
     public void formatDocument(Document document);
