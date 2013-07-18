@@ -1,5 +1,15 @@
 package gui.batches;
 
+import static core.model.InventoryManager.Factory.getInventoryManager;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
+
+import core.model.BarCode;
+import core.model.Item;
+import core.model.Product;
 import gui.common.*;
 import gui.product.*;
 
@@ -8,6 +18,10 @@ import gui.product.*;
  */
 public class RemoveItemBatchController extends Controller implements
         IRemoveItemBatchController {
+	
+	  private static final int TIMER_DELAY = 1000;
+	  private Timer timer;
+
 
     /**
      * Constructor.
@@ -40,6 +54,8 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     protected void loadValues() {
+        this.getView().setUseScanner(false);
+    	 this.useScannerChanged();
     }
 
     /**
@@ -56,6 +72,9 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     protected void enableComponents() {
+    	 this.getView().enableItemAction(false);
+         this.getView().enableUndo(false);
+         this.getView().enableRedo(false);
     }
 
     /**
@@ -64,7 +83,38 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     public void barcodeChanged() {
+    	if (this.getView().getUseScanner()) {
+            this.ensureItemExists();
+        } else {
+            if (this.timer.isRunning()) {
+                this.timer.restart();
+            } else {
+                this.timer.start();
+            }
+        }
     }
+    
+
+	private void ensureItemExists() {
+		final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
+	
+	    // see if the Item exists in the InventoryManager
+		Item item = getInventoryManager().itemByBarcode(barcode);
+
+		if (item == null) {
+			// prompt the user to create/add the product
+			this.getView().displayErrorMessage("Item Does not exist.");
+			
+			this.getView().setBarcode("");
+			enableComponents();
+			}
+		else
+		{
+			this.getView().enableItemAction(true);
+
+		}
+			}
+
 
     /**
      * This method is called when the "Use Barcode Scanner" setting is changed in the remove item
@@ -72,6 +122,24 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     public void useScannerChanged() {
+        if (this.getView().getUseScanner()) {
+            this.timer.stop();
+            this.getView().enableItemAction(false);
+        } else {
+            this.initTimer();
+        }
+    }
+    
+    private void initTimer() {
+        if (null == this.timer) {
+            this.timer = new Timer(TIMER_DELAY, new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    ensureItemExists();
+                }
+            });
+            this.timer.setRepeats(false);
+        }
     }
 
     /**

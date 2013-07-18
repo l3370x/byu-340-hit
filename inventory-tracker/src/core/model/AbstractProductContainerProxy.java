@@ -97,4 +97,5 @@ extends AbstractContainer<T> implements ProductContainer<T> {
     public int getItemCount(Product product) {
         return this.delegate.getItemCount(product);
     }
+
 }
