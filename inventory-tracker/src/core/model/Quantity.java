@@ -109,4 +109,11 @@ public class Quantity {
          */
         LITERS;
     }
+    
+    @Override
+    public String toString() {
+    	if(value == (int) value)
+    		return String.format("%d %s", (int)value, units.toString());
+    	return String.format("%s %s", value, units.toString());
+    }
 }
