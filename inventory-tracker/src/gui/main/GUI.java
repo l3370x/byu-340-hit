@@ -36,14 +36,14 @@ public final class GUI extends JFrame implements IMainView {
 			}			
 		});	
 		
-		/*
+		
 		try {
 			PersistenceManager.INSTANCE.load();
 		} catch (HITException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		*/
+		/**/
 		
 		createMenus();
 		createInventoryView();

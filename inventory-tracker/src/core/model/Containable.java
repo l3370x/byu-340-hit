@@ -1,6 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
+import java.io.Serializable;
 
 /**
  * The {@code Containable} interface defines the contract for an object that can
@@ -10,7 +11,7 @@ import core.model.exception.HITException;
  * 
  * @author kemcqueen
  */
-public interface Containable<T extends Container> {
+public interface Containable<T extends Container> extends Serializable {
     /**
      * Notify this {@code Containable} that it has been added to the given
      * container.  This allows the containable to perform any necessary 

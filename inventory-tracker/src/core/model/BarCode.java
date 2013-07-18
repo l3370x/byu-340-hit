@@ -1,6 +1,7 @@
 package core.model;
 
 import core.model.exception.HITException;
+import java.io.Serializable;
 import core.model.exception.HITException.Severity;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
  * 
  * @author Andrew
  */
-public class BarCode {
+public class BarCode implements Serializable {
     private static final Random random = new Random(System.currentTimeMillis());
 
     /**
