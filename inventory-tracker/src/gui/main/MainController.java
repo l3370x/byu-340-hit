@@ -1,5 +1,7 @@
 package gui.main;
 
+import core.model.PersistenceManager;
+import core.model.exception.HITException;
 import gui.common.*;
 
 /**
@@ -44,6 +46,14 @@ public class MainController extends Controller implements IMainController {
 	 */
 	@Override
 	public void exit() {
+		/*
+		try {
+			PersistenceManager.INSTANCE.save();
+		} catch (HITException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
 	}
 
 	/**

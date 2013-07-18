@@ -3,6 +3,9 @@ package gui.main;
 
 import javax.swing.*;
 
+import core.model.PersistenceManager;
+import core.model.exception.HITException;
+
 import java.awt.event.*;
 
 import gui.common.*;
@@ -33,6 +36,15 @@ public final class GUI extends JFrame implements IMainView {
 			}			
 		});	
 		
+		/*
+		try {
+			PersistenceManager.INSTANCE.load();
+		} catch (HITException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+		
 		createMenus();
 		createInventoryView();
 
@@ -40,7 +52,7 @@ public final class GUI extends JFrame implements IMainView {
 
 		_sessionMenu.setController(_controller);
 		_reportsMenu.setController(_controller);
-
+		
 		display();
 	}
 

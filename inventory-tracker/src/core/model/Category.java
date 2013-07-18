@@ -12,7 +12,8 @@ import core.model.exception.HITException.Severity;
  * 
  * @author kemcqueen
  */
-public interface Category extends Containable<ProductContainer<Category>>, ProductContainer<Category> {
+public interface Category extends Containable<ProductContainer<Category>>, 
+        ProductContainer<Category> {
     /**
      * Get the total amount of products in this category required for a three 
      * (3) month supply. For example:

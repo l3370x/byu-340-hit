@@ -112,7 +112,7 @@ public class BarCode {
      * 
      * @throws HITException if the bar code could not be created for any reason.
      */
-    public BarCode(String value) {
+    private BarCode(String value) {
         this.value = value;
     }
 

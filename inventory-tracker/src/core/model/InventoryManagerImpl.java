@@ -15,7 +15,8 @@ import java.util.Observable;
  * 
  * @author kemcqueen
  */
-class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> implements InventoryManager {
+class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> 
+implements InventoryManager {
     private final Container<Item> removedItems = new ItemCollection(null);
     
     /**
@@ -64,7 +65,8 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> impleme
 
     @Override
     public StorageUnit getStorageUnit() {
-        throw new UnsupportedOperationException("InventoryManager does not belong to a StorageUnit");
+        throw new UnsupportedOperationException(
+                "InventoryManager does not belong to a StorageUnit");
     }
 
     @Override

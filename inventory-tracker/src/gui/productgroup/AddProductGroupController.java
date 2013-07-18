@@ -126,7 +126,8 @@ public class AddProductGroupController extends Controller implements
                     newCategory(this.getView().getProductGroupName());
             String  newSupply = this.getView().getSupplyValue();
     		SizeUnits newSize = this.getView().getSupplyUnit();
-            Quantity newQuantity = new Quantity(Float.parseFloat(newSupply),UnitController.sizeUnitsToUnits(newSize));
+            Quantity newQuantity = new Quantity(Float.parseFloat(newSupply),
+                    UnitController.sizeUnitsToUnits(newSize));
             category.set3MonthSupplyQuantity(newQuantity);
             // add the category to the selected container
             Container selectedContainer = (Container) this.container.getTag();

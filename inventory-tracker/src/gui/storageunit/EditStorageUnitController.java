@@ -133,7 +133,8 @@ public class EditStorageUnitController extends Controller
             
             // the unit should notify its observers of the change
             if (unit instanceof Observable) {
-                ((Observable) unit).notifyObservers(new ModelNotification(CONTENT_UPDATED, unit.getContainer(), unit));
+                ((Observable) unit).notifyObservers(new ModelNotification(CONTENT_UPDATED, 
+                        unit.getContainer(), unit));
             }
         } catch (HITException ex) {
             ExceptionHandler.TO_USER.reportException(ex, 

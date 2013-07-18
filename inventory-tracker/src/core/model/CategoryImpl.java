@@ -42,7 +42,8 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
     }
 
     @Override
-    public void wasAddedTo(ProductContainer<Category> container) throws HITException {
+    public void wasAddedTo(ProductContainer<Category> container) 
+            throws HITException {
         verifyContains(container, this);
 
         this.container = container;
@@ -52,7 +53,8 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
     }
 
     @Override
-    public void wasRemovedFrom(ProductContainer<Category> container) throws HITException {
+    public void wasRemovedFrom(ProductContainer<Category> container) 
+            throws HITException {
         verifyDoesNotContain(container, this);
         
         this.container = null;
@@ -62,7 +64,8 @@ class CategoryImpl extends AbstractProductContainer<Category> implements Categor
     }
 
     @Override
-    public void transfer(ProductContainer<Category> from, ProductContainer<Category> to) throws HITException {
+    public void transfer(ProductContainer<Category> from, ProductContainer<Category> to) 
+            throws HITException {
         throw new HITException(Severity.INFO, 
                 "Categories (or product groups) are not transferable");
     }
