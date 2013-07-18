@@ -2,7 +2,7 @@ package core.model;
 
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
-
+import java.io.Serializable;
 /**
  * The {@code Quantity} class is used to measure a product. This class is
  * immutable and therefore thread-safe.
@@ -12,7 +12,7 @@ import core.model.exception.HITException.Severity;
  *
  * @author kemcqueen
  */
-public class Quantity {
+public class Quantity implements Serializable {
 
     private final float value;
     private final Units units;
