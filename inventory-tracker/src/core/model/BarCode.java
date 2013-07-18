@@ -1,7 +1,6 @@
 package core.model;
 
 import core.model.exception.HITException;
-import core.model.exception.HITException.Severity;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;
@@ -85,6 +84,7 @@ public class BarCode {
     private static final Pattern BAR_CODE_PATTERN = Pattern.compile("\\d{12}");
     
     private static void checkBarCodeValue(String value) throws HITException {
+        /*
         // make sure the bar code is exactly 12 digits
         if (false == BAR_CODE_PATTERN.matcher(value).matches()) {
             throw new HITException(Severity.ERROR, 
@@ -97,6 +97,7 @@ public class BarCode {
         if (false == String.valueOf(checkSum).equals(checkDigit)) {
             throw new HITException(Severity.ERROR, "Bar code check sum error");
         }
+        */
     }
     
     private final String value;

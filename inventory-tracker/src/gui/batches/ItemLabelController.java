@@ -55,7 +55,7 @@ public class ItemLabelController implements IItemLabelController {
 	    }
 	    document.add(table);
 	} catch (DocumentException e) {
-            ExceptionHandler.TO_USER.reportException(e, "Can;t print bar code labels");
+            ExceptionHandler.TO_USER.reportException(e, "Can't print bar code labels");
             ExceptionHandler.TO_LOG.reportException(e, "Can't print bar code labels");
 	}
     }
@@ -77,9 +77,9 @@ public class ItemLabelController implements IItemLabelController {
 	    String dateString = DateUtils.formatDate(date);
 	    dateString = dateString.replace("/", "_");
 	    fileName = fileName.replace("build/", "");
-	    outFile = new File(fileName, "printouts/labels/" + dateString
+	    outFile = new File(fileName + "printouts/labels/", dateString
 		    + "_" + printCount + ".pdf");
-	    outFile.mkdirs();
+	    outFile.getParentFile().mkdirs();
 	    System.out.println(outFile);
 	    if (!outFile.exists()) {
 		System.out.println("File DNE. Create " + outFile);
@@ -87,7 +87,7 @@ public class ItemLabelController implements IItemLabelController {
 	    }
 	    printCount++;
 	} catch (IOException e) {
-            ExceptionHandler.TO_USER.reportException(e, "Can;t print bar code labels");
+            ExceptionHandler.TO_USER.reportException(e, "Can't print bar code labels");
             ExceptionHandler.TO_LOG.reportException(e, "Can't print bar code labels");
 	}
     }
