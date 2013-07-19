@@ -29,7 +29,7 @@ import javax.swing.Timer;
 public class AddItemBatchController extends Controller implements
         IAddItemBatchController {
     private static final int TIMER_DELAY = 1000;
-    private static final Pattern POSITIVE_INTEGER_PATTERN = Pattern.compile("-?\\d+(\\.\\d+)?");
+    private static final Pattern POSITIVE_INTEGER_PATTERN = Pattern.compile("[1-9]+0*");
 
     private Timer timer;
 
