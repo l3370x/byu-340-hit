@@ -82,4 +82,9 @@ public class ItemCollection extends AbstractProductContainerProxy<Item> {
         
         return null != items ? items.size() : 0;
     }
+
+    @Override
+    public int getItemCount() {
+        return this.size();
+    }
 }

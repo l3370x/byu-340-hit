@@ -1,5 +1,6 @@
 package core.model;
 
+import common.Visitable;
 import core.model.exception.HITException;
 
 /**
@@ -96,5 +97,15 @@ extends AbstractContainer<T> implements ProductContainer<T> {
     @Override
     public int getItemCount(Product product) {
         return this.delegate.getItemCount(product);
+    }
+
+    @Override
+    public int getItemCount() {
+        return this.delegate.getItemCount();
+    }
+
+    @Override
+    public Iterable<Visitable> getNextToBeVisited() {
+        return this.delegate.getNextToBeVisited();
     }
 }

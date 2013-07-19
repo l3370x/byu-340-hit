@@ -1,5 +1,6 @@
 package core.model;
 
+import common.Visitable;
 import core.model.exception.HITException;
 
 /**
@@ -8,7 +9,7 @@ import core.model.exception.HITException;
  * 
  * @author kemcqueen
  */
-public interface ProductContainer<T extends Containable> extends Container<T> {
+public interface ProductContainer<T extends Containable> extends Container<T>, Visitable {
 
     /**
      * Add the given {@link Item} instance to this product container.
@@ -115,6 +116,13 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
     Iterable<Item> getItems();
     
     /**
+     * Get the number of {@link Item} instances stored in this product container.
+     * 
+     * @return the number of items in this product container
+     */
+    int getItemCount();
+    
+    /**
      * Get the collection of {@link Item} instances contained in this product
      * container belonging to the given product.
      * 
@@ -128,6 +136,15 @@ public interface ProductContainer<T extends Containable> extends Container<T> {
      * @return a collection of items for the given product
      */
     Iterable<Item> getItems(Product product);
+    
+    /**
+     * Get the number of {@link Item} instances contained in this product container
+     * belonging to the given product.
+     * 
+     * @param product the product for which to retrieve the count of items
+     * 
+     * @return the number of items in this product container associated with the given product.
+     */
     int getItemCount(Product product);
 
     /**

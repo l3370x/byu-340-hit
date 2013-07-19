@@ -1,5 +1,6 @@
 package core.model;
 
+import common.Visitable;
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
 import static core.model.ModelNotification.ChangeType.*;
@@ -141,6 +142,11 @@ public abstract class AbstractProductContainer<T extends Containable>
     }
 
     @Override
+    public int getItemCount() {
+        return this.items.getItemCount();
+    }
+    
+    @Override
     public Iterable<Item> getItems(Product product) {
         return this.items.getItems(product);
     }
@@ -263,5 +269,10 @@ public abstract class AbstractProductContainer<T extends Containable>
         } catch (HITException ex) {
             ExceptionHandler.TO_LOG.reportException(ex, "Unable to update content");
         }
+    }
+
+    @Override
+    public <V extends Visitable> Iterable<V> getNextToBeVisited() {
+        return (Iterable<V>) this.getContents();
     }
 }
