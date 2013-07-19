@@ -150,6 +150,7 @@ public class InventoryController extends Controller
                 ((ProductContainer) selected.getTag()).getStorageUnit();
         try {
             unit.getContainer().remove(unit);
+            this.productContainerSelectionChanged();
         } catch (HITException ex) {
             ExceptionHandler.TO_USER.reportException(ex, 
                     "Unable To Delete Storage Unit");
