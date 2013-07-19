@@ -313,7 +313,7 @@ public class AddItemBatchController extends Controller implements
     }
 
     private void prepareForEntry() {
-        //this.getView().setCount("1");
+        this.getView().setCount("1");
         this.getView().setEntryDate(new Date());
         this.getView().giveBarcodeFocus();
     }
