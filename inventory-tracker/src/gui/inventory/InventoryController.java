@@ -211,6 +211,7 @@ public class InventoryController extends Controller
         
         try {
             category.getContainer().remove(category);
+            this.productContainerSelectionChanged();
         } catch (HITException ex) {
             ExceptionHandler.TO_USER.reportException(ex, 
                     "Unable To Delete Product Group");
