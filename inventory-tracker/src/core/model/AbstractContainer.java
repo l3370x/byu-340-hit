@@ -26,7 +26,7 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
     public final Iterable<T> getContents() {
         this.sortContentsIfNecessary();
         
-        return Collections.unmodifiableList(this.contents);
+        return Collections.unmodifiableList(new ArrayList<>(this.contents));
     }
     
     @Override
@@ -179,8 +179,7 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
      * @throws HITException if the follow-up task(s) fail(s) for any reason
      */
     protected void didAdd(T content) throws HITException {
-        // notify the content that it has been added to this container
-        content.wasAddedTo(this);
+        this.updateAddedContent(content);
         
         // notify observers that content has been added
         this.notifyObservers(new ModelNotification(CONTENT_ADDED, this, content));
@@ -200,8 +199,7 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
      * @throws HITException if the follow-up task(s) fail(s) for any reason
      */
     protected void didRemove(T content) throws HITException {
-        // notify the content that it has been removed from this container
-        content.wasRemovedFrom(this);
+        this.updateRemovedContent(content);
         
         // notify observers that content has been added
         this.notifyObservers(new ModelNotification(CONTENT_REMOVED, this, content));
@@ -295,5 +293,33 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
 
     protected void requiresSort(boolean requiresSort) {
         this.requiresSort = requiresSort;
+    }
+
+    /**
+     * This method is called after the given content was added, in order to notify the content that
+     * it has been added to this container.  Implementations should call the content's 
+     * {@link Containable#wasAddedTo(core.model.Container) wasAddedTo} method.
+     * 
+     * @param content the content that was just added
+     * 
+     * @throws HITException 
+     */
+    protected void updateAddedContent(T content) throws HITException {
+        // notify the content that it has been added to this container
+        content.wasAddedTo(this);
+    }
+
+    /**
+     * This method is called after the given content was removed, in order to notify the content 
+     * that it has been removed from this container.  Implementations should call the content's 
+     * {@link Containable#wasRemovedFrom(core.model.Container) wasRemovedFrom} method.
+     * 
+     * @param content the content that was just removed
+     * 
+     * @throws HITException 
+     */
+    protected void updateRemovedContent(T content) throws HITException {
+        // notify the content that it has been removed from this container
+        content.wasRemovedFrom(this);
     }
 }

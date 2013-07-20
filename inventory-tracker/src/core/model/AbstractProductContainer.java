@@ -100,12 +100,12 @@ public abstract class AbstractProductContainer<T extends Containable>
     
     @Override
     public void addItem(Item item) throws HITException {
-        assert null != item;
+        if (null == item) {
+            throw new HITException(Severity.INFO, "Item must not be null");
+        }
         
         // add the product if necessary
-        if (this.products.canAdd(item.getProduct())) {
-            this.products.add(item.getProduct());
-        }
+        this.addProduct(item.getProduct());
         
         // (try to) add the item
         this.items.add(item);
@@ -113,7 +113,28 @@ public abstract class AbstractProductContainer<T extends Containable>
 
     @Override
     public void addProduct(Product product) throws HITException {
-        this.products.add(product);
+        if (null == product) {
+            throw new HITException(Severity.INFO, "Product must not be null");
+        }
+        
+        if (false == this.canAddProduct(product)) {
+            return;
+        }
+        
+        // check to see if the product is already contained with this container's storage unit
+        // if so, do a transfer, otherwise just add it
+        StorageUnit mySU = this.getStorageUnit();
+        for (StorageUnit unit : product.getStorageUnits()) {
+            // I'm doing indentity equality here on purpose
+            if (unit == mySU) {
+                // transfer the product from the container within this storage unit to the this
+                product.transfer(product.getProductContainer(unit), this);
+                return;
+            }
+        }
+
+        // just add the product here as a new product in this branch
+        this.doAddProduct(product);
     }
 
     @Override
@@ -274,5 +295,23 @@ public abstract class AbstractProductContainer<T extends Containable>
     @Override
     public <V extends Visitable> Iterable<V> getNextToBeVisited() {
         return (Iterable<V>) this.getContents();
+    }
+
+    protected void doAddProduct(Product product) throws HITException {
+        this.products.add(product);
+    }
+    
+    protected void doAddItem(Item item) throws HITException {
+        this.items.add(item);
+    }
+
+    @Override
+    public boolean containsItem(Item item) {
+        return this.items.contains(item);
+    }
+
+    @Override
+    public boolean containsProduct(Product product) {
+        return this.products.contains(product);
     }
 }

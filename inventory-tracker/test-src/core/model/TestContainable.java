@@ -1,5 +1,7 @@
 package core.model;
 
+import core.model.exception.HITException;
+
 /**
  * The {@code TestContainable} class is an implementation of the {@link Containable}
  * interface for testing purposes.
@@ -28,5 +30,15 @@ public class TestContainable extends AbstractContainable<TestContainer> {
      */
     public boolean isAddable() {
         return this.addable;
+    }
+
+    @Override
+    protected void verifyContainedIn(TestContainer container) throws HITException {
+        verifyContains(container, this);
+    }
+
+    @Override
+    protected void verifyNotContainedIn(TestContainer container) throws HITException {
+        verifyDoesNotContain(container, this);
     }
 }

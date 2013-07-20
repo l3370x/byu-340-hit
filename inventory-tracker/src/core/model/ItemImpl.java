@@ -1,5 +1,6 @@
 package core.model;
 
+import core.model.exception.HITException;
 import java.util.Date;
 
 import java.util.*;
@@ -58,6 +59,48 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
     @Override
     public Date getExpirationDate() {
         return this.expirationDate;
+    }
+
+    @Override
+    public void transfer(ProductContainer from, ProductContainer to) throws HITException {
+        from.removeItem(this);
+        to.addItem(this);
+    }
+
+    @Override
+    public String toString() {
+        return this.getBarCode().toString();
+    }
+
+    @Override
+    protected void verifyContainedIn(ProductContainer container) throws HITException {
+        if (null == container) {
+            throw new HITException(HITException.Severity.WARNING, 
+                    "Container must not be null");
+        }
+        
+        if (false == container.containsItem(this)) {
+            throw new HITException(HITException.Severity.WARNING, 
+                    "Container (" + container +") does not contain this item");
+        }
+    }
+
+    @Override
+    protected void verifyNotContainedIn(ProductContainer container) throws HITException {
+        if (null == container) {
+            throw new HITException(HITException.Severity.WARNING, 
+                    "Container must not be null");
+        }
+        
+        if (this.getContainer() != container) {
+            throw new HITException(HITException.Severity.WARNING, 
+                    "Container (" + container + ") is not the current container");
+        }
+        
+        if (container.containsItem(this)) {
+            throw new HITException(HITException.Severity.WARNING, 
+                    "Container (" + container + ") still contains this item");
+        }
     }
     
 }

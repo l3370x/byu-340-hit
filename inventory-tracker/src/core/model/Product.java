@@ -167,7 +167,7 @@ public interface Product extends Containable<ProductContainer> {
      * @return the product container that actually contains this product in the
      * given storage unit (may be the storage unit itself)
      */
-    ProductContainer getProductContainer(StorageUnit unit) throws HITException;
+    ProductContainer getProductContainer(StorageUnit unit);
     
     
     /**
