@@ -262,7 +262,30 @@ public class InventoryController extends Controller
      */
     @Override
     public boolean canDeleteProduct() {
-        return true;
+        ProductData productData = this.getView().getSelectedProduct();
+        if (null == productData) {
+            return false;
+        }
+        
+        Object tag = productData.getTag();
+        if (false == tag instanceof Product) {
+            return false;
+        }
+        
+        Product product = (Product) tag;
+
+        ProductContainerData containerData = this.getView().getSelectedProductContainer();
+        if (null == containerData) {
+            return false;
+        }
+        
+        tag = containerData.getTag();
+        
+        if (false == tag instanceof ProductContainer) {
+            return false;
+        }
+        
+        return ((ProductContainer) tag).getItemCount(product) == 0;
     }
 
     /**
@@ -270,6 +293,33 @@ public class InventoryController extends Controller
      */
     @Override
     public void deleteProduct() {
+        ProductData productData = this.getView().getSelectedProduct();
+        if (null == productData) {
+            return;
+        }
+        
+        Object tag = productData.getTag();
+        if (false == tag instanceof Product) {
+            return;
+        }
+        
+        Product product = (Product) tag;
+
+        ProductContainerData containerData = this.getView().getSelectedProductContainer();
+        if (null == containerData) {
+            return;
+        }
+        
+        tag = containerData.getTag();
+        
+        if (false == tag instanceof ProductContainer) {
+            return;
+        }
+        try {
+            ((ProductContainer) tag).removeProduct(product);
+        } catch (HITException ex) {
+            ExceptionHandler.TO_USER.reportException(ex, "Unable To Remove Product");
+        }
     }
 
     /**
