@@ -301,6 +301,25 @@ public class InventoryController extends Controller
      */
     @Override
     public void removeItem() {
+        ItemData itemData = this.getView().getSelectedItem();
+        if (null == itemData) {
+            return;
+        }
+        
+        Object tag = itemData.getTag();
+        if (false == tag instanceof Item) {
+            return;
+        }
+        
+        Item item = (Item) tag;
+        
+        try {
+            item.getContainer().removeItem(item);
+            
+            // TODO do I set the exit date here or do I do that somewhere else?
+        } catch (HITException ex) {
+            ExceptionHandler.TO_USER.reportException(ex, "Unable To Remove Item");
+        }
     }
 
     /**
@@ -445,8 +464,8 @@ public class InventoryController extends Controller
                 break;
 
             case PRODUCT_ADDED:
-            case PRODUCT_REMOVED:
             case ITEM_ADDED:
+            case PRODUCT_REMOVED:
             case ITEM_REMOVED:
                 this.productContainerSelectionChanged();
                 this.productSelectionChanged();
@@ -510,7 +529,18 @@ public class InventoryController extends Controller
     }
 
     private static void updateProductsPane(IInventoryView view) {
-        view.setProducts(getProducts(view));
+        ProductData selectedProduct = view.getSelectedProduct();
+        
+        ProductData[] products = getProducts(view);
+        view.setProducts(products);
+        
+        if (false == Arrays.asList(products).contains(selectedProduct)) {
+            selectedProduct = products.length > 0 ? products[0] : null;
+        }
+        
+        if (null != selectedProduct) {
+            view.selectProduct(selectedProduct);
+        }
     }
 
     private static void updateItemsPane(IInventoryView view) {
