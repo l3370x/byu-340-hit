@@ -85,6 +85,16 @@ public interface Item extends Containable<ProductContainer> {
      * @return the date on which this item will expire
      */
     Date getExpirationDate();
+
+    /**
+     * Set the date on which this item was entered.
+     * 
+     * @param date the date to set
+     * @pre
+     * 
+     * @post entry date is set
+     */
+    void setEntryDate(Date date);
     
     /**
      * The static {@code Item.Factory} class is used to generate valid Item

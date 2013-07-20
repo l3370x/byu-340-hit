@@ -1,5 +1,7 @@
 package core.model;
 
+import java.util.Observable;
+
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
 
@@ -11,7 +13,7 @@ import core.model.exception.HITException.Severity;
  * 
  * @author kemcqueen
  */
-abstract class AbstractContainable<T extends Container> implements Containable<T> {
+abstract class AbstractContainable<T extends Container> extends Observable implements Containable<T> {
     private T container;
     
     @Override
