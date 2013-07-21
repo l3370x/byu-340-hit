@@ -61,7 +61,7 @@ implements InventoryManager {
         
         item.setExitDate(new Date());
         
-        this.removedItems.add(item);
+        //this.removedItems.add(item);
     }
     
     @Override
@@ -70,9 +70,18 @@ implements InventoryManager {
     }
 
     @Override
+    public void addProduct(Product product) throws HITException {
+        this.doAddProduct(product);
+    }
+
+    @Override
+    public void addItem(Item item) throws HITException {
+        this.doAddItem(item);
+    }
+
+    @Override
     public StorageUnit getStorageUnit() {
-        throw new UnsupportedOperationException(
-                "InventoryManager does not belong to a StorageUnit");
+        return null;
     }
 
     @Override

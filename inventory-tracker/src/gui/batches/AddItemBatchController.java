@@ -8,6 +8,7 @@ import core.model.exception.HITException;
 import static core.model.InventoryManager.Factory.getInventoryManager;
 import static core.model.Item.Factory.newItem;
 import static core.model.BarCode.*;
+import core.model.exception.HITException.Severity;
 import gui.common.*;
 import gui.inventory.*;
 import gui.item.ItemData;
@@ -28,11 +29,10 @@ import javax.swing.Timer;
  */
 public class AddItemBatchController extends Controller implements
         IAddItemBatchController {
-    private static final int TIMER_DELAY = 1000;
-    private static final Pattern POSITIVE_INTEGER_PATTERN = Pattern.compile("-?\\d+(\\.\\d+)?");
 
+    private static final int TIMER_DELAY = 500;
+    private static final Pattern POSITIVE_INTEGER_PATTERN = Pattern.compile("[1-9]+0*");
     private Timer timer;
-
     private ProductContainerData source;
     private final CopyOnWriteArrayList<Product> addedProducts = new CopyOnWriteArrayList<>();
     private final Map<Product, List<Item>> addedItemsByProduct = new HashMap<>();
@@ -69,12 +69,11 @@ public class AddItemBatchController extends Controller implements
      */
     @Override
     protected void loadValues() {
-        this.getView().setCount("1");
-
-        // default to *not* use the scanner
-        this.getView().setUseScanner(false);
+        // default to use the scanner
+        this.getView().setUseScanner(true);
         this.useScannerChanged();
-        
+
+        // prepare the form for entry
         this.prepareForEntry();
     }
 
@@ -95,6 +94,7 @@ public class AddItemBatchController extends Controller implements
         this.getView().enableItemAction(false);
         this.getView().enableUndo(false);
         this.getView().enableRedo(false);
+        this.getView().setUseScanner(true);
     }
 
     /**
@@ -111,44 +111,33 @@ public class AddItemBatchController extends Controller implements
      */
     @Override
     public void countChanged() {
-        this.getView().enableItemAction(POSITIVE_INTEGER_PATTERN.matcher(
-                this.getView().getCount()).matches());
+        if (this.getView().getUseScanner()) {
+            return;
+        }
+        
+        this.getView().enableItemAction(this.countIsValid(this.getView().getCount()));
     }
-    
+
     /**
      * This method is called when the "Product Barcode" field in the add item batch view is changed
      * by the user.
      */
     @Override
     public void barcodeChanged() {
-        if (this.getView().getUseScanner()) {
-            this.ensureProductExists();
-        } else {
-            if (this.timer.isRunning()) {
-                this.timer.restart();
-            } else {
-                this.timer.start();
-            }
-        }
-    }
-    
-    private void ensureProductExists() {
-        final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
-
-        // see if the product exists in the InventoryManager
-        Product product = getInventoryManager().getProduct(barcode);
-
-        if (product == null) {
-            // prompt the user to create/add the product
-            this.getView().displayAddProductView();
-
-            // see if the product was added
-            product = getInventoryManager().getProduct(barcode);
-
-            this.getView().enableItemAction(null != product);
+        if (false == this.getView().getUseScanner()) {
+            return;
         }
         
-        this.getView().enableItemAction(true);
+        String barcode = this.getView().getBarcode();
+        if (null == barcode || barcode.isEmpty()) {
+            return;
+        }
+
+        if (this.timer.isRunning()) {
+            this.timer.restart();
+        } else {
+            this.timer.start();
+        }
     }
 
     /**
@@ -158,10 +147,17 @@ public class AddItemBatchController extends Controller implements
     @Override
     public void useScannerChanged() {
         if (this.getView().getUseScanner()) {
-            this.timer.stop();
+            // when using the scanner, items are added immediately and automatically
             this.getView().enableItemAction(false);
-        } else {
+
+            // start the timer
             this.initTimer();
+        } else {
+            // when not using the scanner, the user will have to click the "Add Item" button
+            this.getView().enableItemAction(true);
+
+            // stop the timer
+            this.timer.stop();
         }
     }
 
@@ -174,22 +170,22 @@ public class AddItemBatchController extends Controller implements
         if (null == productData) {
             return;
         }
-        
+
         Object tag = productData.getTag();
         if (false == tag instanceof Product) {
             return;
         }
-        
+
         List<Item> addedItems = this.addedItemsByProduct.get((Product) tag);
         if (null == addedItems) {
             return;
         }
-        
+
         List<ItemData> itemList = new ArrayList<>();
         for (Item item : addedItems) {
             itemList.add(new ItemData(item));
         }
-        
+
         this.getView().setItems(itemList.toArray(new ItemData[0]));
     }
 
@@ -205,18 +201,47 @@ public class AddItemBatchController extends Controller implements
             // get the product
             Product product = getInventoryManager().getProduct(barcode);
 
-            // if the product doesn't exist, then there's nothing else we can do
+            // if the product doesn't exist, then...
             if (product == null) {
-                return;
+                // prompt the user to create/add the product
+                this.getView().displayAddProductView();
+
+                // see if the product was added
+                product = getInventoryManager().getProduct(barcode);
+
+                // if the product *still* doesn't exist, then there's nothing more we can do here
+                if (null == product) {
+                    return;
+                }
             }
-            
+
             List<Item> addedItems = this.addedItemsByProduct.get(product);
             if (null == addedItems) {
                 addedItems = new ArrayList<>();
                 this.addedItemsByProduct.put(product, addedItems);
             }
+            
+            String countVal = this.getView().getCount();
+            if (false == this.countIsValid(countVal)) {
+                throw new HITException(Severity.ERROR, "Invalid value for count (" + countVal + 
+                        "): must be a numeric value greater than 0.");
+            }
+            
+            Object tag = this.source.getTag();
+            if (false == tag instanceof StorageUnit) {
+                throw new HITException(Severity.ERROR, 
+                        "Items may only be added when a storage unit is selected");
+            }
+            
+            // get the target container for the items (the target is the actual container where the 
+            // product is located within the storage unit
+            ProductContainer target = product.getProductContainer((StorageUnit) tag);
+            if (null == target) {
+                target = (StorageUnit) tag;
+            }
 
-            int count = Integer.valueOf(this.getView().getCount());
+            // create "count" items
+            int count = Integer.valueOf(countVal);
             for (int i = 0; i < count; i++) {
                 // generate data for the Item
                 Calendar expiryDate = Calendar.getInstance();
@@ -224,22 +249,21 @@ public class AddItemBatchController extends Controller implements
                 expiryDate.add(Calendar.MONTH, product.getShelfLifeInMonths());
 
                 // create the item
-                Item itemtoadd = newItem(product, 
+                Item itemtoadd = newItem(product,
                         this.getView().getEntryDate(), expiryDate.getTime());
 
                 // add the item
-                ProductContainer container = (ProductContainer) this.source.getTag();
-                container.addItem(itemtoadd);
+                target.addItem(itemtoadd);
                 addedItems.add(itemtoadd);
             }
 
             // update the products pane
             this.updateProductsPane(product);
-            
-            // re-initialize entry view
-            this.prepareForEntry();
         } catch (HITException e) {
             ExceptionHandler.TO_USER.reportException(e, "Unable To Add Item(s)");
+        } finally {
+            // re-initialize entry view
+            this.prepareForEntry();
         }
     }
 
@@ -263,21 +287,21 @@ public class AddItemBatchController extends Controller implements
     @Override
     public void done() {
         getView().close();
-        
+
         List<Item> allAddedItems = new ArrayList<>();
         for (List<Item> addedItems : this.addedItemsByProduct.values()) {
             allAddedItems.addAll(addedItems);
         }
-        
+
         ItemLabelController.createDocument(allAddedItems.toArray(new Item[allAddedItems.size()]));
     }
 
     private void initTimer() {
         if (null == this.timer) {
-            this.timer = new Timer(TIMER_DELAY, new ActionListener(){
+            this.timer = new Timer(TIMER_DELAY, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    ensureProductExists();
+                    addItem();
                 }
             });
             this.timer.setRepeats(false);
@@ -287,9 +311,9 @@ public class AddItemBatchController extends Controller implements
     private void updateProductsPane(Product product) {
         // add the product to the list if it hasn't been already
         this.addedProducts.addIfAbsent(product);
-        
+
         ProductContainer container = (ProductContainer) this.source.getTag();
-        
+
         // create the product data instances
         ProductData selected = null;
         List<ProductData> productList = new ArrayList<>();
@@ -301,10 +325,10 @@ public class AddItemBatchController extends Controller implements
                 selected = data;
             }
         }
-        
+
         // display the products in the view
         this.getView().setProducts(productList.toArray(new ProductData[productList.size()]));
-        
+
         // select the just-added product
         if (null != selected) {
             this.getView().selectProduct(selected);
@@ -313,8 +337,23 @@ public class AddItemBatchController extends Controller implements
     }
 
     private void prepareForEntry() {
-        //this.getView().setCount("1");
+        // the count should default to 1
+        this.getView().setCount("1");
+
+        // the entry date should default to "now"
         this.getView().setEntryDate(new Date());
+
+        // give focus to the barcode field
         this.getView().giveBarcodeFocus();
+
+        // if using a scanner, clear the barcode field
+        if (this.getView().getUseScanner()) {
+            this.getView().setBarcode("");
+        }
+    }
+
+    private boolean countIsValid(String count) {
+        return POSITIVE_INTEGER_PATTERN.matcher(
+                count).matches();
     }
 }

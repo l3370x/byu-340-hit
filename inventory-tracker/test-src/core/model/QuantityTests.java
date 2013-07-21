@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  *
  * @author Andrew
  */
-public class QuatitiyTests {
+public class QuantityTests {
     
     @Test (expected = HITException.class)
     public void testBadValue() throws HITException{

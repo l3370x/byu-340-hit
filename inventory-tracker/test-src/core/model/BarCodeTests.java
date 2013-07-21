@@ -14,8 +14,7 @@ public class BarCodeTests {
     @Test
     public void testGenerateBarCode() throws HITException {
         for (int i = 0; i < 100; i++) {
-            BarCode.generateItemBarCode().print(System.out);
-            System.out.println();
+            BarCode.generateItemBarCode();
         }
     }
 }
