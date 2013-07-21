@@ -22,7 +22,7 @@ public class ItemLabelController {
 	private static final String BASE_FILE_NAME = ItemLabelController.class
 			.getClassLoader().getResource(".").getPath();
 
-	public static void createDocument(Item... items) {
+	public static void createDocument(Item[] items) {
 		try {
 			File outFile = initOutputFile();
 			Document document = new Document(PageSize.LETTER);
@@ -41,10 +41,10 @@ public class ItemLabelController {
 	}
 
 	private static void formatDocument(Document document,
-			PdfContentByte contentByte, Item... items) {
+			PdfContentByte contentByte, Item[] items) {
 		try {
 			PdfPTable table = new PdfPTable(COLUMNS);
-			int remainingCells = items.length % COLUMNS;
+			int remainingCells = 4 - (items.length % COLUMNS);
 			for (Item item : items) {
 				renderBarCode(item, table, contentByte);
 			}
@@ -94,6 +94,7 @@ public class ItemLabelController {
 			dateString = dateString.replace("/", "_");
 
 			String fileName = BASE_FILE_NAME.replace("build/", "");
+			fileName = fileName.replace("%20", " ");
 			outFile = new File(fileName + "printouts/labels/", dateString + "_"
 					+ printCount + ".pdf");
 			outFile.getParentFile().mkdirs();
