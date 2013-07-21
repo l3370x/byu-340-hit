@@ -4,13 +4,22 @@ import static core.model.InventoryManager.Factory.getInventoryManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.Timer;
 
 import core.model.BarCode;
 import core.model.Item;
 import core.model.Product;
+import core.model.ProductContainer;
+import core.model.exception.HITException;
 import gui.common.*;
+import gui.inventory.ProductContainerData;
+import gui.item.ItemData;
 import gui.product.*;
 
 /**
@@ -21,6 +30,9 @@ public class RemoveItemBatchController extends Controller implements
 	
 	  private static final int TIMER_DELAY = 1000;
 	  private Timer timer;
+	  private final CopyOnWriteArrayList<Product> removedProducts = new CopyOnWriteArrayList<>();
+	  private final Map<Product, List<Item>> removedItemsByProduct = new HashMap<>();
+
 
 
     /**
@@ -30,7 +42,6 @@ public class RemoveItemBatchController extends Controller implements
      */
     public RemoveItemBatchController(IView view) {
         super(view);
-
         construct();
     }
 
@@ -54,6 +65,7 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     protected void loadValues() {
+    	this.getView().setBarcode("");
         this.getView().setUseScanner(false);
     	 this.useScannerChanged();
     }
@@ -147,16 +159,104 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     public void selectedProductChanged() {
+    	
+        ProductData productData = this.getView().getSelectedProduct();
+        if (null == productData) {
+            return;
+        }
+        
+        Object tag = productData.getTag();
+        if (false == tag instanceof Product) {
+            return;
+        }
+        
+        List<Item> removedItems = this.removedItemsByProduct.get((Product) tag);
+        if (null == removedItems) {
+            return;
+        }
+        
+        List<ItemData> itemList = new ArrayList<>();
+        for (Item item : removedItems) {
+            itemList.add(new ItemData(item));
+        }
+        
+        this.getView().displayInformationMessage(Integer.toString(itemList.size()));
+        
+        this.getView().setItems((ItemData[]) itemList.toArray());
+
+    	
     }
 
+    
+    
+    
     /**
      * This method is called when the user clicks the "Remove Item" button in the remove item batch
      * view.
      */
     @Override
     public void removeItem() {
+		final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
+    	Item item = getInventoryManager().itemByBarcode(barcode);
+
+    	try {
+//    		ProductContainer container = (ProductContainer) this.source.getTag();
+            
+    		getInventoryManager().removeItem(item);
+			//Update Views
+		       this.updateProductsPane(item);
+		       this.loadValues();
+		       this.enableComponents();
+			
+		} catch (HITException e) {
+			this.getView().displayErrorMessage("Could Not Remove Item: "+e.getMessage());
+		}
     }
 
+    private void updateProductsPane(Item item) {
+    	Product product=item.getProduct();
+        // add the product to the list if it hasn't been already
+        this.removedProducts.addIfAbsent(product);
+        if(this.removedItemsByProduct.containsKey(product))
+        {
+          List<Item> list = this.removedItemsByProduct.get(product);
+          list.add(item);
+      	this.removedItemsByProduct.put(product, list);     
+        }
+        else
+        {
+      	  List<Item> list = new ArrayList<Item>();
+      	 list.add(item);
+     	this.removedItemsByProduct.put(product, list);     
+        }
+        
+       
+        
+  //      ProductContainer container = (ProductContainer) this.source.getTag();
+        
+        // create the product data instances
+        ProductData selected = null;
+        List<ProductData> productList = new ArrayList<>();
+        for (Product p : this.removedProducts) {
+            ProductData data = new ProductData(p);
+            data.setCount(Integer.toString(this.removedItemsByProduct.get(p).size()));
+            productList.add(data);
+            if (p == item.getProduct()) {
+                selected = data;
+            }
+        }
+        
+        // display the products in the view
+        this.getView().setProducts(productList.toArray(new ProductData[productList.size()]));
+        
+        // select the just-added product
+        if (null != selected) {
+            this.getView().selectProduct(selected);
+            this.selectedProductChanged();
+        }
+    }
+
+    
     /**
      * This method is called when the user clicks the "Redo" button in the remove item batch view.
      */
