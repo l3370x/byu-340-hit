@@ -32,6 +32,13 @@ public final class GUI extends JFrame implements IMainView {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
+				try {
+					PersistenceManager.INSTANCE.save();
+				} catch (HITException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				/**/
 				_sessionMenu.exit();
 			}			
 		});	
