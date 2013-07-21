@@ -5,6 +5,7 @@ import static core.model.InventoryManager.Factory.getInventoryManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +69,13 @@ public class RemoveItemBatchController extends Controller implements
     	this.getView().setBarcode("");
         this.getView().setUseScanner(false);
     	 this.useScannerChanged();
+         // give focus to the barcode field
+         this.getView().giveBarcodeFocus();
+         // if using a scanner, clear the barcode field
+         if (this.getView().getUseScanner()) {
+             this.getView().setBarcode("");
+         }  
+  
     }
 
     /**
@@ -175,15 +183,11 @@ public class RemoveItemBatchController extends Controller implements
             return;
         }
         
-        List<ItemData> itemList = new ArrayList<>();
+        List<ItemData> itemList = new ArrayList<ItemData>();
         for (Item item : removedItems) {
             itemList.add(new ItemData(item));
-        }
-        
-        this.getView().displayInformationMessage(Integer.toString(itemList.size()));
-        
-        this.getView().setItems((ItemData[]) itemList.toArray());
-
+        }       
+        this.getView().setItems(itemList.toArray(new ItemData[itemList.size()]));
     	
     }
 
