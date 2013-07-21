@@ -47,13 +47,6 @@ public class MainController extends Controller implements IMainController {
 	@Override
 	public void exit() {
 		
-		try {
-			PersistenceManager.INSTANCE.save();
-		} catch (HITException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		/**/
 	}
 
 	/**
