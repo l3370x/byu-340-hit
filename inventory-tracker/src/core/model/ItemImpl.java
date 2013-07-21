@@ -1,7 +1,10 @@
 package core.model;
 
 import core.model.exception.HITException;
+
+import java.util.Calendar;
 import java.util.Date;
+
 import common.util.DateUtils;
 
 /**
@@ -21,12 +24,12 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
     private Date expirationDate;
     private Product product;
 
-    ItemImpl(Date entryDate, Date expirationDate, Product product,
+    ItemImpl(Date entryDate, Product product,
             BarCode barcode) {
         this.product = product;
-        this.expirationDate = expirationDate;
         this.entryDate = entryDate;
         this.barcode = barcode;
+        setExpirationDate();
     }
 
     @Override
@@ -108,9 +111,17 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
                 && date.before(DateUtils.currentDate())) {
             // Yes. Continue
             this.entryDate = date;
+            setExpirationDate();
             this.notifyObservers(new ModelNotification(
                     ModelNotification.ChangeType.ITEM_UPDATED, this
                     .getContainer(), this));
         }
+    }
+    
+    private void setExpirationDate() {
+    	Calendar cal = Calendar.getInstance();
+    	cal.setTime(this.getEntryDate());
+    	cal.add(Calendar.MONTH, this.getProduct().getShelfLifeInMonths());
+    	this.expirationDate = cal.getTime();
     }
 }

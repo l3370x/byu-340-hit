@@ -94,6 +94,7 @@ public class AddItemBatchController extends Controller implements
         this.getView().enableItemAction(false);
         this.getView().enableUndo(false);
         this.getView().enableRedo(false);
+        this.getView().setUseScanner(true);
     }
 
     /**

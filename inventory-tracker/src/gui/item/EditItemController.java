@@ -1,12 +1,17 @@
 package gui.item;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Observable;
 
 import common.util.DateUtils;
-
 import core.model.InventoryManager;
+import core.model.Item.Factory;
+import core.model.ModelNotification;
+import core.model.Product;
 import static core.model.InventoryManager.Factory.getInventoryManager;
 import core.model.Item;
+import core.model.exception.HITException;
 import gui.common.*;
 
 /**
@@ -107,7 +112,13 @@ public class EditItemController extends Controller implements
 	 */
 	@Override
 	public void editItem() {
-
+		Item item = (Item) this.item.getTag();
+		item.setEntryDate(this.getView().getEntryDate());
+		if (item instanceof Observable) {
+			((Observable) item).notifyObservers(new ModelNotification(
+					ModelNotification.ChangeType.ITEM_UPDATED, item
+							.getContainer(), item));
+		}
 	}
 
 }
