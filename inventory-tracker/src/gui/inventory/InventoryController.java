@@ -183,7 +183,7 @@ public class InventoryController extends Controller
         }
 
         // prepare the operator that will work on the containers
-        final Operator<ProductContainer, Boolean> operator = 
+        final Operator<ProductContainer, Boolean> operator =
                 new Operator<ProductContainer, Boolean>() {
             @Override
             public Boolean operate(ProductContainer container) {
@@ -191,10 +191,10 @@ public class InventoryController extends Controller
                 return container.getItemCount() == 0;
             }
         };
-        
+
         // create the visitor (run in pre-order so we can quit at the first sign that a container
         // has some items
-        final ProductContainerVisitor visitor = 
+        final ProductContainerVisitor visitor =
                 new ProductContainerVisitor(operator, VisitOrder.PRE_ORDER);
 
         return visitor.visit((ProductContainer) tag);
@@ -266,25 +266,25 @@ public class InventoryController extends Controller
         if (null == productData) {
             return false;
         }
-        
+
         Object tag = productData.getTag();
         if (false == tag instanceof Product) {
             return false;
         }
-        
+
         Product product = (Product) tag;
 
         ProductContainerData containerData = this.getView().getSelectedProductContainer();
         if (null == containerData) {
             return false;
         }
-        
+
         tag = containerData.getTag();
-        
+
         if (false == tag instanceof ProductContainer) {
             return false;
         }
-        
+
         return ((ProductContainer) tag).getItemCount(product) == 0;
     }
 
@@ -297,21 +297,21 @@ public class InventoryController extends Controller
         if (null == productData) {
             return;
         }
-        
+
         Object tag = productData.getTag();
         if (false == tag instanceof Product) {
             return;
         }
-        
+
         Product product = (Product) tag;
 
         ProductContainerData containerData = this.getView().getSelectedProductContainer();
         if (null == containerData) {
             return;
         }
-        
+
         tag = containerData.getTag();
-        
+
         if (false == tag instanceof ProductContainer) {
             return;
         }
@@ -365,8 +365,6 @@ public class InventoryController extends Controller
         
         try {
             item.getContainer().removeItem(item);
-            
-            // TODO do I set the exit date here or do I do that somewhere else?
         } catch (HITException ex) {
             ExceptionHandler.TO_USER.reportException(ex, "Unable To Remove Item");
         }
@@ -453,6 +451,27 @@ public class InventoryController extends Controller
     @Override
     public void addProductToContainer(ProductData productData,
             ProductContainerData containerData) {
+        if (null == productData || null == containerData) {
+            return;
+        }
+        
+        Object tag = productData.getTag();
+        if (false == tag instanceof Product) {
+            return;
+        }
+        
+        Product product = (Product) tag;
+        
+        tag = containerData.getTag();
+        if (false == tag instanceof ProductContainer) {
+            return;
+        }
+        try {
+            ((ProductContainer) tag).addProduct(product);
+        } catch (HITException ex) {
+            ExceptionHandler.TO_USER.reportException(ex, 
+                    "Unable To Add Product To Product Container");
+        }
     }
 
     /**
@@ -464,6 +483,30 @@ public class InventoryController extends Controller
     @Override
     public void moveItemToContainer(ItemData itemData,
             ProductContainerData containerData) {
+        if (null == itemData || null == containerData) {
+            return;
+        }
+
+        Object tag = itemData.getTag();
+        if (false == tag instanceof Item) {
+            return;
+        }
+
+        final Item item = (Item) tag;
+
+        tag = containerData.getTag();
+
+        if (false == tag instanceof ProductContainer) {
+            return;
+        }
+
+        final ProductContainer target = (ProductContainer) tag;
+
+        try {
+            item.transfer(item.getContainer(), target);
+        } catch (HITException ex) {
+            ExceptionHandler.TO_USER.reportException(ex, "Unable To Move Item");
+        }
     }
 
     private ProductContainerData createProductContainerData(ProductContainer container) {
@@ -580,14 +623,14 @@ public class InventoryController extends Controller
 
     private static void updateProductsPane(IInventoryView view) {
         ProductData selectedProduct = view.getSelectedProduct();
-        
+
         ProductData[] products = getProducts(view);
         view.setProducts(products);
-        
+
         if (false == Arrays.asList(products).contains(selectedProduct)) {
             selectedProduct = products.length > 0 ? products[0] : null;
         }
-        
+
         if (null != selectedProduct) {
             view.selectProduct(selectedProduct);
         }

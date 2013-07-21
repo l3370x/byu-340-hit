@@ -73,7 +73,7 @@ public class ItemCollection extends AbstractProductContainerProxy<Item> {
             return Collections.emptySet();
         }
         
-        return Collections.unmodifiableSet(items);
+        return Collections.unmodifiableSet(new HashSet<>(items));
     }
 
     @Override

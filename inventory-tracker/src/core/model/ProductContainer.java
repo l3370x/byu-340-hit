@@ -231,4 +231,8 @@ public interface ProductContainer<T extends Containable> extends Container<T>, V
      * @return the storage unit under which this category may be found
      */
     StorageUnit getStorageUnit();
+    
+    boolean containsItem(Item item);
+    
+    boolean containsProduct(Product product);
 }

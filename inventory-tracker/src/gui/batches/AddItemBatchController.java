@@ -225,7 +225,21 @@ public class AddItemBatchController extends Controller implements
                 throw new HITException(Severity.ERROR, "Invalid value for count (" + countVal + 
                         "): must be a numeric value greater than 0.");
             }
+            
+            Object tag = this.source.getTag();
+            if (false == tag instanceof StorageUnit) {
+                throw new HITException(Severity.ERROR, 
+                        "Items may only be added when a storage unit is selected");
+            }
+            
+            // get the target container for the items (the target is the actual container where the 
+            // product is located within the storage unit
+            ProductContainer target = product.getProductContainer((StorageUnit) tag);
+            if (null == target) {
+                target = (StorageUnit) tag;
+            }
 
+            // create "count" items
             int count = Integer.valueOf(countVal);
             for (int i = 0; i < count; i++) {
                 // generate data for the Item
@@ -238,8 +252,7 @@ public class AddItemBatchController extends Controller implements
                         this.getView().getEntryDate(), expiryDate.getTime());
 
                 // add the item
-                ProductContainer container = (ProductContainer) this.source.getTag();
-                container.addItem(itemtoadd);
+                target.addItem(itemtoadd);
                 addedItems.add(itemtoadd);
             }
 

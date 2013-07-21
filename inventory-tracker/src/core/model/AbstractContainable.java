@@ -13,19 +13,19 @@ import core.model.exception.HITException.Severity;
  * 
  * @author kemcqueen
  */
-class AbstractContainable<T extends Container> extends Observable implements Containable<T> {
+abstract class AbstractContainable<T extends Container> extends Observable implements Containable<T> {
     private T container;
     
     @Override
     public void wasAddedTo(final T container) throws HITException {
-        verifyContains(container, this);
+        this.verifyContainedIn(container);
         
         this.container = container;
     }
 
     @Override
     public void wasRemovedFrom(final T container) throws HITException {
-        verifyDoesNotContain(container, this);
+        this.verifyNotContainedIn(container);
         
         this.container = null;
     }
@@ -80,5 +80,9 @@ class AbstractContainable<T extends Container> extends Observable implements Con
                     "Container (" + container + ") still contains this containable");
         }
     }
+
+    protected abstract void verifyContainedIn(final T container) throws HITException;
+
+    protected abstract void verifyNotContainedIn(final T container) throws HITException;
     
 }
