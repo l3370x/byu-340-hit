@@ -365,7 +365,11 @@ public class InventoryController extends Controller
         
         try {
             item.getContainer().removeItem(item);
+            //Update the view
+            updateProductsPane(this.getView());
+            updateItemsPane(this.getView());
         } catch (HITException ex) {
+        	
             ExceptionHandler.TO_USER.reportException(ex, "Unable To Remove Item");
         }
     }
