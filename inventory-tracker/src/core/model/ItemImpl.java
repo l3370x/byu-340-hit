@@ -21,7 +21,6 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
     private Date entryDate;
     private BarCode barcode;
     private Date exitDate;
-    private Date expirationDate;
     private Product product;
 
     ItemImpl(Date entryDate, Product product,
@@ -39,7 +38,7 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
 
     @Override
     public Date getExpirationDate() {
-        return this.expirationDate;
+        return this.computeExpirationDate();
     }
 
     @Override
@@ -118,15 +117,16 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
         }
     }
 
-    private void computeExpirationDate() {
+    private Date computeExpirationDate() {
         int shelfLife = this.getProduct().getShelfLifeInMonths();
         if (shelfLife <= 0) {
-            return;
+            return null;
         }
         
         Calendar cal = Calendar.getInstance();
         cal.setTime(this.getEntryDate());
         cal.add(Calendar.MONTH, shelfLife);
-        this.expirationDate = cal.getTime();
+        
+        return cal.getTime();
     }
 }

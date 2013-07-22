@@ -13,7 +13,8 @@ import core.model.exception.HITException.Severity;
  * 
  * @author kemcqueen
  */
-abstract class AbstractContainable<T extends Container> extends Observable implements Containable<T> {
+abstract class AbstractContainable<T extends Container> extends Observable 
+implements Containable<T> {
     private T container;
     
     @Override
