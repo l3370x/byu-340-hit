@@ -93,14 +93,23 @@ public class EditItemController extends Controller implements
      */
     @Override
     public void valuesChanged() {
+    	
         IEditItemView view = getView();
         Date viewDate = view.getEntryDate();
+        if (viewDate != null)
+        {
         if (viewDate.before(DateUtils.earliestDate())
                 || viewDate.after(DateUtils.currentDate())) {
             view.enableOK(false);
         } else {
             view.enableOK(true);
         }
+        }
+        else
+        {
+            view.enableOK(false);
+        }
+        
     }
 
     /**
@@ -109,6 +118,8 @@ public class EditItemController extends Controller implements
     @Override
     public void editItem() {
         Item item = (Item) this.itemData.getTag();
+       
         item.setEntryDate(this.getView().getEntryDate());
+        
     }
 }
