@@ -428,6 +428,7 @@ public class InventoryController extends Controller
     @Override
     public void editProductGroup() {
         getView().displayEditProductGroupView();
+        updateContextPane(this.getView());
     }
 
     /**
