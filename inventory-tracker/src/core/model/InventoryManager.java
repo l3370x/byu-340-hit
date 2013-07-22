@@ -21,7 +21,6 @@ public interface InventoryManager extends ProductContainer<StorageUnit> {
      */
     Iterable<Item> getRemovedItems();
 
-    public Item itemByBarcode(BarCode barcode);
     /**
      * The {@code InventoryManager.Factory} class is used to get the singleton
      * instance of the {@link InventoryManager}.

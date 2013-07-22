@@ -128,4 +128,9 @@ extends AbstractContainer<T> implements ProductContainer<T> {
     public boolean containsProduct(Product product) {
         return this.delegate.containsProduct(product);
     }
+
+    @Override
+    public Item getItem(BarCode barCode) {
+        return this.delegate.getItem(barCode);
+    }
 }

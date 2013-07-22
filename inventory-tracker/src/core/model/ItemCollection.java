@@ -66,12 +66,6 @@ public class ItemCollection extends AbstractProductContainerProxy<Item> {
         return null;
     }
 
-    public Item getItemByBarcode(BarCode barcode) {
-    	
-    	return this.itemsByBarCode.get(barcode);
-        
-    }
-    
     @Override
     public Iterable<Item> getItems(Product product) {
         Set<Item> items = this.itemsByProduct.get(product);
@@ -92,5 +86,10 @@ public class ItemCollection extends AbstractProductContainerProxy<Item> {
     @Override
     public int getItemCount() {
         return this.size();
+    }
+
+    @Override
+    public Item getItem(BarCode barCode) {
+        return this.itemsByBarCode.get(barCode);
     }
 }

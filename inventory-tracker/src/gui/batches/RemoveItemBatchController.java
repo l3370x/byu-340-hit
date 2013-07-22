@@ -25,13 +25,11 @@ import gui.product.*;
  */
 public class RemoveItemBatchController extends Controller implements
         IRemoveItemBatchController {
-	
-	  private static final int TIMER_DELAY = 1000;
-	  private Timer timer;
-	  private final CopyOnWriteArrayList<Product> removedProducts = new CopyOnWriteArrayList<>();
-	  private final Map<Product, List<Item>> removedItemsByProduct = new HashMap<>();
 
-
+    private static final int TIMER_DELAY = 1000;
+    private Timer timer;
+    private final CopyOnWriteArrayList<Product> removedProducts = new CopyOnWriteArrayList<>();
+    private final Map<Product, List<Item>> removedItemsByProduct = new HashMap<>();
 
     /**
      * Constructor.
@@ -63,16 +61,16 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     protected void loadValues() {
-    	this.getView().setBarcode("");
+        this.getView().setBarcode("");
         this.getView().setUseScanner(false);
-    	 this.useScannerChanged();
-         // give focus to the barcode field
-         this.getView().giveBarcodeFocus();
-         // if using a scanner, clear the barcode field
-         if (this.getView().getUseScanner()) {
-             this.getView().setBarcode("");
-         }  
-  
+        this.useScannerChanged();
+        // give focus to the barcode field
+        this.getView().giveBarcodeFocus();
+        // if using a scanner, clear the barcode field
+        if (this.getView().getUseScanner()) {
+            this.getView().setBarcode("");
+        }
+
     }
 
     /**
@@ -89,9 +87,9 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     protected void enableComponents() {
-    	 this.getView().enableItemAction(false);
-         this.getView().enableUndo(false);
-         this.getView().enableRedo(false);
+        this.getView().enableItemAction(false);
+        this.getView().enableUndo(false);
+        this.getView().enableRedo(false);
     }
 
     /**
@@ -100,47 +98,42 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     public void barcodeChanged() {
-    	  if (false == this.getView().getUseScanner()) {
-    		  this.ensureItemExists();
-              return;
-          }
-          
-          String barcode = this.getView().getBarcode();
-          if (null == barcode || barcode.isEmpty()) {
-              return;
-          }
+        if (false == this.getView().getUseScanner()) {
+            this.ensureItemExists();
+            return;
+        }
 
-          if (this.timer.isRunning()) {
-              this.timer.restart();
-          } else {
-              this.timer.start();
-          }
+        String barcode = this.getView().getBarcode();
+        if (null == barcode || barcode.isEmpty()) {
+            return;
+        }
+
+        if (this.timer.isRunning()) {
+            this.timer.restart();
+        } else {
+            this.timer.start();
+        }
     }
-    
 
-	private boolean ensureItemExists() {
-		final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
-		if(barcode.toString().length()!=12)
-		{
-			enableComponents();
-			return false;
-			
-		}
-	
-	    // see if the Item exists in the InventoryManager
-		Item item = getInventoryManager().itemByBarcode(barcode);
+    private boolean ensureItemExists() {
+        final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
+        if (barcode.toString().length() != 12) {
+            enableComponents();
+            return false;
 
-		if (item == null) {
-			enableComponents();
-			return false;
-			}
-		else
-		{
-			this.getView().enableItemAction(true);
-			return true;	
-		}
-			}
+        }
 
+        // see if the Item exists in the InventoryManager
+        Item item = getInventoryManager().getItem(barcode);
+
+        if (item == null) {
+            enableComponents();
+            return false;
+        } else {
+            this.getView().enableItemAction(true);
+            return true;
+        }
+    }
 
     /**
      * This method is called when the "Use Barcode Scanner" setting is changed in the remove item
@@ -155,10 +148,10 @@ public class RemoveItemBatchController extends Controller implements
             this.initTimer();
         }
     }
-    
+
     private void initTimer() {
         if (null == this.timer) {
-            this.timer = new Timer(TIMER_DELAY, new ActionListener(){
+            this.timer = new Timer(TIMER_DELAY, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     removeItem();
@@ -173,83 +166,77 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     public void selectedProductChanged() {
-    	
+
         ProductData productData = this.getView().getSelectedProduct();
         if (null == productData) {
             return;
         }
-        
+
         Object tag = productData.getTag();
         if (false == tag instanceof Product) {
             return;
         }
-        
+
         List<Item> removedItems = this.removedItemsByProduct.get((Product) tag);
         if (null == removedItems) {
             return;
         }
-        
-        List<ItemData> itemList = new ArrayList<ItemData>();
+
+        List<ItemData> itemList = new ArrayList<>();
         for (Item item : removedItems) {
             itemList.add(new ItemData(item));
-        }       
+        }
         this.getView().setItems(itemList.toArray(new ItemData[itemList.size()]));
-    	
+
     }
 
-    
-    
-    
     /**
      * This method is called when the user clicks the "Remove Item" button in the remove item batch
      * view.
      */
     @Override
     public void removeItem() {
-    	
-    	if (this.ensureItemExists() == false)
-    	{
-    		return;
-    	}
-    	
-		final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
-    	Item item = getInventoryManager().itemByBarcode(barcode);
 
-    	try {
+        if (this.ensureItemExists() == false) {
+            return;
+        }
+
+        final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
+        Item item = getInventoryManager().getItem(barcode);
+
+        try {
 //    		ProductContainer container = (ProductContainer) this.source.getTag();
+
+            item.getContainer().removeItem(item);
             
-    		getInventoryManager().removeItem(item);
-			//Update Views
-		       this.updateProductsPane(item);
-		       this.loadValues();
-		       this.enableComponents();
-			
-		} catch (HITException e) {
-			this.getView().displayErrorMessage("Could Not Remove Item: "+e.getMessage());
-		}
+            //Update Views
+            this.updateProductsPane(item);
+            this.loadValues();
+            this.enableComponents();
+
+        } catch (HITException e) {
+            this.getView().displayErrorMessage("Could Not Remove Item: " + e.getMessage());
+        }
     }
 
     private void updateProductsPane(Item item) {
-    	Product product=item.getProduct();
+        Product product = item.getProduct();
         // add the product to the list if it hasn't been already
         this.removedProducts.addIfAbsent(product);
-        if(this.removedItemsByProduct.containsKey(product))
-        {
-          List<Item> list = this.removedItemsByProduct.get(product);
-          list.add(item);
-      	this.removedItemsByProduct.put(product, list);     
+        if (this.removedItemsByProduct.containsKey(product)) {
+            List<Item> list = this.removedItemsByProduct.get(product);
+            list.add(item);
+            this.removedItemsByProduct.put(product, list);
+        } else {
+            List<Item> list = new ArrayList<>();
+            list.add(item);
+            this.removedItemsByProduct.put(product, list);
         }
-        else
-        {
-      	  List<Item> list = new ArrayList<Item>();
-      	 list.add(item);
-     	this.removedItemsByProduct.put(product, list);     
-        }
-        
-       
-        
-  //      ProductContainer container = (ProductContainer) this.source.getTag();
-        
+
+
+
+        //      ProductContainer container = (ProductContainer) this.source.getTag();
+
         // create the product data instances
         ProductData selected = null;
         List<ProductData> productList = new ArrayList<>();
@@ -261,10 +248,10 @@ public class RemoveItemBatchController extends Controller implements
                 selected = data;
             }
         }
-        
+
         // display the products in the view
         this.getView().setProducts(productList.toArray(new ProductData[productList.size()]));
-        
+
         // select the just-added product
         if (null != selected) {
             this.getView().selectProduct(selected);
@@ -272,7 +259,6 @@ public class RemoveItemBatchController extends Controller implements
         }
     }
 
-    
     /**
      * This method is called when the user clicks the "Redo" button in the remove item batch view.
      */

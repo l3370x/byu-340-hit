@@ -142,11 +142,6 @@ public abstract class AbstractProductContainer<T extends Containable>
         return this.items.canAdd(item);
     }
     
-    public Item itemByBarcode(BarCode barcode) {
-        return this.items.getItemByBarcode(barcode);
-    }
-    
-
     @Override
     public boolean canAddProduct(Product product) {
         return this.products.canAdd(product);
@@ -318,5 +313,10 @@ public abstract class AbstractProductContainer<T extends Containable>
     @Override
     public boolean containsProduct(Product product) {
         return this.products.contains(product);
+    }
+
+    @Override
+    public Item getItem(BarCode barCode) {
+        return this.items.getItem(barCode);
     }
 }

@@ -235,4 +235,6 @@ public interface ProductContainer<T extends Containable> extends Container<T>, V
     boolean containsItem(Item item);
     
     boolean containsProduct(Product product);
+    
+    Item getItem(BarCode barCode);
 }
