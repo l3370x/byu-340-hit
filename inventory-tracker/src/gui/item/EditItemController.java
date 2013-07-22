@@ -1,10 +1,8 @@
 package gui.item;
 
 import java.util.Date;
-import java.util.Observable;
 
 import common.util.DateUtils;
-import core.model.ModelNotification;
 import core.model.Item;
 import gui.common.*;
 
