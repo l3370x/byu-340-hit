@@ -5,7 +5,6 @@ import static core.model.InventoryManager.Factory.getInventoryManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +15,8 @@ import javax.swing.Timer;
 import core.model.BarCode;
 import core.model.Item;
 import core.model.Product;
-import core.model.ProductContainer;
 import core.model.exception.HITException;
 import gui.common.*;
-import gui.inventory.ProductContainerData;
 import gui.item.ItemData;
 import gui.product.*;
 
@@ -103,35 +100,44 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     public void barcodeChanged() {
-    	if (this.getView().getUseScanner()) {
-            this.ensureItemExists();
-        } else {
-            if (this.timer.isRunning()) {
-                this.timer.restart();
-            } else {
-                this.timer.start();
-            }
-        }
+    	  if (false == this.getView().getUseScanner()) {
+    		  this.ensureItemExists();
+              return;
+          }
+          
+          String barcode = this.getView().getBarcode();
+          if (null == barcode || barcode.isEmpty()) {
+              return;
+          }
+
+          if (this.timer.isRunning()) {
+              this.timer.restart();
+          } else {
+              this.timer.start();
+          }
     }
     
 
-	private void ensureItemExists() {
+	private boolean ensureItemExists() {
 		final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
+		if(barcode.toString().length()!=12)
+		{
+			enableComponents();
+			return false;
+			
+		}
 	
 	    // see if the Item exists in the InventoryManager
 		Item item = getInventoryManager().itemByBarcode(barcode);
 
 		if (item == null) {
-			// prompt the user to create/add the product
-			this.getView().displayErrorMessage("Item Does not exist.");
-			
-			this.getView().setBarcode("");
 			enableComponents();
+			return false;
 			}
 		else
 		{
 			this.getView().enableItemAction(true);
-
+			return true;	
 		}
 			}
 
@@ -155,7 +161,7 @@ public class RemoveItemBatchController extends Controller implements
             this.timer = new Timer(TIMER_DELAY, new ActionListener(){
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    ensureItemExists();
+                    removeItem();
                 }
             });
             this.timer.setRepeats(false);
@@ -200,6 +206,12 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     public void removeItem() {
+    	
+    	if (this.ensureItemExists() == false)
+    	{
+    		return;
+    	}
+    	
 		final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
     	Item item = getInventoryManager().itemByBarcode(barcode);
 
