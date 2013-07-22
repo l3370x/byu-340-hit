@@ -64,8 +64,15 @@ public class Quantity implements Serializable {
 
     @Override
     public String toString() {
+    	// return nothing if nothing was defined
+    	if(value == 0 && units == Units.COUNT)
+    		return "";
+    	
+    	// return nice value if value is integer
     	if(value == (int) value)
     		return String.format("%d %s", (int)value, units.getLabel());
+    	
+    	// return value and units in pretty format.
     	return String.format("%s %s", value, units.toString());
     }
 

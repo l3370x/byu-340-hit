@@ -17,12 +17,15 @@ import gui.inventory.*;
 public class AddProductGroupController extends Controller implements
 		IAddProductGroupController {
 	private final ProductContainerData container;
-	
+
 	/**
 	 * Constructor.
 	 * 
-	 * @param view Reference to add product group view
-	 * @param container Product container to which the new product group is being added
+	 * @param view
+	 *            Reference to add product group view
+	 * @param container
+	 *            Product container to which the new product group is being
+	 *            added
 	 */
 	public AddProductGroupController(IView view, ProductContainerData container) {
 		super(view);
@@ -33,7 +36,7 @@ public class AddProductGroupController extends Controller implements
 	//
 	// Controller overrides
 	//
-	
+
 	/**
 	 * Returns a reference to the view for this controller.
 	 * 
@@ -43,18 +46,18 @@ public class AddProductGroupController extends Controller implements
 	 */
 	@Override
 	protected IAddProductGroupView getView() {
-		return (IAddProductGroupView)super.getView();
+		return (IAddProductGroupView) super.getView();
 	}
 
 	/**
 	 * Sets the enable/disable state of all components in the controller's view.
-	 * A component should be enabled only if the user is currently
-	 * allowed to interact with that component.
+	 * A component should be enabled only if the user is currently allowed to
+	 * interact with that component.
 	 * 
 	 * {@pre None}
 	 * 
-	 * {@post The enable/disable state of all components in the controller's view
-	 * have been set appropriately.}
+	 * {@post The enable/disable state of all components in the controller's
+	 * view have been set appropriately.}
 	 */
 	@Override
 	protected void enableComponents() {
@@ -64,9 +67,9 @@ public class AddProductGroupController extends Controller implements
 	/**
 	 * Loads data into the controller's view.
 	 * 
-	 *  {@pre None}
-	 *  
-	 *  {@post The controller has loaded data into its view}
+	 * {@pre None}
+	 * 
+	 * {@post The controller has loaded data into its view}
 	 */
 	@Override
 	protected void loadValues() {
@@ -79,66 +82,74 @@ public class AddProductGroupController extends Controller implements
 	//
 
 	/**
-	 * This method is called when any of the fields in the
-	 * add product group view is changed by the user.
+	 * This method is called when any of the fields in the add product group
+	 * view is changed by the user.
 	 */
 	@Override
 	public void valuesChanged() {
-		// if the name is null or the name is empty, then we can't create a 
-        // storage unit
-        String name = this.getView().getProductGroupName();
-        if (null == name || name.isEmpty()) {
-            this.getView().enableOK(false);
-            return;
-        }
-        
-        // if the count is not a number or is blank, don't allow OK
-        String count = this.getView().getSupplyValue();
-        if (false == count.matches("-?\\d+(\\.\\d+)?") || 
-        		null == count || name.isEmpty()) {
-        	this.getView().enableOK(false);
-        	return;
-        }
+		// if the name is null or the name is empty, then we can't create a
+		// storage unit
+		String name = this.getView().getProductGroupName();
+		if (null == name || name.isEmpty()) {
+			this.getView().enableOK(false);
+			return;
+		}
 
-        // if the name matches an existing storage unit, then we can't
-        // create a storage unit
-        
-        for (int i = 0 ; i < this.container.getChildCount() ; i++) {
-            if (this.container.getChild(i).getName().equals(
-            		this.getView().getProductGroupName())) {
-                this.getView().enableOK(false);
-                return;
-            }
-        }
-        
-        // we can create a storage unit
-        this.getView().enableOK(true);
+		// if the count is not a number or is blank, or is negative, don't allow
+		// OK
+		String count = this.getView().getSupplyValue();
+		if (false == count.matches("-?\\d+(\\.\\d+)?") || null == count
+				|| name.isEmpty() || Float.parseFloat(count) < 0) {
+			this.getView().enableOK(false);
+			return;
+		}
+
+		// if the name matches an existing storage unit, then we can't
+		// create a storage unit
+
+		for (int i = 0; i < this.container.getChildCount(); i++) {
+			if (this.container.getChild(i).getName()
+					.equals(this.getView().getProductGroupName())) {
+				this.getView().enableOK(false);
+				return;
+			}
+		}
+
+		// we can create a storage unit
+		this.getView().enableOK(true);
 	}
-	
+
 	/**
-	 * This method is called when the user clicks the "OK"
-	 * button in the add product group view.
+	 * This method is called when the user clicks the "OK" button in the add
+	 * product group view.
 	 */
 	@Override
 	public void addProductGroup() {
 		try {
-            // create the storage unit
-            final Category category = 
-                    newCategory(this.getView().getProductGroupName());
-            String  newSupply = this.getView().getSupplyValue();
-    		SizeUnits newSize = this.getView().getSupplyUnit();
-            Quantity newQuantity = new Quantity(Float.parseFloat(newSupply),
-                    UnitsConverter.sizeUnitsToUnits(newSize));
-            category.set3MonthSupplyQuantity(newQuantity);
-            // add the category to the selected container
-            Container selectedContainer = (Container) this.container.getTag();
-            selectedContainer.add(category);
-            
-        } catch (HITException ex) {
-            ExceptionHandler.TO_USER.reportException(ex, 
-                    "Unable To Create Product Group");
-        }
+			// create the storage unit
+			final Category category = newCategory(this.getView()
+					.getProductGroupName());
+			
+			// set the quantity
+			String newSupply = this.getView().getSupplyValue();
+			SizeUnits newSize = this.getView().getSupplyUnit();
+			Quantity newQuantity = new Quantity(Float.parseFloat(newSupply),
+					UnitsConverter.sizeUnitsToUnits(newSize));
+			category.set3MonthSupplyQuantity(newQuantity);
+
+			// check for valid quantity
+			if(newSupply.compareTo("0") == 0) {
+				category.set3MonthSupplyQuantity(new Quantity(0, Units.COUNT));
+			}
+			
+			// add the category to the selected container
+			Container selectedContainer = (Container) this.container.getTag();
+			selectedContainer.add(category);
+
+		} catch (HITException ex) {
+			ExceptionHandler.TO_USER.reportException(ex,
+					"Unable To Create Product Group");
+		}
 	}
 
 }
-
