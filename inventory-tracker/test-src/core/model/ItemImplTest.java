@@ -4,6 +4,9 @@
 package core.model;
 
 import static org.junit.Assert.*;
+import static core.model.Item.Factory.newItem;
+import static core.model.BarCode.generateItemBarCode;
+import static core.model.Product.Factory.newProduct;
 
 import java.util.Date;
 
@@ -26,10 +29,8 @@ public class ItemImplTest {
     @Test
     public void testItemImpl() throws HITException {
         Date d = new Date();
-        BarCode b = BarCode.generateItemBarCode();
-        BarCode b2 = BarCode.generateItemBarCode();
-        Product p = Product.Factory.newProduct(b2);
-        Item i = new ItemImpl(d, d, p, b);
+        Product p = newProduct(generateItemBarCode());
+        Item i = newItem(p, d, null);
         if (!i.getProduct().equals(p)) {
             fail();
         }
@@ -37,9 +38,6 @@ public class ItemImplTest {
             fail();
         }
         if (!i.getExpirationDate().equals(d)) {
-            fail();
-        }
-        if (!i.getBarCode().equals(b)) {
             fail();
         }
     }
@@ -52,10 +50,8 @@ public class ItemImplTest {
     @Test
     public void testGetProduct() throws HITException {
         Date d = new Date();
-        BarCode b = BarCode.generateItemBarCode();
-        BarCode b2 = BarCode.generateItemBarCode();
-        Product p = Product.Factory.newProduct(b2);
-        Item i = new ItemImpl(d, d, p, b);
+        Product p = newProduct(generateItemBarCode());
+        Item i = newItem(p, d, null);
         if (!i.getProduct().equals(p)) {
             fail();
         }
@@ -69,13 +65,8 @@ public class ItemImplTest {
     @Test
     public void testGetBarCode() throws HITException {
         Date d = new Date();
-        BarCode b = BarCode.generateItemBarCode();
-        BarCode b2 = BarCode.generateItemBarCode();
-        Product p = Product.Factory.newProduct(b2);
-        Item i = new ItemImpl(d, d, p, b);
-        if (!i.getBarCode().equals(b)) {
-            fail();
-        }
+        Product p = newProduct(generateItemBarCode());
+        Item i = newItem(p, d, null);
     }
 
     /**
@@ -86,10 +77,8 @@ public class ItemImplTest {
     @Test
     public void testGetEntryDate() throws HITException {
         Date d = new Date();
-        BarCode b = BarCode.generateItemBarCode();
-        BarCode b2 = BarCode.generateItemBarCode();
-        Product p = Product.Factory.newProduct(b2);
-        Item i = new ItemImpl(d, d, p, b);
+        Product p = newProduct(generateItemBarCode());
+        Item i = newItem(p, d, null);
         if (!i.getEntryDate().equals(d)) {
             fail();
         }
@@ -103,10 +92,8 @@ public class ItemImplTest {
     @Test
     public void testGetExitDate() throws HITException {
         Date d = new Date();
-        BarCode b = BarCode.generateItemBarCode();
-        BarCode b2 = BarCode.generateItemBarCode();
-        Product p = Product.Factory.newProduct(b2);
-        Item i = new ItemImpl(d, d, p, b);
+        Product p = newProduct(generateItemBarCode());
+        Item i = newItem(p, d, null);
         i.setExitDate(d);
         if (!i.getExitDate().equals(d)) {
             fail();
@@ -121,11 +108,9 @@ public class ItemImplTest {
     @Test
     public void testSetExitDate() throws HITException {
         Date d = new Date();
-        BarCode b = BarCode.generateItemBarCode();
-        BarCode b2 = BarCode.generateItemBarCode();
-        Product p = Product.Factory.newProduct(b2);
+        Product p = newProduct(generateItemBarCode());
         Date d2 = new Date(20000);
-        Item i = new ItemImpl(d, d, p, b);
+        Item i = newItem(p, d, null);
         i.setExitDate(d2);
     }
 
@@ -137,10 +122,8 @@ public class ItemImplTest {
     @Test
     public void testGetExpirationDate() throws HITException {
         Date d = new Date();
-        BarCode b = BarCode.generateItemBarCode();
-        BarCode b2 = BarCode.generateItemBarCode();
-        Product p = Product.Factory.newProduct(b2);
-        Item i = new ItemImpl(d, d, p, b);
+        Product p = newProduct(generateItemBarCode());
+        Item i = newItem(p, d, null);
         if (!i.getExpirationDate().equals(d)) {
             fail();
         }

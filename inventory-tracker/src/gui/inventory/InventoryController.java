@@ -567,6 +567,14 @@ public class InventoryController extends Controller
                 this.productContainerSelectionChanged();
                 this.productSelectionChanged();
                 break;
+                
+            case PRODUCT_UPDATED:
+                this.productContainerSelectionChanged();
+                break;
+                
+            case ITEM_UPDATED:
+                this.productSelectionChanged();
+                break;
         }
     }
 
