@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import common.util.DateUtils;
+import java.util.Observer;
 
 /**
  * The {@code ItemImpl} class is the default implementation of the {@link Item} interface. The
@@ -110,9 +111,8 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
                 && date.before(DateUtils.currentDate())) {
             // Yes. Continue
             this.entryDate = date;
-            computeExpirationDate();
             this.notifyObservers(new ModelNotification(
-                    ModelNotification.ChangeType.ITEM_UPDATED, this
+                    ModelNotification.ChangeType.CONTENT_UPDATED, this
                     .getContainer(), this));
         }
     }
@@ -128,5 +128,10 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
         cal.add(Calendar.MONTH, shelfLife);
         
         return cal.getTime();
+    }
+
+    @Override
+    public synchronized void addObserver(Observer o) {
+        super.addObserver(o);
     }
 }

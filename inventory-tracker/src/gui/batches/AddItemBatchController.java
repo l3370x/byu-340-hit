@@ -124,15 +124,17 @@ public class AddItemBatchController extends Controller implements
      */
     @Override
     public void barcodeChanged() {
-        if (false == this.getView().getUseScanner()) {
-            return;
-        }
-        
         String barcode = this.getView().getBarcode();
         if (null == barcode || barcode.isEmpty()) {
+            this.getView().enableItemAction(false);
             return;
         }
 
+        if (false == this.getView().getUseScanner()) {
+            this.getView().enableItemAction(true);
+            return;
+        }
+        
         if (this.timer.isRunning()) {
             this.timer.restart();
         } else {
@@ -154,7 +156,7 @@ public class AddItemBatchController extends Controller implements
             this.initTimer();
         } else {
             // when not using the scanner, the user will have to click the "Add Item" button
-            this.getView().enableItemAction(true);
+            //this.getView().enableItemAction(true);
 
             // stop the timer
             this.timer.stop();

@@ -6,6 +6,7 @@ import static core.model.ModelNotification.ChangeType.*;
 
 import java.util.Date;
 import java.util.Observable;
+import java.util.Observer;
 
 /**
  * The {@code InventoryManagerImpl} class is the default (and sole) 
@@ -30,22 +31,32 @@ implements InventoryManager {
         super ("Storage Units", new ItemCollection(null){
             @Override
             protected void didAdd(Item content) throws HITException {
-                this.notifyObservers(new ModelNotification(CONTENT_ADDED, this, content));
+                //this.notifyObservers(new ModelNotification(CONTENT_ADDED, this, content));
             }
 
             @Override
             protected void didRemove(Item content) throws HITException {
-                this.notifyObservers(new ModelNotification(CONTENT_REMOVED, this, content));
+                //this.notifyObservers(new ModelNotification(CONTENT_REMOVED, this, content));
+            }
+
+            @Override
+            public synchronized void addObserver(Observer o) {
+                // do nothing
             }
         }, new ProductCollection(null){
             @Override
             protected void didAdd(Product content) throws HITException {
-                this.notifyObservers(new ModelNotification(CONTENT_ADDED, this, content));
+                //this.notifyObservers(new ModelNotification(CONTENT_ADDED, this, content));
             }
 
             @Override
             protected void didRemove(Product content) throws HITException {
-                this.notifyObservers(new ModelNotification(CONTENT_REMOVED, this, content));
+                //this.notifyObservers(new ModelNotification(CONTENT_REMOVED, this, content));
+            }
+
+            @Override
+            public synchronized void addObserver(Observer o) {
+                // do nothing
             }
         });
     }

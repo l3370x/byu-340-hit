@@ -63,6 +63,11 @@ public abstract class AbstractProductContainer<T extends Containable>
                                     notification.getContent()));
                             break;
                             
+                        case CONTENT_UPDATED:
+                            notifyObservers(new ModelNotification(ITEM_UPDATED,
+                                    AbstractProductContainer.this,
+                                    notification.getContent()));
+
                         default:
                             break;
                     }
@@ -90,6 +95,12 @@ public abstract class AbstractProductContainer<T extends Containable>
                                     notification.getContent()));
                             break;
                             
+                            
+                        case CONTENT_UPDATED:
+                            notifyObservers(new ModelNotification(PRODUCT_UPDATED,
+                                    AbstractProductContainer.this,
+                                    notification.getContent()));
+
                         default:
                             break;
                     }

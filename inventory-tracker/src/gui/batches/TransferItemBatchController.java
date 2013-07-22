@@ -151,10 +151,12 @@ public class TransferItemBatchController extends Controller implements
     @Override
     public void useScannerChanged() {
         if (this.getView().getUseScanner()) {
-            this.timer.stop();
             this.getView().enableItemAction(false);
-        } else {
             this.initTimer();
+        } else {
+            if (null != this.timer && this.timer.isRunning()) {
+                this.timer.stop();
+            }
         }
     }
 
