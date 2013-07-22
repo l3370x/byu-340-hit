@@ -33,12 +33,10 @@ public class ItemLabelController {
             document.close();
             displayDocument(outFile);
         } catch (FileNotFoundException | DocumentException e) {
-            /*
             ExceptionHandler.TO_USER.reportException(e,
                     "Can't print bar code labels");
             ExceptionHandler.TO_LOG.reportException(e,
                     "Can't print bar code labels");
-                    */
         }
     }
 
@@ -46,7 +44,7 @@ public class ItemLabelController {
             PdfContentByte contentByte, Item... items) {
         try {
             PdfPTable table = new PdfPTable(COLUMNS);
-            int remainingCells = items.length % COLUMNS;
+            int remainingCells = 4 - (items.length % COLUMNS);
             for (Item item : items) {
                 renderBarCode(item, table, contentByte);
             }
