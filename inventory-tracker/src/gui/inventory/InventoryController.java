@@ -317,6 +317,7 @@ public class InventoryController extends Controller
         }
         try {
             ((ProductContainer) tag).removeProduct(product);
+              productContainerSelectionChanged();
         } catch (HITException ex) {
             ExceptionHandler.TO_USER.reportException(ex, "Unable To Remove Product");
         }
@@ -388,6 +389,7 @@ public class InventoryController extends Controller
     @Override
     public void addProductGroup() {
         getView().displayAddProductGroupView();
+        productContainerSelectionChanged();
     }
 
     /**
@@ -396,6 +398,7 @@ public class InventoryController extends Controller
     @Override
     public void addItems() {
         getView().displayAddItemBatchView();
+        productContainerSelectionChanged();
     }
 
     /**
@@ -404,6 +407,7 @@ public class InventoryController extends Controller
     @Override
     public void transferItems() {
         getView().displayTransferItemBatchView();
+        productContainerSelectionChanged();
     }
 
     /**
@@ -412,6 +416,7 @@ public class InventoryController extends Controller
     @Override
     public void removeItems() {
         getView().displayRemoveItemBatchView();
+        productContainerSelectionChanged();
     }
 
     /**
@@ -420,6 +425,7 @@ public class InventoryController extends Controller
     @Override
     public void addStorageUnit() {
         getView().displayAddStorageUnitView();
+        productContainerSelectionChanged();
     }
 
     /**
@@ -428,7 +434,7 @@ public class InventoryController extends Controller
     @Override
     public void editProductGroup() {
         getView().displayEditProductGroupView();
-        updateContextPane(this.getView());
+        productContainerSelectionChanged();
     }
 
     /**
@@ -437,6 +443,7 @@ public class InventoryController extends Controller
     @Override
     public void editStorageUnit() {
         getView().displayEditStorageUnitView();
+        productContainerSelectionChanged();
     }
 
     /**
@@ -445,6 +452,7 @@ public class InventoryController extends Controller
     @Override
     public void editProduct() {
         getView().displayEditProductView();
+        productContainerSelectionChanged();
     }
 
     /**

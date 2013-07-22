@@ -2,6 +2,7 @@ package core.model;
 
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
+
 import java.util.Date;
 
 /**
@@ -53,7 +54,7 @@ public interface Product extends Containable<ProductContainer> {
      */
     String getDescription();
     
-    
+	void setDescription(String description);
     /**
      * Get the size of this product expressed as a {@link Quantity}.  For 
      * example:
