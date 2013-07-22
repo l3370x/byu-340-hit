@@ -1,13 +1,19 @@
 package gui.product;
 
 import static core.model.InventoryManager.Factory.getInventoryManager;
+import static core.model.ModelNotification.ChangeType.CONTENT_UPDATED;
 import static core.model.Product.Factory.newProduct;
 
+import java.util.Observable;
 import java.util.regex.Pattern;
 
 import core.model.BarCode;
+import core.model.Category;
+import core.model.Container;
+import core.model.ModelNotification;
 import core.model.Product;
 import core.model.Quantity;
+import core.model.Quantity.Units;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import gui.common.*;
@@ -20,6 +26,7 @@ public class EditProductController extends Controller
 
     private ProductData target;
     private String sizeValue;
+    private String sizeUnit;
     private String shelfLife;
     private String monthSupply;
     private static final Pattern POSITIVE_INTEGER_PATTERN = 
@@ -35,6 +42,7 @@ public class EditProductController extends Controller
         super(view);
         this.target = target;
         sizeValue = target.getSize().replaceAll("[\\D]", "");
+        sizeUnit = target.getSize().replaceAll("\\P{L}", "");
         shelfLife = target.getShelfLife().replaceAll("[\\D]", "");
         monthSupply = target.getSupply().replaceAll("[\\D]", "");
         construct();
@@ -99,13 +107,13 @@ public class EditProductController extends Controller
         this.getView().setBarcode(target.getBarcode());
         this.getView().setSizeValue(sizeValue);
         try {
-			this.getView().setSizeUnit(UnitsConverter.stringToUnits(target.getCount()));
+			this.getView().setSizeUnit(UnitsConverter.stringToUnits(sizeUnit));
 		} catch (HITException ex) {
 			 ExceptionHandler.TO_USER.reportException(ex,
 	                    "Unable To Load Product");
 		}
         this.getView().setShelfLife(shelfLife);
-        this.getView().setSupply(monthSupply);
+        this.getView().setSupply(monthSupply);	
     }
 
     //
@@ -154,20 +162,24 @@ public class EditProductController extends Controller
      */
     @Override
     public void editProduct() {
-        try {
-            // Make new product
-            final Product product = newProduct(BarCode.getBarCodeFor(this.getView().getBarcode()),
-                    this.getView().getDescription());
 
-            product.setShelfLifeInMonths(Integer.parseInt(this.getView().getShelfLife()));
+    	String newDescription = this.getView().getDescription();
+    	
+		try {
+			// get the Product "tag" from the data
+			final Product product = (Product) this.target.getTag();
+			
+			product.setDescription(newDescription);
+	        product.setShelfLifeInMonths(Integer.parseInt(this.getView().getShelfLife()));
             product.set3MonthSupplyQuota(Integer.parseInt(this.getView().getSupply()));
             product.setSize(new Quantity(Float.parseFloat(this.getView().getSizeValue()),
                     UnitsConverter.sizeUnitsToUnits(this.getView().getSizeUnit())));
 
-
-            // add the product to the inventory manager
-            getInventoryManager().addProduct(product);
-
+			// the unit should notify its observers of the change
+			if (product instanceof Observable) {
+				((Observable) product).notifyObservers(new ModelNotification(
+						CONTENT_UPDATED, product.getContainer(), product));
+			}
         } catch (HITException ex) {
             ExceptionHandler.TO_USER.reportException(ex,
                     "Unable To Edit Product");

@@ -259,6 +259,7 @@ public class AddItemBatchController extends Controller implements
 
             // update the products pane
             this.updateProductsPane(product);
+       
         } catch (HITException e) {
             ExceptionHandler.TO_USER.reportException(e, "Unable To Add Item(s)");
         } finally {

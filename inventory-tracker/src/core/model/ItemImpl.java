@@ -29,7 +29,7 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
         this.product = product;
         this.entryDate = entryDate;
         this.barcode = barcode;
-        setExpirationDate();
+        computeExpirationDate();
     }
 
     @Override
@@ -111,17 +111,22 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
                 && date.before(DateUtils.currentDate())) {
             // Yes. Continue
             this.entryDate = date;
-            setExpirationDate();
+            computeExpirationDate();
             this.notifyObservers(new ModelNotification(
                     ModelNotification.ChangeType.ITEM_UPDATED, this
                     .getContainer(), this));
         }
     }
-    
-    private void setExpirationDate() {
-    	Calendar cal = Calendar.getInstance();
-    	cal.setTime(this.getEntryDate());
-    	cal.add(Calendar.MONTH, this.getProduct().getShelfLifeInMonths());
-    	this.expirationDate = cal.getTime();
+
+    private void computeExpirationDate() {
+        int shelfLife = this.getProduct().getShelfLifeInMonths();
+        if (shelfLife <= 0) {
+            return;
+        }
+        
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(this.getEntryDate());
+        cal.add(Calendar.MONTH, shelfLife);
+        this.expirationDate = cal.getTime();
     }
 }

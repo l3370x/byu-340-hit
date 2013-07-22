@@ -101,6 +101,11 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
     }
 
     @Override
+    public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
     public int get3MonthSupplyQuota() {
         assert true;
         return this.quota;
