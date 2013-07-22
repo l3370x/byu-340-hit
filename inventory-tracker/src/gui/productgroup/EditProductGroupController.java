@@ -166,9 +166,12 @@ public class EditProductGroupController extends Controller implements
 					UnitsConverter.sizeUnitsToUnits(newSize));
 			category.set3MonthSupplyQuantity(newQuantity);
 
+			// check for valid quantity
 			if(newSupply.compareTo("0") == 0) {
 				category.set3MonthSupplyQuantity(new Quantity(0, Units.COUNT));
 			}
+			
+			
 			
 			// the unit should notify its observers of the change
 			if (category instanceof Observable) {
