@@ -19,8 +19,7 @@ public class ItemLabelController {
 
     private static int printCount = 1;
     private static final int COLUMNS = 4;
-    private static final String BASE_FILE_NAME = ItemLabelController.class
-            .getClassLoader().getResource(".").getPath();
+    private static final String BASE_FILE_NAME = System.getProperty("user.dir");
 
     public static void createDocument(Item... items) {
         try {
