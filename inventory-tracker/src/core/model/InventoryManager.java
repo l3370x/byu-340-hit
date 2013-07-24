@@ -22,6 +22,15 @@ public interface InventoryManager extends ProductContainer<StorageUnit> {
     Iterable<Item> getRemovedItems();
 
     /**
+     * Get all items in the inventory that have been removed that are associated with the given product.
+     *
+     * @param product the product associated with the removed items
+     *
+     * @return a collection of items that have been removed from the system
+     */
+    Iterable<Item> getRemovedItems(Product product);
+
+    /**
      * The {@code InventoryManager.Factory} class is used to get the singleton
      * instance of the {@link InventoryManager}.
      * 

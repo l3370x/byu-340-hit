@@ -2,7 +2,6 @@ package core.model;
 
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
-import static core.model.ModelNotification.ChangeType.*;
 
 import java.util.Date;
 import java.util.Observable;
@@ -14,18 +13,14 @@ import java.util.Observer;
  * constructor is hidden, so the only way to get an instance is through the
  * {@link InventoryManager.Factory}.
  * 
- * @invariant ?
- * 
  * @author kemcqueen
  */
 class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> 
 implements InventoryManager {
-    private final Container<Item> removedItems = new ItemCollection(null);
+    private final ItemCollection removedItems = new ItemCollection(null);
     
     /**
      * Hidden (mostly) constructor.
-     * 
-     * @see InventoryManger.Factory
      */
     InventoryManagerImpl() {
         super ("Storage Units", new ItemCollection(null){
@@ -65,7 +60,12 @@ implements InventoryManager {
     public Iterable<Item> getRemovedItems() {
         return this.removedItems.getContents();
     }
-    
+
+    @Override
+    public Iterable<Item> getRemovedItems(Product product) {
+        return this.removedItems.getItems(product);
+    }
+
     @Override
     public void removeItem(Item item) throws HITException {
         super.removeItem(item);
