@@ -1,65 +1,40 @@
 package gui.reports.productstats;
 
-public class ProductStatsCalculator implements IProductStatsCalculator {
+import java.util.Date;
 
-	@Override
-	public int calculateCurrentSupply() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+import core.model.Item;
 
-	@Override
-	public double calculateAverageSupply() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+public interface ProductStatsCalculator {
 
-	@Override
-	public int calculateMinimumSupply() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	void setValues(Date startDate, Iterable<Item> currentItems,
+			Iterable<Item> removedItems);
 
-	@Override
-	public int calculateMaximumSupply() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	int calculateCurrentSupply();
 
-	@Override
-	public int calculateItemsUsed() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	double calculateAverageSupply();
 
-	@Override
-	public int calculateItemsAdded() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	int calculateMinimumSupply();
 
-	@Override
-	public double calculateAverageAgeUsed() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	int calculateMaximumSupply();
 
-	@Override
-	public int calculateMaximumAgeUsed() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	int calculateItemsUsed();
 
-	@Override
-	public double calculateAverageAgedCurrent() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	int calculateItemsAdded();
 
-	@Override
-	public int calculateMaximumAgeCurrent() {
-		// TODO Auto-generated method stub
-		return 0;
+	double calculateAverageAgeUsed();
+
+	int calculateMaximumAgeUsed();
+
+	double calculateAverageAgedCurrent();
+
+	int calculateMaximumAgeCurrent();
+
+	public static class Factory {
+		private static final ProductStatsCalculator INSTANCE = new ProductStatsCalculatorImpl();
+
+		public ProductStatsCalculator getInstance() {
+			return INSTANCE;
+		}
 	}
 
 }
