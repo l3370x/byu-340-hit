@@ -11,7 +11,8 @@ import core.model.Item;
 public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 
 	Date startDate;
-	int numberOfDays = calculateDayDifference(startDate, DateUtils.currentDate());
+	int numberOfDays = calculateDayDifference(startDate,
+			DateUtils.currentDate());
 	Iterable<Item> currentItems;
 	Iterable<Item> removedItems;
 
@@ -19,8 +20,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 
 	}
 
-	public void setValues(Date startDate,
-			Iterable<Item> currentItems, Iterable<Item> removedItems) {
+	public void setValues(Date startDate, Iterable<Item> currentItems,
+			Iterable<Item> removedItems) {
 		this.startDate = startDate;
 		this.currentItems = currentItems;
 		this.removedItems = removedItems;
@@ -46,22 +47,19 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Iterator<Item> iterRem = removedItems.iterator();
 		while (iterCur.hasNext()) {
 			item = iterCur.next();
-			if (!item.getEntryDate().after(DateUtils.currentDate())) {
-				netDaysItemsStored += calculateDayDifference(
-						getLatestDate(item.getEntryDate(), startDate), DateUtils.currentDate());
-			}
+			netDaysItemsStored += calculateDayDifference(
+					getLatestDate(item.getEntryDate(), startDate),
+					DateUtils.currentDate());
 		}
 		while (iterRem.hasNext()) {
 			item = iterRem.next();
-			if (!(item.getEntryDate().after(DateUtils.currentDate()))
-					|| item.getExitDate().before(startDate)) {
+			if (!item.getExitDate().before(startDate)) {
 				netDaysItemsStored += calculateDayDifference(
 						getLatestDate(item.getEntryDate(), startDate),
-						getEarliestDate(item.getExitDate(), DateUtils.currentDate()));
+						item.getExitDate());
 			}
 		}
-		averageSupply = netDaysItemsStored
-				/ numberOfDays;
+		averageSupply = netDaysItemsStored / numberOfDays;
 		return averageSupply;
 	}
 
@@ -94,8 +92,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		}
 		while (iterRem.hasNext()) {
 			item = iterRem.next();
-			if (item.getEntryDate().before(cal.getTime())
-					&& item.getExitDate().after(cal.getTime())) {
+			if (!(item.getEntryDate().after(cal.getTime()) || item
+					.getExitDate().before(cal.getTime()))) {
 				itemsStoredinDate++;
 			}
 		}
@@ -121,9 +119,9 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 	public int calculateItemsUsed() {
 		int itemsUsed = 0;
 		Iterator<Item> iterRem = removedItems.iterator();
-		while(iterRem.hasNext()) {
+		while (iterRem.hasNext()) {
 			Item item = iterRem.next();
-			if(item.getExitDate().after(startDate) && item.getExitDate().before(DateUtils.currentDate())) {
+			if (item.getExitDate().after(startDate)) {
 				itemsUsed++;
 			}
 		}
@@ -136,15 +134,15 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Iterator<Item> iterCur = currentItems.iterator();
 		Iterator<Item> iterRem = removedItems.iterator();
 		Item item;
-		while(iterCur.hasNext()) {
+		while (iterCur.hasNext()) {
 			item = iterCur.next();
-			if(item.getEntryDate().after(startDate) && item.getEntryDate().before(DateUtils.currentDate())) {
+			if (item.getEntryDate().after(startDate)) {
 				itemsAdded++;
 			}
 		}
-		while(iterRem.hasNext()) {
+		while (iterRem.hasNext()) {
 			item = iterRem.next();
-			if(item.getEntryDate().after(startDate) && item.getEntryDate().before(DateUtils.currentDate())) {
+			if (item.getEntryDate().after(startDate)) {
 				itemsAdded++;
 			}
 		}
@@ -153,30 +151,73 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 
 	@Override
 	public double calculateAverageAgeUsed() {
-		// TODO Auto-generated method stub
-		return 0;
+		double averageAgeUsed = 0;
+		int netAgeUsed = 0;
+		int totalUsedItems = 0;
+		Item item;
+		Iterator<Item> iter = removedItems.iterator();
+		while (iter.hasNext()) {
+			item = iter.next();
+			netAgeUsed += calculateDayDifference(item.getEntryDate(),
+					item.getExitDate());
+			totalUsedItems++;
+		}
+		averageAgeUsed = (double) (netAgeUsed / totalUsedItems);
+		return averageAgeUsed;
 	}
 
 	@Override
 	public int calculateMaximumAgeUsed() {
-		// TODO Auto-generated method stub
-		return 0;
+		int maximumAgeUsed = 0;
+		Item item;
+		Iterator<Item> iter = removedItems.iterator();
+		while (iter.hasNext()) {
+			item = iter.next();
+			int age = calculateDayDifference(item.getEntryDate(),
+					item.getExitDate());
+			if (age > maximumAgeUsed) {
+				maximumAgeUsed = age;
+			}
+		}
+		return maximumAgeUsed;
 	}
 
 	@Override
 	public double calculateAverageAgedCurrent() {
-		// TODO Auto-generated method stub
-		return 0;
+		double averageAgeCurrent = 0;
+		int netAgeCurrent = 0;
+		int totalCurrentItems = 0;
+		Item item;
+		Iterator<Item> iter = currentItems.iterator();
+		while (iter.hasNext()) {
+			item = iter.next();
+			netAgeCurrent += calculateDayDifference(item.getEntryDate(),
+					DateUtils.currentDate());
+			totalCurrentItems++;
+		}
+		averageAgeCurrent = (double) (netAgeCurrent / totalCurrentItems);
+		return averageAgeCurrent;
 	}
 
 	@Override
 	public int calculateMaximumAgeCurrent() {
-		// TODO Auto-generated method stub
-		return 0;
+		int maximumAgeCurrent = 0;
+		Item item;
+		Iterator<Item> iter = currentItems.iterator();
+		while (iter.hasNext()) {
+			item = iter.next();
+			int age = calculateDayDifference(item.getEntryDate(),
+					DateUtils.currentDate());
+			if (age > maximumAgeCurrent) {
+				maximumAgeCurrent = age;
+			}
+		}
+		return maximumAgeCurrent;
 	}
 
 	public int calculateDayDifference(Date begin, Date end) {
-		return (int) (end.getTime() - begin.getTime()) / (1000 * 60 * 60 * 24) + 1;
+		return (int) (end.getTime() - begin.getTime()) / (1000 * 60 * 60 * 24)
+				+ 1;
 	}
 
 	public Date getEarliestDate(Date date1, Date date2) {
