@@ -15,6 +15,7 @@ import javax.swing.Timer;
 import core.model.BarCode;
 import core.model.Item;
 import core.model.Product;
+import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import gui.common.*;
 import gui.item.ItemData;
@@ -198,7 +199,6 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     public void removeItem() {
-
         if (this.ensureItemExists() == false) {
             return;
         }
@@ -207,17 +207,18 @@ public class RemoveItemBatchController extends Controller implements
         Item item = getInventoryManager().getItem(barcode);
 
         try {
-//    		ProductContainer container = (ProductContainer) this.source.getTag();
-
+            // remove the item from its container
             item.getContainer().removeItem(item);
+
+            // save the removed item for tracking purposes
+            getInventoryManager().saveRemovedItem(item);
             
             //Update Views
             this.updateProductsPane(item);
             this.loadValues();
             this.enableComponents();
-
         } catch (HITException e) {
-            this.getView().displayErrorMessage("Could Not Remove Item: " + e.getMessage());
+            ExceptionHandler.TO_USER.reportException(e, "Unable To Remove Item");
         }
     }
 
@@ -236,8 +237,6 @@ public class RemoveItemBatchController extends Controller implements
         }
 
 
-
-        //      ProductContainer container = (ProductContainer) this.source.getTag();
 
         // create the product data instances
         ProductData selected = null;

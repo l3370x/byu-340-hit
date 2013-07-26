@@ -17,7 +17,19 @@ import java.util.Observer;
  */
 class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> 
 implements InventoryManager {
-    private final ItemCollection removedItems = new ItemCollection(null);
+    private final ItemCollection removedItems = new ItemCollection(null) {
+        @Override
+        protected void didAdd(Item content) throws HITException {
+        }
+
+        @Override
+        protected void didRemove(Item content) throws HITException {
+        }
+
+        @Override
+        public synchronized void addObserver(Observer o) {
+        }
+    };
     
     /**
      * Hidden (mostly) constructor.
@@ -26,32 +38,26 @@ implements InventoryManager {
         super ("Storage Units", new ItemCollection(null){
             @Override
             protected void didAdd(Item content) throws HITException {
-                //this.notifyObservers(new ModelNotification(CONTENT_ADDED, this, content));
             }
 
             @Override
             protected void didRemove(Item content) throws HITException {
-                //this.notifyObservers(new ModelNotification(CONTENT_REMOVED, this, content));
             }
 
             @Override
             public synchronized void addObserver(Observer o) {
-                // do nothing
             }
         }, new ProductCollection(null){
             @Override
             protected void didAdd(Product content) throws HITException {
-                //this.notifyObservers(new ModelNotification(CONTENT_ADDED, this, content));
             }
 
             @Override
             protected void didRemove(Product content) throws HITException {
-                //this.notifyObservers(new ModelNotification(CONTENT_REMOVED, this, content));
             }
 
             @Override
             public synchronized void addObserver(Observer o) {
-                // do nothing
             }
         });
     }
@@ -67,14 +73,22 @@ implements InventoryManager {
     }
 
     @Override
-    public void removeItem(Item item) throws HITException {
-        super.removeItem(item);
-        
+    public void saveRemovedItem(Item item) throws HITException {
+        assert null != item;
+        assert null == item.getContainer();
+
+        // set the item's exit date
         item.setExitDate(new Date());
-        
-        //this.removedItems.add(item);
+
+        // put the removed item with the others
+        this.removedItems.add(item);
     }
-    
+
+    @Override
+    public void deleteRemovedItem(Item item) throws HITException {
+        this.removedItems.remove(item);
+    }
+
     @Override
     public boolean canRemoveItem(Item item) {
         return super.canRemoveItem(item) && this.removedItems.canAdd(item);
