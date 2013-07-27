@@ -5,11 +5,12 @@ import java.util.Date;
 import java.util.Iterator;
 
 import common.util.DateUtils;
-
 import core.model.Item;
+import core.model.Product;
 
 public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 
+	Product product;
 	Date startDate;
 	int numberOfDays;
 	Iterable<Item> currentItems;
@@ -19,7 +20,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 	}
 
 	public void setValues(Date startDate, Iterable<Item> currentItems,
-			Iterable<Item> removedItems) {
+			Iterable<Item> removedItems, Product product) {
+		this.product = product;
 		this.startDate = startDate;
 		this.currentItems = currentItems;
 		this.removedItems = removedItems;
