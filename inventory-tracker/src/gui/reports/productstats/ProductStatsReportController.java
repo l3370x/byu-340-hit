@@ -130,6 +130,7 @@ public class ProductStatsReportController extends Controller implements
 		goBack.setTime(startingDate);
 		goBack.add(Calendar.MONTH, -1 * nMonths);
 		startingDate = goBack.getTime();
+		System.out.println("Going back to " + startingDate.toString());
 
 		ProductStatsCalculator calc = ProductStatsCalculator.Factory
 				.getInstance();
@@ -161,10 +162,6 @@ public class ProductStatsReportController extends Controller implements
 					"Can't print bar code labels");
 			ExceptionHandler.TO_LOG.reportException(e,
 					"Can't print bar code labels");
-		}
-
-		for (Product p : allProducts) {
-			System.out.println(p.toString());
 		}
 
 	}
