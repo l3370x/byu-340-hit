@@ -76,6 +76,8 @@ public interface Product extends Containable<ProductContainer> {
     
     void setSize(Quantity quantity);
     
+    public void setCreationDate(Date d);
+    
     /**
      * Get the shelf life of this product measured in months.  A value of zero
      * (0) means "unspecified."
