@@ -229,17 +229,18 @@ public class ProductStatsReportController extends Controller implements
 					table.addCell(String.valueOf(p.get3MonthSupplyQuota()));
 					break;
 				case 5:
-					table.addCell(String.format("%d / %f",
-							calc.calculateCurrentSupply(),
-							calc.calculateAverageSupply()));
+					table.addCell(String.format("%d / %s", calc
+							.calculateCurrentSupply(),
+							String.valueOf(calc.calculateAverageSupply())
+									.replaceAll("\\.?0*$", "")));
 					break;
 				case 6:
-					table.addCell(String.format("%d days / %d days",
+					table.addCell(String.format("%d / %d",
 							calc.calculateMinimumSupply(),
 							calc.calculateMaximumSupply()));
 					break;
 				case 7:
-					table.addCell(String.format("%d days / %d days",
+					table.addCell(String.format("%d / %d",
 							calc.calculateItemsUsed(),
 							calc.calculateItemsAdded()));
 					break;
@@ -248,14 +249,16 @@ public class ProductStatsReportController extends Controller implements
 							p.getShelfLifeInMonths()));
 					break;
 				case 9:
-					table.addCell(String.format("%f days / %d days",
-							calc.calculateAverageAgeUsed(),
-							calc.calculateMaximumAgeUsed()));
+					table.addCell(String.format("%s days / %d days", String
+							.valueOf(calc.calculateAverageAgeUsed())
+							.replaceAll("\\.?0*$", ""), calc
+							.calculateMaximumAgeUsed()));
 					break;
 				case 10:
-					table.addCell(String.format("%f days / %d days",
-							calc.calculateAverageAgedCurrent(),
-							calc.calculateMaximumAgeCurrent()));
+					table.addCell(String.format("%s days / %d days", String
+							.valueOf(calc.calculateAverageAgedCurrent())
+							.replaceAll("\\.?0*$", ""), calc
+							.calculateMaximumAgeCurrent()));
 					break;
 				}
 			}

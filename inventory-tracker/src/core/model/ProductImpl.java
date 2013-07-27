@@ -30,6 +30,7 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
     ProductImpl(BarCode barCode, String description) {
         this.barcode = barCode;
         this.description = description;
+        this.creationDate = new Date();
     }
 
     @Override
@@ -124,6 +125,11 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
             this.quota = quota;
         }
         //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Date getCreationDate(Date d) throws HITException {
+        return new Date();//smallest date.
     }
 
     @Override

@@ -241,4 +241,7 @@ public interface Product extends Containable<ProductContainer> {
             return "TODO";
         }
     }
+
+
+	Date setCreationDate(Date d) throws HITException;
 }
