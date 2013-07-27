@@ -106,7 +106,7 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 	public int calculateMaximumSupply() {
 		int maximumSupply = (int) calculateAverageSupply();
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(startDate);
+		cal.setTime(getLatestDate(startDate, product.getCreationDate()));
 		while (!cal.getTime().after(DateUtils.currentDate())) {
 			int itemsStoredinDate = calculateItemsStoredinDate(cal);
 			if (itemsStoredinDate > maximumSupply) {
