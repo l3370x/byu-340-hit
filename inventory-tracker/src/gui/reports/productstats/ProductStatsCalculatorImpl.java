@@ -5,26 +5,29 @@ import java.util.Date;
 import java.util.Iterator;
 
 import common.util.DateUtils;
-
 import core.model.Item;
+import core.model.Product;
 
 public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 
 	Date startDate = new Date();
 	int numberOfDays = calculateDayDifference(startDate,
 			DateUtils.currentDate());
+	Product product;
 	Iterable<Item> currentItems;
 	Iterable<Item> removedItems;
 
 	public ProductStatsCalculatorImpl() {
-
 	}
 
 	public void setValues(Date startDate, Iterable<Item> currentItems,
-			Iterable<Item> removedItems) {
+			Iterable<Item> removedItems, Product product) {
+		this.product = product;
 		this.startDate = startDate;
 		this.currentItems = currentItems;
 		this.removedItems = removedItems;
+		numberOfDays = calculateDayDifference(startDate,
+				DateUtils.currentDate());
 	}
 
 	@Override

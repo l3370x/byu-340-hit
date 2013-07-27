@@ -39,7 +39,7 @@ public class ItemLabelControllerTest {
 	cal.add(Calendar.MONTH, 3);
 	Date expirationDate = cal.getTime();
 	for (int i = 0; i < 1; i++) {
-	    itemList.add(newItem(product1, currentDate, expirationDate));
+	    itemList.add(newItem(product1, currentDate));
 	}/*
 	cal.setTime(currentDate);
 	cal.add(Calendar.YEAR, 2);

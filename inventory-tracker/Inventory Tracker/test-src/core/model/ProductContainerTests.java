@@ -123,7 +123,7 @@ public class ProductContainerTests {
         Product product = newProduct(generateItemBarCode(), "Test Product");
         
         // create the item
-        Item item = Item.Factory.newItem(product, new Date(), new Date());
+        Item item = Item.Factory.newItem(product, new Date());
         
         // add the item
         container.addItem(item);
@@ -144,7 +144,7 @@ public class ProductContainerTests {
         Product product = newProduct(generateItemBarCode(), "Test Product");
         
         // create the item
-        Item item = Item.Factory.newItem(product, new Date(), new Date());
+        Item item = Item.Factory.newItem(product, new Date());
         
         // add the item
         container.addItem(item);
@@ -177,7 +177,7 @@ public class ProductContainerTests {
         Product product = newProduct(generateItemBarCode(), "Test Product");
         
         // create the item
-        Item item = Item.Factory.newItem(product, new Date(), new Date());
+        Item item = Item.Factory.newItem(product, new Date());
         
         // add the item
         container.addItem(item);
@@ -204,7 +204,7 @@ public class ProductContainerTests {
         Product product = newProduct(generateItemBarCode(), "Test Product");
         
         // create the item
-        Item item = Item.Factory.newItem(product, new Date(), new Date());
+        Item item = Item.Factory.newItem(product, new Date());
         
         // add the item
         container.addItem(item);
