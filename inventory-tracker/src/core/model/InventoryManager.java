@@ -22,6 +22,7 @@ public interface InventoryManager extends ProductContainer<StorageUnit> {
      * @return a collection of items that have been removed from the system
      */
     Iterable<Item> getRemovedItems();
+    
 
     /**
      * Get all items in the inventory that have been removed that are associated with the given product.
@@ -54,6 +55,9 @@ public interface InventoryManager extends ProductContainer<StorageUnit> {
      * @throws HITException if the item could not be deleted for any reason
      */
     void deleteRemovedItem(Item item) throws HITException;
+    
+    
+    void load(AbstractProductContainer i) throws HITException;
 
     /**
      * The {@code InventoryManager.Factory} class is used to get the singleton
@@ -78,4 +82,5 @@ public interface InventoryManager extends ProductContainer<StorageUnit> {
             return INSTANCE;
         }
     }
+
 }

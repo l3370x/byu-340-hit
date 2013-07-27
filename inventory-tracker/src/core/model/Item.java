@@ -4,6 +4,7 @@ import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
 
 import java.util.Date;
+import java.util.Observer;
 
 /**
  * Instances of the {@code Item} class represent physical items of a particular
@@ -96,6 +97,8 @@ public interface Item extends Containable<ProductContainer> {
 	 * @post entry date is set
 	 */
 	void setEntryDate(Date date);
+	
+	void addObs(Observer o);
 
 	/**
 	 * The static {@code Item.Factory} class is used to generate valid Item

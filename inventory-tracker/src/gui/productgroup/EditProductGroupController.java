@@ -138,6 +138,14 @@ public class EditProductGroupController extends Controller implements
 			}
 		}
 
+		// if the unit is count, check to make sure the value is an int.
+		if (this.getView().getSupplyUnit().equals(SizeUnits.Count)
+				&& (Float.parseFloat(count) != Math.round(Float
+						.parseFloat(count)))) {
+			this.getView().enableOK(false);
+			return;
+		}
+
 		// we can create a storage unit
 		this.getView().enableOK(true);
 	}
@@ -167,12 +175,10 @@ public class EditProductGroupController extends Controller implements
 			category.set3MonthSupplyQuantity(newQuantity);
 
 			// check for valid quantity
-			if(newSupply.compareTo("0") == 0) {
+			if (newSupply.compareTo("0") == 0) {
 				category.set3MonthSupplyQuantity(new Quantity(0, Units.COUNT));
 			}
-			
-			
-			
+
 			// the unit should notify its observers of the change
 			if (category instanceof Observable) {
 				((Observable) category).notifyObservers(new ModelNotification(

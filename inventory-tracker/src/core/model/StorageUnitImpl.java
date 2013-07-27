@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import sun.tools.tree.ThisExpression;
+
 import core.model.exception.HITException;
 import static core.model.AbstractContainable.*;
 import core.model.exception.HITException.Severity;
@@ -59,20 +61,17 @@ class StorageUnitImpl extends AbstractProductContainer<Category> implements
 	@Override
 	public StorageUnit getStorageUnit() {
 		assert true;
-
 		return this;
 	}
-
+	
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.defaultWriteObject();
-		for (Category c : this.getContents()) {
-			out.writeObject(c);
-		}
 	}
 
 	private void readObject(ObjectInputStream in) throws IOException,
 			ClassNotFoundException, HITException {
 		in.defaultReadObject();
+		super.loadObject(this);
 		InventoryManager.Factory.getInventoryManager().add(this);
 	}
 }

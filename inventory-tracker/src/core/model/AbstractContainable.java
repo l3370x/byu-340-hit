@@ -19,7 +19,6 @@ abstract class AbstractContainable<T extends Container> extends Observable imple
     @Override
     public void wasAddedTo(final T container) throws HITException {
         this.verifyContainedIn(container);
-        
         this.container = container;
     }
 

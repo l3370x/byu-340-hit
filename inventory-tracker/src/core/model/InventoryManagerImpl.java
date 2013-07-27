@@ -3,6 +3,9 @@ package core.model;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
@@ -71,7 +74,7 @@ implements InventoryManager {
     public Iterable<Item> getRemovedItems(Product product) {
         return this.removedItems.getItems(product);
     }
-
+    
     @Override
     public void saveRemovedItem(Item item) throws HITException {
         assert null != item;
@@ -149,4 +152,21 @@ implements InventoryManager {
             }
         }
     }
+    
+    
+    private void writeObject(ObjectOutputStream out) throws IOException {
+		out.defaultWriteObject();
+	}
+    
+    private void readObject(ObjectInputStream in) throws IOException,
+	  ClassNotFoundException, HITException {
+    	in.defaultReadObject();
+    	InventoryManager.Factory.getInventoryManager().load(this);
+    }
+
+    
+	@Override
+	public void load(AbstractProductContainer i) throws HITException {
+		super.loadInvMan(i);
+	}
 }

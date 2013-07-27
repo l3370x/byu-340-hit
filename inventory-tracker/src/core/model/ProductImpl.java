@@ -2,10 +2,14 @@ package core.model;
 
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observer;
 
 /**
  * The {@code ProductImpl} class is the default implementation of the {@link Product} interface. The
@@ -183,4 +187,13 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
         }
 
     }
+    
+    @Override
+    public void addObs(Observer o) {
+    	super.addObserver(o);
+    }
+    
+    //private void readObject(ObjectInputStream in) throws IOException {
+    //	this.addObserver(getContainer());
+    //}
 }

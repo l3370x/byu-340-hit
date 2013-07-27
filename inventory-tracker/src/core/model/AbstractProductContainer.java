@@ -109,6 +109,18 @@ public abstract class AbstractProductContainer<T extends Containable>
         });
     }
     
+    protected void loadObject(Container c){
+    	initCollections(this.items, this.products);
+    	for( Item i : this.items.getItems()){
+    		i.addObs(this.items);
+    	}
+    }
+    
+	protected void loadInvMan(AbstractProductContainer i) throws HITException {
+		this.items = i.items;
+		this.products = i.products;
+	}
+    
     @Override
     public void addItem(Item item) throws HITException {
         if (null == item) {

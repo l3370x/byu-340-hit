@@ -8,6 +8,7 @@ import gui.common.UnitsConverter;
 import core.model.Quantity.Units;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
+import core.model.exception.HITException.Severity;
 import gui.common.*;
 import gui.inventory.*;
 
@@ -104,6 +105,14 @@ public class AddProductGroupController extends Controller implements
 			return;
 		}
 
+		// if the unit is count, check to make sure the value is an int.
+		if (this.getView().getSupplyUnit().equals(SizeUnits.Count)
+				&& (Float.parseFloat(count) != Math.round(Float
+						.parseFloat(count)))) {
+			this.getView().enableOK(false);
+			return;
+		}
+
 		// if the name matches an existing storage unit, then we can't
 		// create a storage unit
 
@@ -129,7 +138,7 @@ public class AddProductGroupController extends Controller implements
 			// create the storage unit
 			final Category category = newCategory(this.getView()
 					.getProductGroupName());
-			
+
 			// set the quantity
 			String newSupply = this.getView().getSupplyValue();
 			SizeUnits newSize = this.getView().getSupplyUnit();
@@ -138,10 +147,10 @@ public class AddProductGroupController extends Controller implements
 			category.set3MonthSupplyQuantity(newQuantity);
 
 			// check for valid quantity
-			if(newSupply.compareTo("0") == 0) {
+			if (newSupply.compareTo("0") == 0) {
 				category.set3MonthSupplyQuantity(new Quantity(0, Units.COUNT));
 			}
-			
+
 			// add the category to the selected container
 			Container selectedContainer = (Container) this.container.getTag();
 			selectedContainer.add(category);

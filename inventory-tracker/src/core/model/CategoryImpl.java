@@ -82,14 +82,17 @@ class CategoryImpl extends AbstractProductContainer<Category> implements
 
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.defaultWriteObject();
-		for (Category c : this.getContents()) {
-			out.writeObject(c);
-		}
 	}
 
 	private void readObject(ObjectInputStream in) throws IOException,
 			ClassNotFoundException, HITException {
 		in.defaultReadObject();
 		this.addObserver(container);
+		for(Item i : this.getItems()) {
+			i.addObs(this);
+		}
+		for(Product p : this.getProducts()) {
+			p.addObs(this);
+		}
 	}
 }
