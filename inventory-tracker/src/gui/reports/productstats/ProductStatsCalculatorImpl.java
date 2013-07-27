@@ -225,7 +225,7 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 	}
 
 	public int calculateDayDifference(Date begin, Date end) {
-		return (int) (end.getTime() - begin.getTime()) / (1000 * 60 * 60 * 24)
+		return (int) ((end.getTime() - begin.getTime()) / (1000 * 60 * 60 * 24))
 				+ 1;
 	}
 
