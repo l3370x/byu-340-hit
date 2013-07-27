@@ -102,7 +102,6 @@ public interface Product extends Containable<ProductContainer> {
      */
     void setShelfLifeInMonths(int shelfLife) throws HITException;
     
-    
     /**
      * Get the number of this product required for a three (3) month supply. A
      * value of zero (0) means "unspecified."
@@ -242,6 +241,4 @@ public interface Product extends Containable<ProductContainer> {
         }
     }
 
-
-	Date setCreationDate(Date d) throws HITException;
 }

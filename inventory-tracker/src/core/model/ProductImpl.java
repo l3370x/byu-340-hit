@@ -127,10 +127,6 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements Produ
         //To change body of generated methods, choose Tools | Templates.
     }
     
-    @Override
-    public Date getCreationDate(Date d) throws HITException {
-        return new Date();//smallest date.
-    }
 
     @Override
     public Iterable<StorageUnit> getStorageUnits() {
