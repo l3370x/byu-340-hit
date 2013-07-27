@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -21,6 +23,7 @@ import common.util.DateUtils;
 import core.model.InventoryManager;
 import core.model.Item;
 import core.model.Product;
+import gui.reports.productstats.ProductStatsCalculator;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
@@ -128,21 +131,29 @@ public class ProductStatsReportController extends Controller implements
 		goBack.add(Calendar.MONTH, -1 * nMonths);
 		startingDate = goBack.getTime();
 
+		ProductStatsCalculator calc = ProductStatsCalculator.Factory
+				.getInstance();
+
 		InventoryManager inventory = InventoryManager.Factory
 				.getInventoryManager();
 		Iterable<Product> allProducts = inventory.getProducts();
 
 		try {
 			File outFile = initOutputFile();
-			Document document = new Document(PageSize.LETTER);
+			Document document = new Document(PageSize.LETTER_LANDSCAPE);
 			PdfWriter pdfWriter = PdfWriter.getInstance(document,
 					new FileOutputStream(outFile, true));
 			document.open();
-
+			PdfPTable table = new PdfPTable(10);
+			formatDocument(document, pdfWriter.getDirectContent(), null, calc,
+					table);
 			for (Product p : allProducts) {
-				formatDocument(document, pdfWriter.getDirectContent(), p);
+				calc.setValues(startingDate, inventory.getItems(p),
+						inventory.getRemovedItems(p), p);
+				formatDocument(document, pdfWriter.getDirectContent(), p, calc,
+						table);
 			}
-
+			document.add(table);
 			document.close();
 			displayDocument(outFile);
 		} catch (FileNotFoundException | DocumentException e) {
@@ -157,17 +168,17 @@ public class ProductStatsReportController extends Controller implements
 		}
 
 	}
-	
+
 	private static void displayDocument(File file) {
-        try {
-            Desktop.getDesktop().open(file);
-        } catch (IOException e) {
-            ExceptionHandler.TO_USER.reportException(e,
-                    "Can't print bar code labels");
-            ExceptionHandler.TO_LOG.reportException(e,
-                    "Can't print bar code labels");
-        }
-    }
+		try {
+			Desktop.getDesktop().open(file);
+		} catch (IOException e) {
+			ExceptionHandler.TO_USER.reportException(e,
+					"Can't print bar code labels");
+			ExceptionHandler.TO_LOG.reportException(e,
+					"Can't print bar code labels");
+		}
+	}
 
 	private static File initOutputFile() {
 		File outFile = null;
@@ -177,8 +188,8 @@ public class ProductStatsReportController extends Controller implements
 			dateString = dateString.replace("/", "_");
 
 			String fileName = BASE_FILE_NAME.replace("build/", "");
-			outFile = new File(fileName + "printouts/labels/", dateString + "_"
-					+ ".pdf");
+			outFile = new File(fileName + "reports/productStatisticsReport/",
+					dateString + "_" + ".pdf");
 			outFile.getParentFile().mkdirs();
 
 			if (!outFile.exists()) {
@@ -196,19 +207,58 @@ public class ProductStatsReportController extends Controller implements
 	}
 
 	private static void formatDocument(Document document,
-			PdfContentByte contentByte, Product p) {
-		try {
-			PdfPTable table = new PdfPTable(10);
+			PdfContentByte contentByte, Product p, ProductStatsCalculator calc,
+			PdfPTable table) {
+		if (p == null) {
 			for (int i = 0; i < 10; i++) {
-				PdfPCell blankCell = new PdfPCell();
-				table.addCell(blankCell);
+				table.addCell(REPORT_HEADINGS.get("h" + String.valueOf(i + 1)));
 			}
-			document.add(table);
-		} catch (DocumentException e) {
-			ExceptionHandler.TO_USER.reportException(e,
-					"Can't print bar code labels");
-			ExceptionHandler.TO_LOG.reportException(e,
-					"Can't print bar code labels");
+		} else {
+			for (int i = 1; i <= 10; i++) {
+				switch (i) {
+				case 1:
+					table.addCell(p.getDescription());
+					break;
+				case 2:
+					table.addCell(p.getBarCode().getValue());
+					break;
+				case 3:
+					table.addCell(p.getSize().toString());
+					break;
+				case 4:
+					table.addCell(String.valueOf(p.get3MonthSupplyQuota()));
+					break;
+				case 5:
+					table.addCell(String.format("%d / %f",
+							calc.calculateCurrentSupply(),
+							calc.calculateAverageSupply()));
+					break;
+				case 6:
+					table.addCell(String.format("%d days / %d days",
+							calc.calculateMinimumSupply(),
+							calc.calculateMaximumSupply()));
+					break;
+				case 7:
+					table.addCell(String.format("%d days / %d days",
+							calc.calculateItemsUsed(),
+							calc.calculateItemsAdded()));
+					break;
+				case 8:
+					table.addCell(String.format("%d months",
+							p.getShelfLifeInMonths()));
+					break;
+				case 9:
+					table.addCell(String.format("%f days / %d days",
+							calc.calculateAverageAgeUsed(),
+							calc.calculateMaximumAgeUsed()));
+					break;
+				case 10:
+					table.addCell(String.format("%f days / %d days",
+							calc.calculateAverageAgedCurrent(),
+							calc.calculateMaximumAgeCurrent()));
+					break;
+				}
+			}
 		}
 	}
 
@@ -225,6 +275,20 @@ public class ProductStatsReportController extends Controller implements
 			return false;
 		}
 		return true;
+	}
+
+	private static final Map<String, String> REPORT_HEADINGS = new HashMap<>();
+	static {
+		REPORT_HEADINGS.put("h1", "Description");
+		REPORT_HEADINGS.put("h2", "Barcode");
+		REPORT_HEADINGS.put("h3", "Size");
+		REPORT_HEADINGS.put("h4", "3-Month Supply");
+		REPORT_HEADINGS.put("h5", "Supply: Cur/Avg");
+		REPORT_HEADINGS.put("h6", "Supply: Min/Max");
+		REPORT_HEADINGS.put("h7", "Supply: Used/Added");
+		REPORT_HEADINGS.put("h8", "Shelf Life");
+		REPORT_HEADINGS.put("h9", "Used Age: Avg/Max");
+		REPORT_HEADINGS.put("h10", "Cur Age: Avg/Max");
 	}
 
 }

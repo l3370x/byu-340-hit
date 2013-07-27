@@ -10,7 +10,7 @@ import core.model.Item;
 
 public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 
-	Date startDate;
+	Date startDate = new Date();
 	int numberOfDays = calculateDayDifference(startDate,
 			DateUtils.currentDate());
 	Iterable<Item> currentItems;
@@ -162,6 +162,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 					item.getExitDate());
 			totalUsedItems++;
 		}
+		if(totalUsedItems == 0)
+			return 0;
 		averageAgeUsed = (double) (netAgeUsed / totalUsedItems);
 		return averageAgeUsed;
 	}
