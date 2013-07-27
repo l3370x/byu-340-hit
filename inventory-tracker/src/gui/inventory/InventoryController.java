@@ -365,6 +365,7 @@ public class InventoryController extends Controller
         Item item = (Item) tag;
         
         try {
+        	getInventoryManager().saveRemovedItem(item);
             item.getContainer().removeItem(item);
             //Update the view
             updateProductsPane(this.getView());

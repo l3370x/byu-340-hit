@@ -1,8 +1,22 @@
 package gui.reports.productstats;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import common.util.DateUtils;
 
 import core.model.InventoryManager;
 import core.model.Item;
@@ -18,6 +32,8 @@ import gui.common.*;
  */
 public class ProductStatsReportController extends Controller implements
 		IProductStatsReportController {
+
+	private static final String BASE_FILE_NAME = System.getProperty("user.dir");
 
 	/**
 	 * Constructor.
@@ -116,12 +132,84 @@ public class ProductStatsReportController extends Controller implements
 				.getInventoryManager();
 		Iterable<Product> allProducts = inventory.getProducts();
 
+		try {
+			File outFile = initOutputFile();
+			Document document = new Document(PageSize.LETTER);
+			PdfWriter pdfWriter = PdfWriter.getInstance(document,
+					new FileOutputStream(outFile, true));
+			document.open();
+
+			for (Product p : allProducts) {
+				formatDocument(document, pdfWriter.getDirectContent(), p);
+			}
+
+			document.close();
+			displayDocument(outFile);
+		} catch (FileNotFoundException | DocumentException e) {
+			ExceptionHandler.TO_USER.reportException(e,
+					"Can't print bar code labels");
+			ExceptionHandler.TO_LOG.reportException(e,
+					"Can't print bar code labels");
+		}
+
 		for (Product p : allProducts) {
 			System.out.println(p.toString());
 		}
-		
-		
 
+	}
+	
+	private static void displayDocument(File file) {
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (IOException e) {
+            ExceptionHandler.TO_USER.reportException(e,
+                    "Can't print bar code labels");
+            ExceptionHandler.TO_LOG.reportException(e,
+                    "Can't print bar code labels");
+        }
+    }
+
+	private static File initOutputFile() {
+		File outFile = null;
+		try {
+			Date date = DateUtils.removeTimeFromDate(DateUtils.currentDate());
+			String dateString = DateUtils.formatDate(date);
+			dateString = dateString.replace("/", "_");
+
+			String fileName = BASE_FILE_NAME.replace("build/", "");
+			outFile = new File(fileName + "printouts/labels/", dateString + "_"
+					+ ".pdf");
+			outFile.getParentFile().mkdirs();
+
+			if (!outFile.exists()) {
+				outFile.createNewFile();
+			}
+
+		} catch (IOException e) {
+			ExceptionHandler.TO_USER.reportException(e,
+					"Can't print bar code labels");
+			ExceptionHandler.TO_LOG.reportException(e,
+					"Can't print bar code labels");
+		}
+
+		return outFile;
+	}
+
+	private static void formatDocument(Document document,
+			PdfContentByte contentByte, Product p) {
+		try {
+			PdfPTable table = new PdfPTable(10);
+			for (int i = 0; i < 10; i++) {
+				PdfPCell blankCell = new PdfPCell();
+				table.addCell(blankCell);
+			}
+			document.add(table);
+		} catch (DocumentException e) {
+			ExceptionHandler.TO_USER.reportException(e,
+					"Can't print bar code labels");
+			ExceptionHandler.TO_LOG.reportException(e,
+					"Can't print bar code labels");
+		}
 	}
 
 	private boolean isValidInput(String months) {

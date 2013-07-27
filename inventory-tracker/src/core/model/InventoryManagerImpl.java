@@ -74,7 +74,7 @@ implements InventoryManager {
     public Iterable<Item> getRemovedItems(Product product) {
         return this.removedItems.getItems(product);
     }
-
+    
     @Override
     public void saveRemovedItem(Item item) throws HITException {
         assert null != item;
