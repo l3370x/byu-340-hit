@@ -126,7 +126,7 @@ public class ProductStatsReportController extends Controller implements
 		int nMonths = Integer.parseInt(this.getView().getMonths());
 
 		Date startingDate = new Date();
-		GregorianCalendar goBack = new GregorianCalendar();
+		Calendar goBack = Calendar.getInstance();
 		goBack.setTime(startingDate);
 		goBack.add(Calendar.MONTH, -1 * nMonths);
 		startingDate = goBack.getTime();

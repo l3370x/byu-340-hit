@@ -28,6 +28,10 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		this.removedItems = removedItems;
 		numberOfDays = calculateDayDifference(startDate,
 				DateUtils.currentDate());
+		System.out.println(this);
+		System.out.println("Going back to " + this.startDate);
+		System.out.println("The product is " + this.product);
+		System.out.println("Number of days: " + this.numberOfDays);
 	}
 
 	@Override
@@ -95,8 +99,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		}
 		while (iterRem.hasNext()) {
 			item = iterRem.next();
-			if (!(item.getEntryDate().after(cal.getTime()) || item
-					.getExitDate().before(cal.getTime()))) {
+			if (!(item.getEntryDate().before(cal.getTime()) || item
+					.getExitDate().after(cal.getTime()))) {
 				itemsStoredinDate++;
 			}
 		}
