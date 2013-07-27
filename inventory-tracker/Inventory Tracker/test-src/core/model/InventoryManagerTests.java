@@ -147,7 +147,7 @@ public class InventoryManagerTests extends AbstractContainmentTests<InventoryMan
         
         // create a product
         Product product = newProduct(generateItemBarCode(), "Test Product");
-        Item item = newItem(product, new Date(), null);
+        Item item = newItem(product, new Date());
         
         // add the product to the storage unit
         unit.addItem(item);
@@ -178,7 +178,7 @@ public class InventoryManagerTests extends AbstractContainmentTests<InventoryMan
         
         // create a product
         Product product = newProduct(generateItemBarCode(), "Test Product");
-        Item item = newItem(product, new Date(), null);
+        Item item = newItem(product, new Date());
         
         // add the product to the storage unit
         category.addItem(item);
@@ -201,7 +201,7 @@ public class InventoryManagerTests extends AbstractContainmentTests<InventoryMan
         
         // create a product
         Product product = newProduct(generateItemBarCode(), "Test Product");
-        Item item = newItem(product, new Date(), null);
+        Item item = newItem(product, new Date());
         
         // add the product to the storage unit
         unit.addItem(item);
@@ -239,7 +239,7 @@ public class InventoryManagerTests extends AbstractContainmentTests<InventoryMan
         
         // create a product
         Product product = newProduct(generateItemBarCode(), "Test Product");
-        Item item = newItem(product, new Date(), null);
+        Item item = newItem(product, new Date());
         
         // add the product to the storage unit
         category.addItem(item);

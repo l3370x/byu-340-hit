@@ -252,7 +252,7 @@ public class AddItemBatchController extends Controller implements
 
                 // create the item
                 Item itemtoadd = newItem(product,
-                        this.getView().getEntryDate(), expiryDate.getTime());
+                        this.getView().getEntryDate());
 
                 // add the item
                 target.addItem(itemtoadd);

@@ -11,13 +11,11 @@ import core.model.Item;
 public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 
 	Date startDate;
-	int numberOfDays = calculateDayDifference(startDate,
-			DateUtils.currentDate());
+	int numberOfDays;
 	Iterable<Item> currentItems;
 	Iterable<Item> removedItems;
 
 	public ProductStatsCalculatorImpl() {
-
 	}
 
 	public void setValues(Date startDate, Iterable<Item> currentItems,
@@ -25,6 +23,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		this.startDate = startDate;
 		this.currentItems = currentItems;
 		this.removedItems = removedItems;
+		numberOfDays = calculateDayDifference(startDate,
+				DateUtils.currentDate());
 	}
 
 	@Override
