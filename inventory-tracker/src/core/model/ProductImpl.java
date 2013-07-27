@@ -143,7 +143,7 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements
 
 	@Override
 	public void setCreationDate(Date d) {
-		this.creationDate = new Date(); // smallest date.
+		this.creationDate = d; // smallest date.
 	}
 
 	@Override
