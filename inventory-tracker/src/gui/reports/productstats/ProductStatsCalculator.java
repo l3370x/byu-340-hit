@@ -32,7 +32,7 @@ public interface ProductStatsCalculator {
 	public static class Factory {
 		private static final ProductStatsCalculator INSTANCE = new ProductStatsCalculatorImpl();
 
-		public ProductStatsCalculator getInstance() {
+		public static ProductStatsCalculator getInstance() {
 			return INSTANCE;
 		}
 	}

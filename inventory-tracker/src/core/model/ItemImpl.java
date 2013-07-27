@@ -2,6 +2,8 @@ package core.model;
 
 import core.model.exception.HITException;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -134,4 +136,10 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
     public synchronized void addObserver(Observer o) {
         super.addObserver(o);
     }
+    
+    @Override
+    public void addObs(Observer o) {
+    	super.addObserver(o);
+    }
+    
 }

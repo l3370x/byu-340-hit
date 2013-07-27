@@ -128,6 +128,7 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
         this.notifyObservers(arg);
     }
     
+    
     /**
      * This method is called by the {@link #canAdd(core.model.Containable)} 
      * method after it has performed its initial checks;
@@ -190,6 +191,7 @@ abstract class AbstractContainer<T extends Containable> extends Observable imple
         }
     }
 
+    
     /**
      * This method is called after content has been removed to allow for any 
      * kind of specific follow-up tasks.

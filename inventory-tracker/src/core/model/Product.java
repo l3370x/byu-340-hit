@@ -4,6 +4,7 @@ import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
 
 import java.util.Date;
+import java.util.Observer;
 
 /**
  * The {@code Product} interface defines the contract for an object that
@@ -169,6 +170,8 @@ public interface Product extends Containable<ProductContainer> {
      * given storage unit (may be the storage unit itself)
      */
     ProductContainer getProductContainer(StorageUnit unit);
+    
+    void addObs(Observer o);
     
     
     /**

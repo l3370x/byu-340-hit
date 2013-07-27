@@ -33,10 +33,10 @@ public enum PersistenceManager {
 		try {
 			FileOutputStream fileOut = new FileOutputStream("save.data");
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			for (StorageUnit s : storageUnits) {
-				out.writeObject(s);
-			}
-
+			out.writeObject(getInventoryManager());
+			//for (StorageUnit s : storageUnits) {
+			//	out.writeObject(s);
+			//}
 			// TODO save removed items
 
 			out.close();
@@ -72,6 +72,11 @@ public enum PersistenceManager {
 			if (e instanceof FileNotFoundException) {
 				System.out.println("No previous save data found.");
 			} else {
+				if (e.getClass() == InvalidClassException.class) {
+					System.out
+							.println("Couldn't load old save file due to version mismatch.  Starting over.");
+					return;
+				}
 				throw new HITException(WARNING, e.getMessage());
 			}
 		}
