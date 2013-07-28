@@ -93,6 +93,8 @@ implements InventoryManager {
     @Override
     public void deleteRemovedItem(Item item) throws HITException {
         this.removedItems.remove(item);
+        
+        item.setExitDate(null);
     }
 
     @Override
@@ -117,10 +119,6 @@ implements InventoryManager {
 
     @Override
     public void update(Observable o, Object arg) {
-        // call the super first, so that notifications will propagate to my 
-        // observers
-        super.update(o, arg);
-        
         if (false == arg instanceof ModelNotification) {
             return;
         }
@@ -154,6 +152,9 @@ implements InventoryManager {
                     break;
             }
         }
+        
+        // call the super, so that notifications will propagate to my observers
+        super.update(o, arg);
     }
     
     

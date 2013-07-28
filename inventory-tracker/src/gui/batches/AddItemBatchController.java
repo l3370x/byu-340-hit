@@ -2,12 +2,16 @@ package gui.batches;
 
 import java.util.Calendar;
 
+import common.Command;
+import common.UndoSupport;
 import core.model.*;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import static core.model.InventoryManager.Factory.getInventoryManager;
 import static core.model.Item.Factory.newItem;
 import static core.model.BarCode.*;
+import static gui.batches.ItemLabelController.*;
+
 import core.model.exception.HITException.Severity;
 import gui.common.*;
 import gui.inventory.*;
@@ -36,6 +40,8 @@ public class AddItemBatchController extends Controller implements
     private ProductContainerData source;
     private final CopyOnWriteArrayList<Product> addedProducts = new CopyOnWriteArrayList<>();
     private final Map<Product, List<Item>> addedItemsByProduct = new HashMap<>();
+
+    private final UndoSupport undoSupport = new UndoSupport();
 
     /**
      * Constructor.
@@ -92,8 +98,8 @@ public class AddItemBatchController extends Controller implements
     @Override
     protected void enableComponents() {
         this.getView().enableItemAction(false);
-        this.getView().enableUndo(false);
-        this.getView().enableRedo(false);
+        this.getView().enableUndo(this.undoSupport.canUndo());
+        this.getView().enableRedo(this.undoSupport.canRedo());
         this.getView().setUseScanner(true);
     }
 
@@ -170,16 +176,19 @@ public class AddItemBatchController extends Controller implements
     public void selectedProductChanged() {
         ProductData productData = this.getView().getSelectedProduct();
         if (null == productData) {
+            this.getView().setItems(new ItemData[0]);
             return;
         }
 
         Object tag = productData.getTag();
         if (false == tag instanceof Product) {
+            this.getView().setItems(new ItemData[0]);
             return;
         }
 
         List<Item> addedItems = this.addedItemsByProduct.get((Product) tag);
         if (null == addedItems) {
+            this.getView().setItems(new ItemData[0]);
             return;
         }
 
@@ -188,7 +197,7 @@ public class AddItemBatchController extends Controller implements
             itemList.add(new ItemData(item));
         }
 
-        this.getView().setItems(itemList.toArray(new ItemData[0]));
+        this.getView().setItems(itemList.toArray(new ItemData[itemList.size()]));
     }
 
     /**
@@ -217,12 +226,6 @@ public class AddItemBatchController extends Controller implements
                 }
             }
 
-            List<Item> addedItems = this.addedItemsByProduct.get(product);
-            if (null == addedItems) {
-                addedItems = new ArrayList<>();
-                this.addedItemsByProduct.put(product, addedItems);
-            }
-            
             String countVal = this.getView().getCount();
             if (false == this.countIsValid(countVal)) {
                 throw new HITException(Severity.ERROR, "Invalid value for count (" + countVal + 
@@ -234,8 +237,8 @@ public class AddItemBatchController extends Controller implements
                 throw new HITException(Severity.ERROR, 
                         "Items may only be added when a storage unit is selected");
             }
-            
-            // get the target container for the items (the target is the actual container where the 
+
+            // get the target container for the items (the target is the actual container where the
             // product is located within the storage unit
             ProductContainer target = product.getProductContainer((StorageUnit) tag);
             if (null == target) {
@@ -243,6 +246,7 @@ public class AddItemBatchController extends Controller implements
             }
 
             // create "count" items
+            List<Item> itemsToAdd = new ArrayList<>();
             int count = Integer.valueOf(countVal);
             for (int i = 0; i < count; i++) {
                 // generate data for the Item
@@ -251,17 +255,16 @@ public class AddItemBatchController extends Controller implements
                 expiryDate.add(Calendar.MONTH, product.getShelfLifeInMonths());
 
                 // create the item
-                Item itemtoadd = newItem(product,
-                        this.getView().getEntryDate());
+                Item item = newItem(product, this.getView().getEntryDate());
 
                 // add the item
-                target.addItem(itemtoadd);
-                addedItems.add(itemtoadd);
+                itemsToAdd.add(item);
             }
 
-            // update the products pane
-            this.updateProductsPane(product);
-       
+            AddItemCommand command = new AddItemCommand(target,
+                    product, itemsToAdd.toArray(new Item[itemsToAdd.size()]));
+            this.undoSupport.execute(command);
+            this.enableComponents();
         } catch (HITException e) {
             ExceptionHandler.TO_USER.reportException(e, "Unable To Add Item(s)");
         } finally {
@@ -275,6 +278,8 @@ public class AddItemBatchController extends Controller implements
      */
     @Override
     public void redo() {
+        this.undoSupport.redo();
+        this.enableComponents();
     }
 
     /**
@@ -282,6 +287,8 @@ public class AddItemBatchController extends Controller implements
      */
     @Override
     public void undo() {
+        this.undoSupport.undo();
+        this.enableComponents();
     }
 
     /**
@@ -296,7 +303,9 @@ public class AddItemBatchController extends Controller implements
             allAddedItems.addAll(addedItems);
         }
 
-        ItemLabelController.createDocument(allAddedItems.toArray(new Item[allAddedItems.size()]));
+        if (false == allAddedItems.isEmpty()) {
+            createDocument(allAddedItems.toArray(new Item[allAddedItems.size()]));
+        }
     }
 
     private void initTimer() {
@@ -312,9 +321,6 @@ public class AddItemBatchController extends Controller implements
     }
 
     private void updateProductsPane(Product product) {
-        // add the product to the list if it hasn't been already
-        this.addedProducts.addIfAbsent(product);
-
         ProductContainer container = (ProductContainer) this.source.getTag();
 
         // create the product data instances
@@ -324,7 +330,7 @@ public class AddItemBatchController extends Controller implements
             ProductData data = new ProductData(p);
             data.setCount(Integer.toString(container.getItemCount(p)));
             productList.add(data);
-            if (p == product) {
+            if ( p == product) {
                 selected = data;
             }
         }
@@ -335,8 +341,8 @@ public class AddItemBatchController extends Controller implements
         // select the just-added product
         if (null != selected) {
             this.getView().selectProduct(selected);
-            this.selectedProductChanged();
         }
+        this.selectedProductChanged();
     }
 
     private void prepareForEntry() {
@@ -358,5 +364,75 @@ public class AddItemBatchController extends Controller implements
     private boolean countIsValid(String count) {
         return POSITIVE_INTEGER_PATTERN.matcher(
                 count).matches();
+    }
+
+    private class AddItemCommand implements Command {
+        private final Item[] items;
+        private final Product product;
+        private final ProductContainer container;
+        private final boolean productExisted;
+
+        public AddItemCommand(ProductContainer container, Product product, Item... item) {
+            this.items = item;
+            this.product = product;
+            this.container = container;
+            this.productExisted = this.container.containsProduct(this.product);
+        }
+
+        @Override
+        public void execute() {
+            try {
+                AddItemBatchController _this = AddItemBatchController.this;
+                
+                List<Item> addedItems = _this.addedItemsByProduct.get(this.product);
+                if (null == addedItems) {
+                    addedItems = new ArrayList<>();
+                    _this.addedItemsByProduct.put(this.product, addedItems);
+                }
+
+                for (Item item : this.items) {
+                    container.addItem(item);
+                    addedItems.add(item);
+                }
+
+                if (false == this.productExisted) {
+                    // add the product to the list if it hasn't been already
+                    _this.addedProducts.addIfAbsent(this.product);
+                }
+
+                _this.updateProductsPane(this.product);
+            } catch (HITException e) {
+                ExceptionHandler.TO_USER.reportException(e,
+                        "Unable To Perform Command: Add Item(s)");
+            }
+        }
+
+        @Override
+        public void undo() {
+            try {
+                AddItemBatchController _this = AddItemBatchController.this;
+                
+                List<Item> addedItems = _this.addedItemsByProduct.get(this.product);
+
+                for (Item item : this.items) {
+                    container.removeItem(item);
+                    addedItems.remove(item);
+                }
+
+                if (addedItems.isEmpty()) {
+                    _this.addedItemsByProduct.remove(this.product);
+                }
+
+                if (false == this.productExisted) {
+                    this.container.removeProduct(this.product);
+                    _this.addedProducts.remove(this.product);
+                }
+
+                _this.updateProductsPane(this.product);
+            } catch (HITException e) {
+                ExceptionHandler.TO_USER.reportException(e,
+                        "Unable To Undo Command: Add Item(s)");
+            }
+        }
     }
 }

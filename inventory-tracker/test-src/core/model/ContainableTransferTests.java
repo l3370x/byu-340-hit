@@ -49,7 +49,7 @@ public class ContainableTransferTests {
     public void testTransferItemFromOneStorageUnitToAnother() throws HITException {
         // create and add product/item to storage unit 1
         Product product = newProduct(generateItemBarCode(), "P1");
-        Item item = newItem(product, new Date(), null);
+        Item item = newItem(product, new Date());
         this.su1.addItem(item);
         
         // make sure the product and item are in SU1
@@ -82,7 +82,7 @@ public class ContainableTransferTests {
     public void testTransferItemFromStorageUnitToCategory() throws HITException {
         // create and add product/item to storage unit 1
         Product product = newProduct(generateItemBarCode(), "P1");
-        Item item = newItem(product, new Date(), null);
+        Item item = newItem(product, new Date());
         this.su1.addItem(item);
         
         // make sure the product and item are in SU1
@@ -113,7 +113,7 @@ public class ContainableTransferTests {
     public void testTransferAllItemsFromStorageUnitToCategory() throws HITException {
         // create and add product/item to storage unit 1
         Product product = newProduct(generateItemBarCode(), "P1");
-        Item item = newItem(product, new Date(), null);
+        Item item = newItem(product, new Date());
         this.su1.addItem(item);
         
         // make sure the product and item are in SU1
@@ -123,7 +123,7 @@ public class ContainableTransferTests {
         // now create and add a bunch more items to the storage unit
         int numAddlItems = 10;
         for (int i = 0; i < numAddlItems; i++) {
-            Item newItem = newItem(product, new Date(), null);
+            Item newItem = newItem(product, new Date());
             this.su1.addItem(newItem);
             assertItemAdded(this.su1, newItem);
         }

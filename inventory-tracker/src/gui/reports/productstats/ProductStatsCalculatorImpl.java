@@ -28,6 +28,10 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		this.removedItems = removedItems;
 		numberOfDays = calculateDayDifference(startDate,
 				DateUtils.currentDate());
+		System.out.println(this);
+		System.out.println("Going back to " + this.startDate);
+		System.out.println("The product is " + this.product);
+		System.out.println("Number of days: " + this.numberOfDays);
 	}
 
 	@Override
@@ -89,7 +93,7 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		// iterate through current items
 		while (iterCur.hasNext()) {
 			item = iterCur.next();
-			if (item.getEntryDate().before(cal.getTime())) {
+			if (!item.getEntryDate().after(cal.getTime())) {
 				itemsStoredinDate++;
 			}
 		}
@@ -107,7 +111,7 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 	public int calculateMaximumSupply() {
 		int maximumSupply = (int) calculateAverageSupply();
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(startDate);
+		cal.setTime(getLatestDate(startDate, product.getCreationDate()));
 		while (!cal.getTime().after(DateUtils.currentDate())) {
 			int itemsStoredinDate = calculateItemsStoredinDate(cal);
 			if (itemsStoredinDate > maximumSupply) {

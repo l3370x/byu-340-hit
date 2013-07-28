@@ -1,34 +1,25 @@
 package gui.reports.productstats;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import gui.common.Controller;
+import gui.common.FileFormat;
+import gui.common.IView;
+import gui.reports.HTMLProductStatisticsReport;
+import gui.reports.PDFProductStatisticsReport;
+import gui.reports.ReportController;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import common.util.DateUtils;
-
 import core.model.InventoryManager;
-import core.model.Item;
 import core.model.Product;
-import gui.reports.productstats.ProductStatsCalculator;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
-
-import gui.common.*;
 
 /**
  * Controller class for the product statistics report view.
@@ -36,7 +27,7 @@ import gui.common.*;
 public class ProductStatsReportController extends Controller implements
 		IProductStatsReportController {
 
-	private static final String BASE_FILE_NAME = System.getProperty("user.dir");
+	ProductStatsCalculator calc = ProductStatsCalculator.Factory.getInstance();
 
 	/**
 	 * Constructor.
@@ -46,7 +37,6 @@ public class ProductStatsReportController extends Controller implements
 	 */
 	public ProductStatsReportController(IView view) {
 		super(view);
-
 		construct();
 	}
 
@@ -125,141 +115,109 @@ public class ProductStatsReportController extends Controller implements
 
 		int nMonths = Integer.parseInt(this.getView().getMonths());
 
-		Date startingDate = new Date();
-		GregorianCalendar goBack = new GregorianCalendar();
-		goBack.setTime(startingDate);
-		goBack.add(Calendar.MONTH, -1 * nMonths);
-		startingDate = goBack.getTime();
-		System.out.println("Going back to " + startingDate.toString());
+		List<ArrayList<String>> data = createHeader();
+		data.addAll(createData());
 
-		ProductStatsCalculator calc = ProductStatsCalculator.Factory
-				.getInstance();
+		ReportController report = null;
+
+		FileFormat f = this.getView().getFormat();
+		String title = String.format("Product Report (%d Months)", nMonths);
+		String name = "ProductReport";
+
+		if (f.equals(FileFormat.PDF))
+			report = new PDFProductStatisticsReport(name, title);
+		else if (f.equals(FileFormat.HTML))
+			report = new HTMLProductStatisticsReport(name, title);
+		else {
+			ExceptionHandler.TO_USER.reportException(new HITException(
+					Severity.INFO, "Couldn't make report from given input."),
+					String.format("Bad Format Entered - %s.", f.toString()));
+			return;
+		}
+
+		report.initialize();
+		report.appendTable(data);
+		report.finalize();
+
+	}
+
+	private List<ArrayList<String>> createData() {
+		List<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
+		Date startingDate = new Date();
+		Calendar goBack = Calendar.getInstance();
+		goBack.setTime(startingDate);
+		goBack.add(Calendar.MONTH,
+				-1 * Integer.valueOf(this.getView().getMonths()));
+		startingDate = goBack.getTime();
 
 		InventoryManager inventory = InventoryManager.Factory
 				.getInventoryManager();
 		Iterable<Product> allProducts = inventory.getProducts();
-
-		try {
-			File outFile = initOutputFile();
-			Document document = new Document(PageSize.LETTER_LANDSCAPE);
-			PdfWriter pdfWriter = PdfWriter.getInstance(document,
-					new FileOutputStream(outFile, true));
-			document.open();
-			PdfPTable table = new PdfPTable(10);
-			formatDocument(document, pdfWriter.getDirectContent(), null, calc,
-					table);
-			for (Product p : allProducts) {
-				calc.setValues(startingDate, inventory.getItems(p),
-						inventory.getRemovedItems(p), p);
-				formatDocument(document, pdfWriter.getDirectContent(), p, calc,
-						table);
-			}
-			document.add(table);
-			document.close();
-			displayDocument(outFile);
-		} catch (FileNotFoundException | DocumentException e) {
-			ExceptionHandler.TO_USER.reportException(e,
-					"Can't print bar code labels");
-			ExceptionHandler.TO_LOG.reportException(e,
-					"Can't print bar code labels");
-		}
-
-	}
-
-	private static void displayDocument(File file) {
-		try {
-			Desktop.getDesktop().open(file);
-		} catch (IOException e) {
-			ExceptionHandler.TO_USER.reportException(e,
-					"Can't print bar code labels");
-			ExceptionHandler.TO_LOG.reportException(e,
-					"Can't print bar code labels");
-		}
-	}
-
-	private static File initOutputFile() {
-		File outFile = null;
-		try {
-			Date date = DateUtils.removeTimeFromDate(DateUtils.currentDate());
-			String dateString = DateUtils.formatDate(date);
-			dateString = dateString.replace("/", "_");
-
-			String fileName = BASE_FILE_NAME.replace("build/", "");
-			outFile = new File(fileName + "reports/productStatisticsReport/",
-					dateString + "_" + ".pdf");
-			outFile.getParentFile().mkdirs();
-
-			if (!outFile.exists()) {
-				outFile.createNewFile();
-			}
-
-		} catch (IOException e) {
-			ExceptionHandler.TO_USER.reportException(e,
-					"Can't print bar code labels");
-			ExceptionHandler.TO_LOG.reportException(e,
-					"Can't print bar code labels");
-		}
-
-		return outFile;
-	}
-
-	private static void formatDocument(Document document,
-			PdfContentByte contentByte, Product p, ProductStatsCalculator calc,
-			PdfPTable table) {
-		if (p == null) {
-			for (int i = 0; i < 10; i++) {
-				table.addCell(REPORT_HEADINGS.get("h" + String.valueOf(i + 1)));
-			}
-		} else {
+		for (Product p : allProducts) {
+			ArrayList<String> toAppend = new ArrayList<String>();
+			calc.setValues(startingDate, inventory.getItems(p),
+					inventory.getRemovedItems(p), p);
 			for (int i = 1; i <= 10; i++) {
 				switch (i) {
 				case 1:
-					table.addCell(p.getDescription());
+					toAppend.add(p.getDescription());
 					break;
 				case 2:
-					table.addCell(p.getBarCode().getValue());
+					toAppend.add(p.getBarCode().getValue());
 					break;
 				case 3:
-					table.addCell(p.getSize().toString());
+					toAppend.add(p.getSize().toString());
 					break;
 				case 4:
-					table.addCell(String.valueOf(p.get3MonthSupplyQuota()));
+					toAppend.add(String.valueOf(p.get3MonthSupplyQuota()));
 					break;
 				case 5:
-					table.addCell(String.format("%d / %s", calc
+					toAppend.add(String.format("%d / %s", calc
 							.calculateCurrentSupply(),
 							String.valueOf(calc.calculateAverageSupply())
 									.replaceAll("\\.?0*$", "")));
 					break;
 				case 6:
-					table.addCell(String.format("%d / %d",
+					toAppend.add(String.format("%d / %d",
 							calc.calculateMinimumSupply(),
 							calc.calculateMaximumSupply()));
 					break;
 				case 7:
-					table.addCell(String.format("%d / %d",
+					toAppend.add(String.format("%d / %d",
 							calc.calculateItemsUsed(),
 							calc.calculateItemsAdded()));
 					break;
 				case 8:
-					table.addCell(String.format("%d months",
+					toAppend.add(String.format("%d months",
 							p.getShelfLifeInMonths()));
 					break;
 				case 9:
-					table.addCell(String.format("%s days / %d days", String
+					toAppend.add(String.format("%s days / %d days", String
 							.valueOf(calc.calculateAverageAgeUsed())
 							.replaceAll("\\.?0*$", ""), calc
 							.calculateMaximumAgeUsed()));
 					break;
 				case 10:
-					table.addCell(String.format("%s days / %d days", String
+					toAppend.add(String.format("%s days / %d days", String
 							.valueOf(calc.calculateAverageAgedCurrent())
 							.replaceAll("\\.?0*$", ""), calc
 							.calculateMaximumAgeCurrent()));
 					break;
 				}
 			}
+			data.add(toAppend);
 		}
+		return data;
+	}
+
+	public List<ArrayList<String>> createHeader() {
+		List<ArrayList<String>> rows = new ArrayList<ArrayList<String>>();
+		ArrayList<String> table = new ArrayList<String>();
+		for (int i = 0; i < 10; i++) {
+			table.add(REPORT_HEADINGS.get("h" + String.valueOf(i + 1)));
+		}
+		rows.add(table);
+		return rows;
 	}
 
 	private boolean isValidInput(String months) {
