@@ -93,14 +93,14 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		// iterate through current items
 		while (iterCur.hasNext()) {
 			item = iterCur.next();
-			if (item.getEntryDate().before(cal.getTime())) {
+			if (!item.getEntryDate().after(cal.getTime())) {
 				itemsStoredinDate++;
 			}
 		}
 		while (iterRem.hasNext()) {
 			item = iterRem.next();
-			if (!(item.getEntryDate().before(cal.getTime()) || item
-					.getExitDate().after(cal.getTime()))) {
+			if (!(item.getEntryDate().after(cal.getTime()) || item
+					.getExitDate().before(cal.getTime()))) {
 				itemsStoredinDate++;
 			}
 		}
