@@ -4,7 +4,6 @@ import gui.common.Controller;
 import gui.common.FileFormat;
 import gui.common.IView;
 import gui.reports.PDFProductStatisticsReport;
-import gui.reports.ReportController;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,8 +12,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.itextpdf.text.pdf.PdfPTable;
 
 import core.model.InventoryManager;
 import core.model.Product;
@@ -116,11 +113,9 @@ public class ProductStatsReportController extends Controller implements
 
 		int nMonths = Integer.parseInt(this.getView().getMonths());
 
-
-
 		List<ArrayList<String>> header = createHeader();
 		List<ArrayList<String>> data = createData();
-		
+
 		PDFProductStatisticsReport report = new PDFProductStatisticsReport(
 				"ProductReport", String.format("Product Report (%d Months)",
 						nMonths));

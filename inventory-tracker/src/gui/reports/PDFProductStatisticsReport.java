@@ -4,9 +4,7 @@
 package gui.reports;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -24,7 +22,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class PDFProductStatisticsReport extends ReportController implements
 		IReport {
 
-	private Map<String, String> reportHeadings = new HashMap<>();
 	private String title;
 	private boolean landscape;
 	private Document document;
