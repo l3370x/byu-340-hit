@@ -177,20 +177,21 @@ public class TransferItemBatchController extends Controller implements
      */
     @Override
     public void selectedProductChanged() {
-
-
         ProductData productData = this.getView().getSelectedProduct();
         if (null == productData) {
+            this.getView().setItems(new ItemData[0]);
             return;
         }
 
         Object tag = productData.getTag();
         if (false == tag instanceof Product) {
+            this.getView().setItems(new ItemData[0]);
             return;
         }
 
         List<Item> removedItems = this.transferedItemsByProduct.get((Product) tag);
         if (null == removedItems) {
+            this.getView().setItems(new ItemData[0]);
             return;
         }
 
