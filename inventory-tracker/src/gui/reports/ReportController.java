@@ -4,10 +4,12 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import core.model.exception.ExceptionHandler;
 
-public class ReportController {
+public class ReportController implements IReport{
 
 	File file;
 	FileOutputStream output;
@@ -79,6 +81,24 @@ public class ReportController {
 	 */
 	private void closeFile() {
 		// also possibly not neccessary.
+	}
+	
+	
+	@Override
+	public void appendTable(List<ArrayList<String>> data){
+		
+	}
+	@Override
+	public void appendText(String s){
+		
+	}
+	@Override
+	public void finalize() {
+		finalizeReport();
+	}
+	@Override
+	public void initialize(){
+		
 	}
 
 	/**

@@ -5,6 +5,8 @@ import java.util.List;
 
 public interface IReport {
 
+	void initialize();
+	
 	void appendTable(List<ArrayList<String>> data);
 
 	void appendText(String s);

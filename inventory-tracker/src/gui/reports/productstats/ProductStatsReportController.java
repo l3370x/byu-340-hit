@@ -4,8 +4,8 @@ import gui.common.Controller;
 import gui.common.FileFormat;
 import gui.common.IView;
 import gui.reports.HTMLProductStatisticsReport;
-import gui.reports.IReport;
 import gui.reports.PDFProductStatisticsReport;
+import gui.reports.ReportController;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -118,24 +118,25 @@ public class ProductStatsReportController extends Controller implements
 		List<ArrayList<String>> data = createHeader();
 		data.addAll(createData());
 
-		IReport report = null;
+		ReportController report = null;
 
-		if (this.getView().getFormat().equals(FileFormat.PDF))
-			report = new PDFProductStatisticsReport("ProductReport",
-					String.format("Product Report (%d Months)", nMonths));
-		else if (this.getView().getFormat().equals(FileFormat.HTML))
-			report = new HTMLProductStatisticsReport("ProductReport",
-					String.format("Product Report (%d Months)", nMonths));
+		FileFormat f = this.getView().getFormat();
+		String title = String.format("Product Report (%d Months)", nMonths);
+		String name = "ProductReport";
+
+		if (f.equals(FileFormat.PDF))
+			report = new PDFProductStatisticsReport(name, title);
+		else if (f.equals(FileFormat.HTML))
+			report = new HTMLProductStatisticsReport(name, title);
 		else {
 			ExceptionHandler.TO_USER.reportException(new HITException(
 					Severity.INFO, "Couldn't make report from given input."),
-					String.format("Bad Format Entered - %s.", this.getView()
-							.getFormat().toString()));
+					String.format("Bad Format Entered - %s.", f.toString()));
 			return;
 		}
 
+		report.initialize();
 		report.appendTable(data);
-
 		report.finalize();
 
 	}
