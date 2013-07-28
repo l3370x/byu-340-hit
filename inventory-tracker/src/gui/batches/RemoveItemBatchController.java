@@ -23,7 +23,6 @@ import core.model.exception.HITException;
 import gui.common.*;
 import gui.item.ItemData;
 import gui.product.*;
-import java.util.Date;
 
 /**
  * Controller class for the remove item batch view.
@@ -308,7 +307,7 @@ public class RemoveItemBatchController extends Controller implements
                 getInventoryManager().saveRemovedItem(this.item);
 
                 // update the view
-                _this.updateProductsPane(item);
+                _this.updateProductsPane(this.item);
             } catch (HITException ex) {
                 ExceptionHandler.TO_USER.reportException(ex, "Unable To Remove Item");
             }

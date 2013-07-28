@@ -1,5 +1,7 @@
 package gui.batches;
 
+import common.Command;
+import common.UndoSupport;
 import static core.model.InventoryManager.Factory.getInventoryManager;
 
 import java.awt.event.ActionEvent;
@@ -17,6 +19,7 @@ import core.model.Item;
 import core.model.Product;
 import core.model.ProductContainer;
 import core.model.StorageUnit;
+import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
 import gui.common.*;
@@ -35,6 +38,8 @@ public class TransferItemBatchController extends Controller implements
     private Timer timer;
     private final CopyOnWriteArrayList<Product> transferedProducts = new CopyOnWriteArrayList<>();
     private final Map<Product, List<Item>> transferedItemsByProduct = new HashMap<>();
+    
+    private final UndoSupport undoSupport = new UndoSupport();
 
     /**
      * Constructor.
@@ -97,8 +102,8 @@ public class TransferItemBatchController extends Controller implements
     @Override
     protected void enableComponents() {
         this.getView().enableItemAction(false);
-        this.getView().enableUndo(false);
-        this.getView().enableRedo(false);
+        this.getView().enableUndo(this.undoSupport.canUndo());
+        this.getView().enableRedo(this.undoSupport.canRedo());
     }
 
     /**
@@ -215,7 +220,7 @@ public class TransferItemBatchController extends Controller implements
 
         final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
         Item item = getInventoryManager().getItem(barcode);
-
+        
         try {
 
             Object tag = this.source.getTag();
@@ -225,33 +230,19 @@ public class TransferItemBatchController extends Controller implements
             }
             ProductContainer targetUnit = (StorageUnit) tag;
 
-            item.transfer(item.getContainer(), targetUnit);
-
+            Command command = new TransferItemCommand(targetUnit, item);
+            this.undoSupport.execute(command);
 
             //Update Views
-            this.updateProductsPane(item);
             this.loadValues();
             this.enableComponents();
 
         } catch (HITException e) {
-            this.getView().displayErrorMessage("Could Not Remove Item: " + e.getMessage());
+            ExceptionHandler.TO_USER.reportException(e, "Unable To Transfer Item");
         }
     }
 
     private void updateProductsPane(Item item) {
-        Product product = item.getProduct();
-        // add the product to the list if it hasn't been already
-        this.transferedProducts.addIfAbsent(product);
-        if (this.transferedItemsByProduct.containsKey(product)) {
-            List<Item> list = this.transferedItemsByProduct.get(product);
-            list.add(item);
-            this.transferedItemsByProduct.put(product, list);
-        } else {
-            List<Item> list = new ArrayList<>();
-            list.add(item);
-            this.transferedItemsByProduct.put(product, list);
-        }
-
         // create the product data instances
         ProductData selected = null;
         List<ProductData> productList = new ArrayList<>();
@@ -259,7 +250,7 @@ public class TransferItemBatchController extends Controller implements
             ProductData data = new ProductData(p);
             data.setCount(Integer.toString(this.transferedItemsByProduct.get(p).size()));
             productList.add(data);
-            if (p == item.getProduct()) {
+            if (null != item && p == item.getProduct()) {
                 selected = data;
             }
         }
@@ -270,8 +261,8 @@ public class TransferItemBatchController extends Controller implements
         // select the just-added product
         if (null != selected) {
             this.getView().selectProduct(selected);
-            this.selectedProductChanged();
         }
+        this.selectedProductChanged();
     }
 
     /**
@@ -279,6 +270,8 @@ public class TransferItemBatchController extends Controller implements
      */
     @Override
     public void redo() {
+        this.undoSupport.redo();
+        this.enableComponents();
     }
 
     /**
@@ -286,6 +279,8 @@ public class TransferItemBatchController extends Controller implements
      */
     @Override
     public void undo() {
+        this.undoSupport.undo();
+        this.enableComponents();
     }
 
     /**
@@ -294,5 +289,81 @@ public class TransferItemBatchController extends Controller implements
     @Override
     public void done() {
         getView().close();
+    }
+    
+    private class TransferItemCommand implements Command {
+        private final ProductContainer targetContainer;
+        private final ProductContainer sourceContainer;
+        private final Product product;
+        private final Item item;
+        private final boolean productExisted;
+        
+        public TransferItemCommand(ProductContainer targetContainer, Item item) {
+            this.targetContainer = targetContainer;
+            this.sourceContainer = item.getContainer();
+            this.product = item.getProduct();
+            this.item = item;
+            this.productExisted = targetContainer.containsProduct(this.product);
+        }
+        
+        @Override
+        public void execute() {
+            try {
+                TransferItemBatchController _this = TransferItemBatchController.this;
+                
+                // add the item's product to the list of transferred products
+                _this.transferedProducts.addIfAbsent(this.product);
+                    
+                // get (or create) the list of removed items
+                List<Item> transferredItems = _this.transferedItemsByProduct.get(this.product);
+                if (null == transferredItems) {
+                    transferredItems = new ArrayList<>();
+                    _this.transferedItemsByProduct.put(this.product, transferredItems);
+                }
+
+                // add the item to the list of removed items
+                transferredItems.add(this.item);
+
+                // remove the item from its container
+                this.item.transfer(this.sourceContainer, this.targetContainer);
+
+                if (false == this.productExisted) {
+                    // add the product to the list if it hasn't been already
+                    _this.transferedProducts.addIfAbsent(this.product);
+                }
+
+                // update the view
+                _this.updateProductsPane(this.item);
+            } catch (HITException ex) {
+                ExceptionHandler.TO_USER.reportException(ex, "Unable To Transfer Item");
+            }
+        }
+
+        @Override
+        public void undo() {
+            try {
+                TransferItemBatchController _this = TransferItemBatchController.this;
+                
+                List<Item> removedItems = _this.transferedItemsByProduct.get(this.product);
+                removedItems.remove(this.item);
+                if (removedItems.isEmpty()) {
+                    _this.transferedItemsByProduct.remove(this.product);
+                    _this.transferedProducts.remove(this.product);
+                }
+                
+                // put the item back into the container
+                this.item.transfer(this.targetContainer, this.sourceContainer);
+                
+                if (false == this.productExisted) {
+                    this.targetContainer.removeProduct(this.product);
+                    _this.transferedProducts.remove(this.product);
+                }
+
+                // update the view
+                _this.updateProductsPane(this.item);
+            } catch (HITException ex) {
+                ExceptionHandler.TO_USER.reportException(ex, "Unable To Undo Transfer Item");
+            }
+        }
     }
 }
