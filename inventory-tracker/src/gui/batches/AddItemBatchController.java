@@ -382,11 +382,12 @@ public class AddItemBatchController extends Controller implements
         @Override
         public void execute() {
             try {
-                List<Item> addedItems =
-                        AddItemBatchController.this.addedItemsByProduct.get(this.product);
+                AddItemBatchController _this = AddItemBatchController.this;
+                
+                List<Item> addedItems = _this.addedItemsByProduct.get(this.product);
                 if (null == addedItems) {
                     addedItems = new ArrayList<>();
-                    AddItemBatchController.this.addedItemsByProduct.put(this.product, addedItems);
+                    _this.addedItemsByProduct.put(this.product, addedItems);
                 }
 
                 for (Item item : this.items) {
@@ -396,10 +397,10 @@ public class AddItemBatchController extends Controller implements
 
                 if (false == this.productExisted) {
                     // add the product to the list if it hasn't been already
-                    AddItemBatchController.this.addedProducts.addIfAbsent(this.product);
+                    _this.addedProducts.addIfAbsent(this.product);
                 }
 
-                AddItemBatchController.this.updateProductsPane(this.product);
+                _this.updateProductsPane(this.product);
             } catch (HITException e) {
                 ExceptionHandler.TO_USER.reportException(e,
                         "Unable To Perform Command: Add Item(s)");
@@ -409,8 +410,9 @@ public class AddItemBatchController extends Controller implements
         @Override
         public void undo() {
             try {
-                List<Item> addedItems =
-                        AddItemBatchController.this.addedItemsByProduct.get(this.product);
+                AddItemBatchController _this = AddItemBatchController.this;
+                
+                List<Item> addedItems = _this.addedItemsByProduct.get(this.product);
 
                 for (Item item : this.items) {
                     container.removeItem(item);
@@ -418,15 +420,15 @@ public class AddItemBatchController extends Controller implements
                 }
 
                 if (addedItems.isEmpty()) {
-                    AddItemBatchController.this.addedItemsByProduct.remove(this.product);
+                    _this.addedItemsByProduct.remove(this.product);
                 }
 
                 if (false == this.productExisted) {
                     this.container.removeProduct(this.product);
-                    AddItemBatchController.this.addedProducts.remove(this.product);
+                    _this.addedProducts.remove(this.product);
                 }
 
-                AddItemBatchController.this.updateProductsPane(null);
+                _this.updateProductsPane(this.product);
             } catch (HITException e) {
                 ExceptionHandler.TO_USER.reportException(e,
                         "Unable To Undo Command: Add Item(s)");
