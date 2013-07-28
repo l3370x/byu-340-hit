@@ -3,6 +3,8 @@ package gui.reports.productstats;
 import gui.common.Controller;
 import gui.common.FileFormat;
 import gui.common.IView;
+import gui.reports.HTMLProductStatisticsReport;
+import gui.reports.IReport;
 import gui.reports.PDFProductStatisticsReport;
 
 import java.util.ArrayList;
@@ -113,14 +115,25 @@ public class ProductStatsReportController extends Controller implements
 
 		int nMonths = Integer.parseInt(this.getView().getMonths());
 
-		List<ArrayList<String>> header = createHeader();
-		List<ArrayList<String>> data = createData();
+		List<ArrayList<String>> data = createHeader();
+		data.addAll(createData());
 
-		PDFProductStatisticsReport report = new PDFProductStatisticsReport(
-				"ProductReport", String.format("Product Report (%d Months)",
-						nMonths));
+		IReport report = null;
 
-		report.appendTable(header);
+		if (this.getView().getFormat().equals(FileFormat.PDF))
+			report = new PDFProductStatisticsReport("ProductReport",
+					String.format("Product Report (%d Months)", nMonths));
+		else if (this.getView().getFormat().equals(FileFormat.HTML))
+			report = new HTMLProductStatisticsReport("ProductReport",
+					String.format("Product Report (%d Months)", nMonths));
+		else {
+			ExceptionHandler.TO_USER.reportException(new HITException(
+					Severity.INFO, "Couldn't make report from given input."),
+					String.format("Bad Format Entered - %s.", this.getView()
+							.getFormat().toString()));
+			return;
+		}
+
 		report.appendTable(data);
 
 		report.finalize();

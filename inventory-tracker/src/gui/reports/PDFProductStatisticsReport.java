@@ -68,7 +68,7 @@ public class PDFProductStatisticsReport extends ReportController implements
 	 * @param landscape
 	 *            print in landscape?
 	 */
-	public void initializeReport() {
+	private void initializeReport() {
 		initOutputFile();
 		appendText(title);
 	}
@@ -77,7 +77,7 @@ public class PDFProductStatisticsReport extends ReportController implements
 	 * creates the file to be written to
 	 * 
 	 */
-	public void initOutputFile() {
+	private void initOutputFile() {
 		if (landscape)
 			document = new Document(PageSize.LETTER_LANDSCAPE);
 		else
@@ -91,7 +91,7 @@ public class PDFProductStatisticsReport extends ReportController implements
 		document.open();
 	}
 
-	public void addTable(PdfPTable table) {
+	private void addTable(PdfPTable table) {
 		try {
 			document.add(table);
 		} catch (DocumentException e) {
