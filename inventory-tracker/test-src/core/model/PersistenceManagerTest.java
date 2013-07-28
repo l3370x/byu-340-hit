@@ -34,7 +34,7 @@ public class PersistenceManagerTest {
 		InventoryManager i = InventoryManager.Factory.getInventoryManager();
 		StorageUnit s1 = StorageUnit.Factory.newStorageUnit("su1");
 		Product p1 = Product.Factory.newProduct(BarCode.generateItemBarCode(), "product 1");
-		Item i1 = Item.Factory.newItem(p1, new Date(), new Date());
+		Item i1 = Item.Factory.newItem(p1, new Date());
 		
 
 		// s1.addProduct(p1);

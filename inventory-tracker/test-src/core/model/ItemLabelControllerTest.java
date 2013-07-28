@@ -37,20 +37,18 @@ public class ItemLabelControllerTest {
 	Date currentDate = DateUtils.currentDate();
 	cal.setTime(currentDate);
 	cal.add(Calendar.MONTH, 3);
-	Date expirationDate = cal.getTime();
 	for (int i = 0; i < 4; i++) {
-	    itemList.add(newItem(product1, currentDate, expirationDate));
+	    itemList.add(newItem(product1, currentDate));
 	}
 	cal.setTime(currentDate);
 	cal.add(Calendar.YEAR, 2);
-	expirationDate = cal.getTime();
 	for (int i = 0; i < 3; i++) {
-	    itemList.add(newItem(product2, currentDate, expirationDate));
+	    itemList.add(newItem(product2, currentDate));
 	}
 	for (int i = 0; i < 2; i++) {
-	    itemList.add(newItem(product3, currentDate, null));
+	    itemList.add(newItem(product3, currentDate));
 	}
-	itemList.add(newItem(product4, currentDate, expirationDate));
+	itemList.add(newItem(product4, currentDate));
     }
 
     @AfterClass
