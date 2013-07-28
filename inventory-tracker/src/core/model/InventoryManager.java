@@ -1,5 +1,7 @@
 package core.model;
 
+import java.util.Date;
+
 import core.model.exception.HITException;
 
 /**
@@ -55,6 +57,8 @@ public interface InventoryManager extends ProductContainer<StorageUnit> {
      * @throws HITException if the item could not be deleted for any reason
      */
     void deleteRemovedItem(Item item) throws HITException;
+    public Date getLastReportRun();
+    public void setLastReportRun(Date lastReportRun);
     
     
     void load(AbstractProductContainer i) throws HITException;

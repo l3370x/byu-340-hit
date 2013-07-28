@@ -20,6 +20,9 @@ import java.util.Observer;
  */
 class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> 
 implements InventoryManager {
+	
+	private Date lastReportRun=null;
+	
     private final ItemCollection removedItems = new ItemCollection(null) {
         @Override
         protected void didAdd(Item content) throws HITException {
@@ -168,5 +171,19 @@ implements InventoryManager {
 	@Override
 	public void load(AbstractProductContainer i) throws HITException {
 		super.loadInvMan(i);
+	}
+
+	/**
+	 * @return the lastReportRun
+	 */
+	public Date getLastReportRun() {
+		return lastReportRun;
+	}
+
+	/**
+	 * @param lastReportRun the lastReportRun to set
+	 */
+	public void setLastReportRun(Date lastReportRun) {
+		this.lastReportRun = lastReportRun;
 	}
 }
