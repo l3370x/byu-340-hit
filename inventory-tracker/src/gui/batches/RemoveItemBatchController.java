@@ -1,5 +1,7 @@
 package gui.batches;
 
+import common.Command;
+import common.UndoSupport;
 import static core.model.InventoryManager.Factory.getInventoryManager;
 
 import java.awt.event.ActionEvent;
@@ -15,6 +17,7 @@ import javax.swing.Timer;
 import core.model.BarCode;
 import core.model.Item;
 import core.model.Product;
+import core.model.ProductContainer;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import gui.common.*;
@@ -27,10 +30,12 @@ import gui.product.*;
 public class RemoveItemBatchController extends Controller implements
         IRemoveItemBatchController {
 
-    private static final int TIMER_DELAY = 1000;
+    private static final int TIMER_DELAY = 500;
     private Timer timer;
     private final CopyOnWriteArrayList<Product> removedProducts = new CopyOnWriteArrayList<>();
     private final Map<Product, List<Item>> removedItemsByProduct = new HashMap<>();
+    
+    private final UndoSupport undoSupport = new UndoSupport();
 
     /**
      * Constructor.
@@ -89,8 +94,8 @@ public class RemoveItemBatchController extends Controller implements
     @Override
     protected void enableComponents() {
         this.getView().enableItemAction(false);
-        this.getView().enableUndo(false);
-        this.getView().enableRedo(false);
+        this.getView().enableUndo(this.undoSupport.canUndo());
+        this.getView().enableRedo(this.undoSupport.canRedo());
     }
 
     /**
@@ -172,16 +177,19 @@ public class RemoveItemBatchController extends Controller implements
 
         ProductData productData = this.getView().getSelectedProduct();
         if (null == productData) {
+            this.getView().setItems(new ItemData[0]);
             return;
         }
 
         Object tag = productData.getTag();
         if (false == tag instanceof Product) {
+            this.getView().setItems(new ItemData[0]);
             return;
         }
 
         List<Item> removedItems = this.removedItemsByProduct.get((Product) tag);
         if (null == removedItems) {
+            this.getView().setItems(new ItemData[0]);
             return;
         }
 
@@ -206,38 +214,15 @@ public class RemoveItemBatchController extends Controller implements
         final BarCode barcode = BarCode.getBarCodeFor(this.getView().getBarcode());
         Item item = getInventoryManager().getItem(barcode);
 
-        try {
-            // remove the item from its container
-            item.getContainer().removeItem(item);
+        Command command = new RemoveItemCommand(item);
+        this.undoSupport.execute(command);
 
-            // save the removed item for tracking purposes
-            getInventoryManager().saveRemovedItem(item);
-            
-            //Update Views
-            this.updateProductsPane(item);
-            this.loadValues();
-            this.enableComponents();
-        } catch (HITException e) {
-            ExceptionHandler.TO_USER.reportException(e, "Unable To Remove Item");
-        }
+        //Update Views
+        this.loadValues();
+        this.enableComponents();
     }
 
     private void updateProductsPane(Item item) {
-        Product product = item.getProduct();
-        // add the product to the list if it hasn't been already
-        this.removedProducts.addIfAbsent(product);
-        if (this.removedItemsByProduct.containsKey(product)) {
-            List<Item> list = this.removedItemsByProduct.get(product);
-            list.add(item);
-            this.removedItemsByProduct.put(product, list);
-        } else {
-            List<Item> list = new ArrayList<>();
-            list.add(item);
-            this.removedItemsByProduct.put(product, list);
-        }
-
-
-
         // create the product data instances
         ProductData selected = null;
         List<ProductData> productList = new ArrayList<>();
@@ -245,7 +230,7 @@ public class RemoveItemBatchController extends Controller implements
             ProductData data = new ProductData(p);
             data.setCount(Integer.toString(this.removedItemsByProduct.get(p).size()));
             productList.add(data);
-            if (p == item.getProduct()) {
+            if (null != item && p == item.getProduct()) {
                 selected = data;
             }
         }
@@ -256,8 +241,8 @@ public class RemoveItemBatchController extends Controller implements
         // select the just-added product
         if (null != selected) {
             this.getView().selectProduct(selected);
-            this.selectedProductChanged();
         }
+        this.selectedProductChanged();
     }
 
     /**
@@ -265,6 +250,8 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     public void redo() {
+        this.undoSupport.redo();
+        this.enableComponents();
     }
 
     /**
@@ -272,6 +259,8 @@ public class RemoveItemBatchController extends Controller implements
      */
     @Override
     public void undo() {
+        this.undoSupport.undo();
+        this.enableComponents();
     }
 
     /**
@@ -280,5 +269,74 @@ public class RemoveItemBatchController extends Controller implements
     @Override
     public void done() {
         getView().close();
+    }
+    
+    private class RemoveItemCommand implements Command {
+        private final ProductContainer container;
+        private final Product product;
+        private final Item item;
+        
+        public RemoveItemCommand(Item item) {
+            this.container = item.getContainer();
+            this.product = item.getProduct();
+            this.item = item;
+        }
+        
+        @Override
+        public void execute() {
+            try {
+                RemoveItemBatchController _this = RemoveItemBatchController.this;
+                
+                // add the item's product to the list of removed products (if necessary)
+                _this.removedProducts.addIfAbsent(this.product);
+                
+                // get (or create) the list of removed items
+                List<Item> removedItems = _this.removedItemsByProduct.get(this.product);
+                if (null == removedItems) {
+                    removedItems = new ArrayList<>();
+                    _this.removedItemsByProduct.put(this.product, removedItems);
+                }
+                
+                // add the item to the list of removed items
+                removedItems.add(this.item);
+                
+                // remove the item from its container
+                this.container.removeItem(this.item);
+
+                // save the removed item for tracking purposes
+                getInventoryManager().saveRemovedItem(this.item);
+
+                // update the view
+                _this.updateProductsPane(this.item);
+            } catch (HITException ex) {
+                ExceptionHandler.TO_USER.reportException(ex, "Unable To Remove Item");
+            }
+            
+        }
+
+        @Override
+        public void undo() {
+            try {
+                RemoveItemBatchController _this = RemoveItemBatchController.this;
+                
+                List<Item> removedItems = _this.removedItemsByProduct.get(this.product);
+                removedItems.remove(this.item);
+                if (removedItems.isEmpty()) {
+                    _this.removedItemsByProduct.remove(this.product);
+                    _this.removedProducts.remove(this.product);
+                }
+                
+                // put the item back into the container
+                this.container.addItem(this.item);
+                
+                // remove the item from the "removed" items
+                getInventoryManager().deleteRemovedItem(this.item);
+
+                // update the view
+                _this.updateProductsPane(this.item);
+            } catch (HITException ex) {
+                ExceptionHandler.TO_USER.reportException(ex, "Unable To Undo Remove Item");
+            }
+        }
     }
 }
