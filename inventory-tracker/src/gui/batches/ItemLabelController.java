@@ -1,5 +1,7 @@
 package gui.batches;
 
+import gui.reports.IReport;
+
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
