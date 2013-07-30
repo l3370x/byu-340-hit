@@ -20,7 +20,7 @@ public class ItemCollection extends AbstractProductContainerProxy<Item> {
     private Map<BarCode, Item> itemsByBarCode = new HashMap<>();
     private Map<Product, Set<Item>> itemsByProduct = new HashMap<>();
 
-    ItemCollection(ProductContainer delegate) {
+    public ItemCollection(ProductContainer delegate) {
         super(delegate);
     }
 

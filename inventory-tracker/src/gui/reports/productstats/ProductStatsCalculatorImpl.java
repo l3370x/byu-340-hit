@@ -17,9 +17,6 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 	Iterable<Item> currentItems;
 	Iterable<Item> removedItems;
 
-	public ProductStatsCalculatorImpl() {
-	}
-
 	public void setValues(Date startDate, Iterable<Item> currentItems,
 			Iterable<Item> removedItems, Product product) {
 		this.product = product;
