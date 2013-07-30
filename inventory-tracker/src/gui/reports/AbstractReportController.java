@@ -65,14 +65,26 @@ public abstract class AbstractReportController extends Controller implements IRe
 
     @Override
     public void display() {
+        // create the report instance
         Report report = this.getReport();
+
+        // get the visit order
         VisitOrder order = this.getModelVisitOrder();
 
+        // create the model visitor
         ProductContainerVisitor visitor = new ProductContainerVisitor(report, order);
+
+        // visit the model
         visitor.visit(getInventoryManager());
 
+        // get the renderer for the report and the desired output format
         ReportRenderer renderer = getRendererFor(this.getReportFormat());
+
+        // render the report
         report.render(renderer);
+
+        // display the rendered report
+        renderer.displayReport();
     }
 
     /**
