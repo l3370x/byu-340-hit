@@ -1,25 +1,13 @@
 package gui.reports.notices;
 
-import gui.common.Controller;
+import common.VisitOrder;
 import gui.common.FileFormat;
 import gui.common.IView;
-import gui.common.UnitsConverter;
-import gui.common.UnitsConverter.UnitType;
-import gui.reports.HTMLNoticesReport;
-import gui.reports.PDFNoticesReport;
-import gui.reports.ReportController;
+import gui.reports.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import core.model.Category;
-import core.model.Containable;
-import core.model.InventoryManager;
 import core.model.Item;
-import core.model.Container;
-import core.model.ProductContainer;
-import core.model.Quantity.Units;
-import core.model.StorageUnit;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
@@ -27,7 +15,7 @@ import core.model.exception.HITException.Severity;
 /**
  * Controller class for the notices report view.
  */
-public class NoticesReportController extends Controller implements
+public class NoticesReportController extends AbstractReportController implements
 		INoticesReportController {
 
 	/**
@@ -58,45 +46,11 @@ public class NoticesReportController extends Controller implements
 		return (INoticesReportView) super.getView();
 	}
 
-	/**
-	 * Sets the enable/disable state of all components in the controller's view.
-	 * A component should be enabled only if the user is currently allowed to
-	 * interact with that component.
-	 * 
-	 * {@pre None}
-	 * 
-	 * {@post The enable/disable state of all components in the controller's
-	 * view have been set appropriately.}
-	 */
-	@Override
-	protected void enableComponents() {
-	}
-
-	/**
-	 * Loads data into the controller's view.
-	 * 
-	 * {@pre None}
-	 * 
-	 * {@post The controller has loaded data into its view}
-	 */
-	@Override
-	protected void loadValues() {
-	}
-
-	//
+    //
 	// IExpiredReportController overrides
 	//
 
-	/**
-	 * This method is called when any of the fields in the notices report view
-	 * is changed by the user.
-	 */
-	@Override
-	public void valuesChanged() {
-
-	}
-
-	private List<Item> createData() {
+    private List<Item> createData() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -198,7 +152,22 @@ public class NoticesReportController extends Controller implements
 
 	}
 
-	private boolean isValidInput() {
+    @Override
+    protected FileFormat getReportFormat() {
+        return this.getView().getFormat();
+    }
+
+    @Override
+    protected Report getReport() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected VisitOrder getModelVisitOrder() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    private boolean isValidInput() {
 		if (this.getView().getFormat() == null)
 			return false;
 		return true;

@@ -29,13 +29,16 @@ import core.model.Product;
 import core.model.exception.ExceptionHandler;
 import gui.common.*;
 import gui.item.ItemData;
+import gui.reports.AbstractReportController;
+import gui.reports.Report;
+
 import static core.model.InventoryManager.Factory.getInventoryManager;
 
 
 /**
  * Controller class for the removed items report view.
  */
-public class RemovedReportController extends Controller implements
+public class RemovedReportController extends AbstractReportController implements
 		IRemovedReportController {
 	
 	private static Map<Product, int[]> itemsRemoved = new HashMap<Product, int[]>();
@@ -94,31 +97,6 @@ public class RemovedReportController extends Controller implements
 			view.setSinceLastValue(getInventoryManager().getLastReportRun());
 			view.enableSinceLast(true);
 		}
-	}
-
-	/**
-	 * Loads data into the controller's view.
-	 * 
-	 *  {@pre None}
-	 *  
-	 *  {@post The controller has loaded data into its view}
-	 */
-	@Override
-	protected void loadValues() {
-		
-		
-	}
-
-	//
-	// IExpiredReportController overrides
-	//
-
-	/**
-	 * This method is called when any of the fields in the
-	 * removed items report view is changed by the user.
-	 */
-	@Override
-	public void valuesChanged() {
 	}
 
 	/**
@@ -224,7 +202,18 @@ public class RemovedReportController extends Controller implements
 			}
 		}
 	}
-	private static void displayDocument(File file) {
+
+    @Override
+    protected FileFormat getReportFormat() {
+        return this.getView().getFormat();
+    }
+
+    @Override
+    protected Report getReport() {
+        return null;
+    }
+
+    private static void displayDocument(File file) {
 		try {
 			Desktop.getDesktop().open(file);
 		} catch (IOException e) {

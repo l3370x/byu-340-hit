@@ -1,16 +1,12 @@
 package gui.reports.productstats;
 
-import gui.common.Controller;
 import gui.common.FileFormat;
 import gui.common.IView;
-import gui.reports.HTMLProductStatisticsReport;
-import gui.reports.PDFProductStatisticsReport;
-import gui.reports.ReportController;
+import gui.reports.*;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +20,7 @@ import core.model.exception.HITException.Severity;
 /**
  * Controller class for the product statistics report view.
  */
-public class ProductStatsReportController extends Controller implements
+public class ProductStatsReportController extends AbstractReportController implements
 		IProductStatsReportController {
 
 	ProductStatsCalculator calc = ProductStatsCalculator.Factory.getInstance();
@@ -54,20 +50,6 @@ public class ProductStatsReportController extends Controller implements
 	@Override
 	protected IProductStatsReportView getView() {
 		return (IProductStatsReportView) super.getView();
-	}
-
-	/**
-	 * Sets the enable/disable state of all components in the controller's view.
-	 * A component should be enabled only if the user is currently allowed to
-	 * interact with that component.
-	 * 
-	 * {@pre None}
-	 * 
-	 * {@post The enable/disable state of all components in the controller's
-	 * view have been set appropriately.}
-	 */
-	@Override
-	protected void enableComponents() {
 	}
 
 	/**
@@ -141,7 +123,17 @@ public class ProductStatsReportController extends Controller implements
 
 	}
 
-	private List<ArrayList<String>> createData() {
+    @Override
+    protected FileFormat getReportFormat() {
+        return this.getView().getFormat();
+    }
+
+    @Override
+    protected Report getReport() {
+        return null;
+    }
+
+    private List<ArrayList<String>> createData() {
 		List<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
 		Date startingDate = new Date();
 		Calendar goBack = Calendar.getInstance();

@@ -1,7 +1,9 @@
 /**
  * 
  */
-package gui.reports;
+package gui.reports.productstats;
+
+import gui.reports.HTMLReport;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;

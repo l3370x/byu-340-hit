@@ -1,8 +1,11 @@
 package gui.reports.expired;
 
 
+import common.VisitOrder;
 import gui.common.*;
 import gui.item.ItemData;
+import gui.reports.AbstractReportController;
+import gui.reports.Report;
 import gui.reports.productstats.ProductStatsCalculator;
 
 import java.awt.Desktop;
@@ -34,7 +37,7 @@ import static core.model.InventoryManager.Factory.getInventoryManager;
 /**
  * Controller class for the expired items report view.
  */
-public class ExpiredReportController extends Controller implements
+public class ExpiredReportController extends AbstractReportController implements
 										IExpiredReportController {
 
 	private List<Item> itemsExpired = new ArrayList<Item>();
@@ -67,43 +70,10 @@ public class ExpiredReportController extends Controller implements
 		return (IExpiredReportView)super.getView();
 	}
 
-	/**
-	 * Sets the enable/disable state of all components in the controller's view.
-	 * A component should be enabled only if the user is currently
-	 * allowed to interact with that component.
-	 * 
-	 * {@pre None}
-	 * 
-	 * {@post The enable/disable state of all components in the controller's view
-	 * have been set appropriately.}
-	 */
-	@Override
-	protected void enableComponents() {
-	}
-
-	/**
-	 * Loads data into the controller's view.
-	 * 
-	 *  {@pre None}
-	 *  
-	 *  {@post The controller has loaded data into its view}
-	 */
-	@Override
-	protected void loadValues() {
-	}
-
 	//
 	// IExpiredReportController overrides
 	//
 
-	/**
-	 * This method is called when any of the fields in the
-	 * expired items report view is changed by the user.
-	 */
-	@Override
-	public void valuesChanged() {
-	}
-	
 	/**
 	 * This method is called when the user clicks the "OK"
 	 * button in the expired items report view.
@@ -197,7 +167,18 @@ public class ExpiredReportController extends Controller implements
 			}
 		}
 	}
-	private static void displayDocument(File file) {
+
+    @Override
+    protected FileFormat getReportFormat() {
+        return this.getView().getFormat();
+    }
+
+    @Override
+    protected Report getReport() {
+        return null;
+    }
+
+    private static void displayDocument(File file) {
 		try {
 			Desktop.getDesktop().open(file);
 		} catch (IOException e) {

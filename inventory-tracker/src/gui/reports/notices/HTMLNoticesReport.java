@@ -1,4 +1,6 @@
-package gui.reports;
+package gui.reports.notices;
+
+import gui.reports.HTMLReport;
 
 import java.util.ArrayList;
 import java.util.List;

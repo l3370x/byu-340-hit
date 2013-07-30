@@ -1,51 +1,21 @@
 package gui.reports.supply;
 
-import static core.model.InventoryManager.Factory.getInventoryManager;
-
-import java.awt.Desktop;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
-import common.Operator;
-import common.VisitOrder;
-import common.util.DateUtils;
 import core.model.InventoryManager;
 import core.model.Item;
 import core.model.Product;
-import core.model.ProductContainer;
-import core.model.ProductContainerVisitor;
-import core.model.exception.ExceptionHandler;
-import core.model.exception.HITException;
-import core.model.exception.HITException.Severity;
-import gui.common.*;
-import gui.inventory.ProductContainerData;
-import gui.reports.HTMLProductStatisticsReport;
-import gui.reports.HTMLSupplyReport;
-import gui.reports.PDFProductStatisticsReport;
-import gui.reports.PDFSupplyReport;
-import gui.reports.ReportController;
-import gui.reports.supply.SupplyCalculator;
+import gui.common.FileFormat;
+import gui.common.IView;
+import gui.reports.AbstractReportController;
+import gui.reports.Report;
+
+import java.util.*;
+
+import static core.model.InventoryManager.Factory.getInventoryManager;
 
 /**
  * Controller class for the N-month supply report view.
  */
-	public class SupplyReportController extends Controller implements
+	public class SupplyReportController extends AbstractReportController implements
 		ISupplyReportController {
 		
 	private static final String BASE_FILE_NAME = System.getProperty("user.dir");
@@ -75,20 +45,6 @@ import gui.reports.supply.SupplyCalculator;
 	@Override
 	protected ISupplyReportView getView() {
 		return (ISupplyReportView)super.getView();
-	}
-
-	/**
-	 * Sets the enable/disable state of all components in the controller's view.
-	 * A component should be enabled only if the user is currently
-	 * allowed to interact with that component.
-	 * 
-	 * {@pre None}
-	 * 
-	 * {@post The enable/disable state of all components in the controller's view
-	 * have been set appropriately.}
-	 */
-	@Override
-	protected void enableComponents() {
 	}
 
 	/**
@@ -126,6 +82,7 @@ import gui.reports.supply.SupplyCalculator;
 	 * This method is called when the user clicks the "OK" button in the product
 	 * statistics report view.
 	 */
+    /*
 	@Override
 	public void display() {
 		if (!isValidInput(this.getView().getMonths())) {
@@ -161,8 +118,19 @@ import gui.reports.supply.SupplyCalculator;
 		report.finalize();
 		
 	}
+	*/
 
-	private List<ArrayList<String>> createProductData() {
+    @Override
+    protected FileFormat getReportFormat() {
+        return this.getView().getFormat();
+    }
+
+    @Override
+    protected Report getReport() {
+        return null;
+    }
+
+    private List<ArrayList<String>> createProductData() {
 		List<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
 	
 		InventoryManager inventory = InventoryManager.Factory
