@@ -26,6 +26,8 @@ public class UndoSupport {
         command.execute();
 
         this.undoStack.push(command);
+
+        this.redoStack.clear();
     }
 
     /**
@@ -52,7 +54,9 @@ public class UndoSupport {
 
         Command redoable = this.redoStack.pop();
 
-        this.execute(redoable);
+        redoable.execute();
+
+        this.undoStack.push(redoable);
     }
 
     /**
