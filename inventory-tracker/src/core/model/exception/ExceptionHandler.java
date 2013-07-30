@@ -1,15 +1,12 @@
 package core.model.exception;
 
-import static core.model.exception.HITException.Severity.ERROR;
-import static core.model.exception.HITException.Severity.INFO;
-import static core.model.exception.HITException.Severity.WARNING;
+import javax.swing.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import static javax.swing.JOptionPane.*;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
- *
  * @author kemcqueen
  */
 public enum ExceptionHandler {
@@ -42,7 +39,7 @@ public enum ExceptionHandler {
             }
         }
     },
-    
+
     /**
      * Reports errors/exceptions to the user/screen using a message dialog.
      */
@@ -79,11 +76,10 @@ public enum ExceptionHandler {
 
     /**
      * Report the given error.
-     * 
-     * @param error the error to be reported
-     * 
-     * @param additionalMessage an additional message that will be reported 
-     * along with the error (should not be null)
+     *
+     * @param error             the error to be reported
+     * @param additionalMessage an additional message that will be reported along with the error
+     *                          (should not be null)
      */
     public void reportException(Throwable error, String additionalMessage) {
     }

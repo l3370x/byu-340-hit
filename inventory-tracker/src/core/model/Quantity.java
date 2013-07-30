@@ -2,15 +2,16 @@ package core.model;
 
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
+
 import java.io.Serializable;
+
 /**
- * The {@code Quantity} class is used to measure a product. This class is
- * immutable and therefore thread-safe.
- *
- * @invariant value != null
- * @invariant units != null
+ * The {@code Quantity} class is used to measure a product. This class is immutable and therefore
+ * thread-safe.
  *
  * @author kemcqueen
+ * @invariant value != null
+ * @invariant units != null
  */
 public class Quantity implements Serializable {
 
@@ -20,12 +21,10 @@ public class Quantity implements Serializable {
     /**
      * Create a new Quantity with the given value and units.
      *
-     * @pre float >= 0.0f && units != null
-     *
-     * @post getValue() == value && getUnits() == units
-     *
      * @param value the value (must be >= 0.0f)
-     * @param units the units
+     * @param unit the units
+     * @pre float >= 0.0f && units != null
+     * @post getValue() == value && getUnits() == units
      */
     public Quantity(float value, Units unit) throws HITException {
         if (value < 0.0) {
@@ -41,9 +40,8 @@ public class Quantity implements Serializable {
     /**
      * Get the value (amount) of this quantity.
      *
-     * @pre none
-     *
      * @return the value of this quantity
+     * @pre none
      */
     public float getValue() {
         assert true;
@@ -53,9 +51,8 @@ public class Quantity implements Serializable {
     /**
      * Get the units of this quantity
      *
-     * @pre none
-     *
      * @return the units of this quantity
+     * @pre none
      */
     public Units getUnits() {
         assert true;
@@ -64,21 +61,21 @@ public class Quantity implements Serializable {
 
     @Override
     public String toString() {
-    	// return nothing if nothing was defined
-    	if(value == 0 && units == Units.COUNT)
-    		return "";
-    	
-    	// return nice value if value is integer
-    	if(value == (int) value)
-    		return String.format("%d %s", (int)value, units.getLabel());
-    	
-    	// return value and units in pretty format.
-    	return String.format("%s %s", value, units.toString());
+        // return nothing if nothing was defined
+        if (value == 0 && units == Units.COUNT)
+            return "";
+
+        // return nice value if value is integer
+        if (value == (int) value)
+            return String.format("%d %s", (int) value, units.getLabel());
+
+        // return value and units in pretty format.
+        return String.format("%s %s", value, units.toString());
     }
 
     /**
-     * The {@code Quantity.Unit} enumeration is used to designate the unit of 
-     * measurement for a particular quantity.
+     * The {@code Quantity.Unit} enumeration is used to designate the unit of measurement for a
+     * particular quantity.
      */
     public static enum Units {
 
@@ -122,9 +119,9 @@ public class Quantity implements Serializable {
          * Volume in liters/litres (lit) (as in "2 liters")
          */
         LITERS("liters");
-        
+
         private final String label;
-        
+
         private Units(String label) {
             this.label = label;
         }

@@ -1,21 +1,21 @@
 package core.model;
 
-import java.util.Observable;
-
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
 
+import java.util.Observable;
+
 /**
- * The {@code AbstractContainable} class is the base class for implementations
- * of the {@link Containable} interface.
- * 
- * @invariant ?
- * 
+ * The {@code AbstractContainable} class is the base class for implementations of the {@link
+ * Containable} interface.
+ *
  * @author kemcqueen
+ * @invariant ?
  */
-abstract class AbstractContainable<T extends Container> extends Observable implements Containable<T> {
+abstract class AbstractContainable<T extends Container> extends Observable
+        implements Containable<T> {
     private T container;
-    
+
     @Override
     public void wasAddedTo(final T container) throws HITException {
         this.verifyContainedIn(container);
@@ -25,7 +25,7 @@ abstract class AbstractContainable<T extends Container> extends Observable imple
     @Override
     public void wasRemovedFrom(final T container) throws HITException {
         this.verifyNotContainedIn(container);
-        
+
         this.container = null;
     }
 
@@ -39,7 +39,7 @@ abstract class AbstractContainable<T extends Container> extends Observable imple
             throw new HITException(Severity.WARNING,
                     "Container transferring to must not be null");
         }
-        
+
         from.remove(this);
         to.add(this);
     }
@@ -52,30 +52,30 @@ abstract class AbstractContainable<T extends Container> extends Observable imple
     static <C extends Containable> void verifyContains
             (final Container<C> container, C content) throws HITException {
         if (null == container) {
-            throw new HITException(Severity.WARNING, 
+            throw new HITException(Severity.WARNING,
                     "Container must not be null");
         }
-        
+
         if (false == container.contains(content)) {
-            throw new HITException(Severity.WARNING, 
-                    "Container (" + container +") does not contain this containable");
+            throw new HITException(Severity.WARNING,
+                    "Container (" + container + ") does not contain this containable");
         }
     }
 
     static <C extends Containable> void verifyDoesNotContain(
             final Container<C> container, C content) throws HITException {
         if (null == container) {
-            throw new HITException(Severity.WARNING, 
+            throw new HITException(Severity.WARNING,
                     "Container must not be null");
         }
-        
+
         if (content.getContainer() != container) {
-            throw new HITException(Severity.WARNING, 
+            throw new HITException(Severity.WARNING,
                     "Container (" + container + ") is not the current container");
         }
-        
+
         if (container.contains(content)) {
-            throw new HITException(Severity.WARNING, 
+            throw new HITException(Severity.WARNING,
                     "Container (" + container + ") still contains this containable");
         }
     }
@@ -87,8 +87,8 @@ abstract class AbstractContainable<T extends Container> extends Observable imple
     @Override
     public void notifyObservers(Object arg) {
         this.setChanged();
-        
+
         super.notifyObservers(arg);
     }
-    
+
 }

@@ -2,6 +2,7 @@ package core.model;
 
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;

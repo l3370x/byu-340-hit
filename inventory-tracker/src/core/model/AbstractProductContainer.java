@@ -1,54 +1,50 @@
 package core.model;
 
 import common.Visitable;
+import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import core.model.exception.HITException.Severity;
+
+import java.util.*;
+
 import static core.model.ModelNotification.ChangeType.*;
-import core.model.exception.ExceptionHandler;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
- * The {@code AbstractProductContainer} class is the base class for 
- * {@link ProductContainer} implementations.
- * 
- * @invariant getName() != null
- * 
+ * The {@code AbstractProductContainer} class is the base class for {@link ProductContainer}
+ * implementations.
+ *
  * @author kemcqueen
+ * @invariant getName() != null
  */
-public abstract class AbstractProductContainer<T extends Containable> 
-    extends AbstractContainer<T> implements ProductContainer<T> {
-    
+public abstract class AbstractProductContainer<T extends Containable>
+        extends AbstractContainer<T> implements ProductContainer<T> {
+
     private final Map<String, T> contentsByString = new HashMap<>();
     private ItemCollection items;
     private ProductCollection products;
-    
+
     private String name;
-    
+
     protected AbstractProductContainer(String name) {
         this.name = name;
-        
+
         this.initCollections(new ItemCollection(this), new ProductCollection(this));
     }
-    
-    protected AbstractProductContainer(String name, 
-            ItemCollection item, ProductCollection products) {
+
+    protected AbstractProductContainer(String name,
+                                       ItemCollection item, ProductCollection products) {
         this.name = name;
-        
+
         this.initCollections(item, products);
     }
-    
+
     private void initCollections(ItemCollection items, ProductCollection products) {
         this.items = items;
         this.items.addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
                 if (arg instanceof ModelNotification) {
-                    final ModelNotification notification = 
+                    final ModelNotification notification =
                             (ModelNotification) arg;
                     switch (notification.getChangeType()) {
                         case CONTENT_ADDED:
@@ -56,13 +52,13 @@ public abstract class AbstractProductContainer<T extends Containable>
                                     AbstractProductContainer.this,
                                     notification.getContent()));
                             break;
-                            
+
                         case CONTENT_REMOVED:
-                            notifyObservers(new ModelNotification(ITEM_REMOVED, 
+                            notifyObservers(new ModelNotification(ITEM_REMOVED,
                                     AbstractProductContainer.this,
                                     notification.getContent()));
                             break;
-                            
+
                         case CONTENT_UPDATED:
                             notifyObservers(new ModelNotification(ITEM_UPDATED,
                                     AbstractProductContainer.this,
@@ -74,28 +70,28 @@ public abstract class AbstractProductContainer<T extends Containable>
                 }
             }
         });
-        
+
         this.products = products;
         this.products.addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
                 if (arg instanceof ModelNotification) {
-                    final ModelNotification notification = 
+                    final ModelNotification notification =
                             (ModelNotification) arg;
                     switch (notification.getChangeType()) {
                         case CONTENT_ADDED:
-                            notifyObservers(new ModelNotification(PRODUCT_ADDED, 
+                            notifyObservers(new ModelNotification(PRODUCT_ADDED,
                                     AbstractProductContainer.this,
                                     notification.getContent()));
                             break;
-                            
+
                         case CONTENT_REMOVED:
-                            notifyObservers(new ModelNotification(PRODUCT_REMOVED, 
+                            notifyObservers(new ModelNotification(PRODUCT_REMOVED,
                                     AbstractProductContainer.this,
                                     notification.getContent()));
                             break;
-                            
-                            
+
+
                         case CONTENT_UPDATED:
                             notifyObservers(new ModelNotification(PRODUCT_UPDATED,
                                     AbstractProductContainer.this,
@@ -108,28 +104,28 @@ public abstract class AbstractProductContainer<T extends Containable>
             }
         });
     }
-    
-    protected void loadObject(Container c){
-    	initCollections(this.items, this.products);
-    	for( Item i : this.items.getItems()){
-    		i.addObs(this.items);
-    	}
+
+    protected void loadObject(Container c) {
+        initCollections(this.items, this.products);
+        for (Item i : this.items.getItems()) {
+            i.addObs(this.items);
+        }
     }
-    
-	protected void loadInvMan(AbstractProductContainer i) throws HITException {
-		this.items = i.items;
-		this.products = i.products;
-	}
-    
+
+    protected void loadInvMan(AbstractProductContainer i) throws HITException {
+        this.items = i.items;
+        this.products = i.products;
+    }
+
     @Override
     public void addItem(Item item) throws HITException {
         if (null == item) {
             throw new HITException(Severity.INFO, "Item must not be null");
         }
-        
+
         // add the product if necessary
         this.addProduct(item.getProduct());
-        
+
         // (try to) add the item
         this.items.add(item);
     }
@@ -139,11 +135,11 @@ public abstract class AbstractProductContainer<T extends Containable>
         if (null == product) {
             throw new HITException(Severity.INFO, "Product must not be null");
         }
-        
+
         if (false == this.canAddProduct(product)) {
             return;
         }
-        
+
         // check to see if the product is already contained with this container's storage unit
         // if so, do a transfer, otherwise just add it
         StorageUnit mySU = this.getStorageUnit();
@@ -164,7 +160,7 @@ public abstract class AbstractProductContainer<T extends Containable>
     public boolean canAddItem(Item item) {
         return this.items.canAdd(item);
     }
-    
+
     @Override
     public boolean canAddProduct(Product product) {
         return this.products.canAdd(product);
@@ -189,17 +185,17 @@ public abstract class AbstractProductContainer<T extends Containable>
     public int getItemCount() {
         return this.items.getItemCount();
     }
-    
+
     @Override
     public Iterable<Item> getItems(Product product) {
         return this.items.getItems(product);
     }
-    
+
     @Override
     public int getItemCount(Product product) {
         return this.items.getItemCount(product);
     }
-    
+
     @Override
     public String getName() {
         return this.name;
@@ -217,7 +213,7 @@ public abstract class AbstractProductContainer<T extends Containable>
                 return product;
             }
         }
-        
+
         return null;
     }
 
@@ -230,13 +226,13 @@ public abstract class AbstractProductContainer<T extends Containable>
     public void removeProduct(Product product) throws HITException {
         this.products.remove(product);
     }
-    
+
     @Override
     public void setName(String name) throws HITException {
         if (null == name || name.isEmpty()) {
             throw new HITException(Severity.WARNING, "Name must not be empty");
         }
-        
+
         this.name = name;
     }
 
@@ -254,11 +250,11 @@ public abstract class AbstractProductContainer<T extends Containable>
     public String toString() {
         return this.getName();
     }
-    
+
     @Override
     protected boolean isAddable(T content) {
         assert null != content;
-        
+
         return false == this.contains(content) &&
                 false == this.contentsByString.containsKey(content.toString());
     }
@@ -286,18 +282,18 @@ public abstract class AbstractProductContainer<T extends Containable>
 
         // if the content was changed, it is likely that the key by which it
         // is stored has changed, so we'll need to re-key the content
-        
+
         // if the content is still properly keyed, then we don't really need to
         // do anything
         if (content == this.contentsByString.get(content.toString())) {
             return;
         }
-        
+
         // if we don't have the content, then we don't need to do anything
         if (false == this.contentsByString.containsValue(content)) {
             return;
         }
-        
+
         // see if we can find the content in the values, if so, remove it
         Iterator<T> iter = this.contentsByString.values().iterator();
         while (iter.hasNext()) {
@@ -323,7 +319,7 @@ public abstract class AbstractProductContainer<T extends Containable>
     protected void doAddProduct(Product product) throws HITException {
         this.products.add(product);
     }
-    
+
     protected void doAddItem(Item item) throws HITException {
         this.items.add(item);
     }

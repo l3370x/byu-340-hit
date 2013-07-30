@@ -2,29 +2,16 @@ package gui.inventory;
 
 import common.Operator;
 import common.VisitOrder;
-import core.model.Category;
-import core.model.Containable;
-import core.model.Container;
-import core.model.InventoryManager;
-import gui.common.*;
-import gui.item.*;
-import gui.product.*;
-
-import static core.model.InventoryManager.Factory.getInventoryManager;
-import core.model.Item;
-import core.model.ModelNotification;
-import static core.model.ModelNotification.ChangeType.ITEM_ADDED;
-import static core.model.ModelNotification.ChangeType.ITEM_REMOVED;
-import static core.model.ModelNotification.ChangeType.PRODUCT_REMOVED;
-import core.model.Product;
-import core.model.ProductContainer;
-import core.model.ProductContainerVisitor;
-import core.model.Quantity;
-import core.model.StorageUnit;
+import core.model.*;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
+import gui.common.Controller;
+import gui.item.ItemData;
+import gui.product.ProductData;
 
 import java.util.*;
+
+import static core.model.InventoryManager.Factory.getInventoryManager;
 
 /**
  * Controller class for inventory view.
@@ -721,7 +708,7 @@ public class InventoryController extends Controller
         }
 
         List<ItemData> itemList = new ArrayList<>();
-        for (Item item : (Iterable<Item>) ((ProductContainer) container).getItems(product)) {
+        for (Item item : (Iterable<Item>) container.getItems(product)) {
             itemList.add(createItemData(item));
         }
 
@@ -755,15 +742,15 @@ public class InventoryController extends Controller
             @Override
             public void updateContextPane(IInventoryView view, ProductContainer container) {
                 super.updateContextPane(view, container);
-                view.setContextUnit(((ProductContainer) container).getName());
+                view.setContextUnit(container.getName());
             }
         },
         CATEGORY(Category.class) {
             @Override
             public void updateContextPane(IInventoryView view, ProductContainer container) {
                 super.updateContextPane(view, container);
-                view.setContextUnit(((ProductContainer) container).getStorageUnit().getName());
-                view.setContextGroup(((ProductContainer) container).getName());
+                view.setContextUnit(container.getStorageUnit().getName());
+                view.setContextGroup(container.getName());
 
                 final Quantity supply = ((Category) container).get3MonthSupplyQuantity();
                 if (null != supply) {

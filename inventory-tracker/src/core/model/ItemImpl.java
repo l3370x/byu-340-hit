@@ -1,23 +1,19 @@
 package core.model;
 
+import common.util.DateUtils;
 import core.model.exception.HITException;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Calendar;
 import java.util.Date;
-
-import common.util.DateUtils;
 import java.util.Observer;
 
 /**
  * The {@code ItemImpl} class is the default implementation of the {@link Item} interface. The
- * constructor(s(s) are (mostly) hidden. To get an Item instance you must use the
- * {@link Item.Factory}.
- *
- * @invariant ?
+ * constructor(s(s) are (mostly) hidden. To get an Item instance you must use the {@link
+ * Item.Factory}.
  *
  * @author kemcqueen
+ * @invariant ?
  */
 class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
 
@@ -27,7 +23,7 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
     private Product product;
 
     ItemImpl(Date entryDate, Product product,
-            BarCode barcode) {
+             BarCode barcode) {
         this.product = product;
         this.entryDate = entryDate;
         this.barcode = barcode;
@@ -124,11 +120,11 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
         if (shelfLife <= 0) {
             return null;
         }
-        
+
         Calendar cal = Calendar.getInstance();
         cal.setTime(this.getEntryDate());
         cal.add(Calendar.MONTH, shelfLife);
-        
+
         return cal.getTime();
     }
 
@@ -136,10 +132,10 @@ class ItemImpl extends AbstractContainable<ProductContainer> implements Item {
     public synchronized void addObserver(Observer o) {
         super.addObserver(o);
     }
-    
+
     @Override
     public void addObs(Observer o) {
-    	super.addObserver(o);
+        super.addObserver(o);
     }
-    
+
 }

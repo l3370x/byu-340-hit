@@ -11,18 +11,17 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- * The {@code InventoryManagerImpl} class is the default (and sole) 
- * implementation of the {@link InventoryManager} interface.  The
- * constructor is hidden, so the only way to get an instance is through the
- * {@link InventoryManager.Factory}.
- * 
+ * The {@code InventoryManagerImpl} class is the default (and sole) implementation of the {@link
+ * InventoryManager} interface.  The constructor is hidden, so the only way to get an instance is
+ * through the {@link InventoryManager.Factory}.
+ *
  * @author kemcqueen
  */
-class InventoryManagerImpl extends AbstractProductContainer<StorageUnit> 
-implements InventoryManager {
-	
-	private Date lastReportRun=null;
-	
+class InventoryManagerImpl extends AbstractProductContainer<StorageUnit>
+        implements InventoryManager {
+
+    private Date lastReportRun = null;
+
     private final ItemCollection removedItems = new ItemCollection(null) {
         @Override
         protected void didAdd(Item content) throws HITException {
@@ -36,36 +35,37 @@ implements InventoryManager {
         public synchronized void addObserver(Observer o) {
         }
     };
-    
+
     /**
      * Hidden (mostly) constructor.
      */
     InventoryManagerImpl() {
-        super ("Storage Units", new ItemCollection(null){
-            @Override
-            protected void didAdd(Item content) throws HITException {
-            }
+        super("Storage Units", new ItemCollection(null) {
+                    @Override
+                    protected void didAdd(Item content) throws HITException {
+                    }
 
-            @Override
-            protected void didRemove(Item content) throws HITException {
-            }
+                    @Override
+                    protected void didRemove(Item content) throws HITException {
+                    }
 
-            @Override
-            public synchronized void addObserver(Observer o) {
-            }
-        }, new ProductCollection(null){
-            @Override
-            protected void didAdd(Product content) throws HITException {
-            }
+                    @Override
+                    public synchronized void addObserver(Observer o) {
+                    }
+                }, new ProductCollection(null) {
+                    @Override
+                    protected void didAdd(Product content) throws HITException {
+                    }
 
-            @Override
-            protected void didRemove(Product content) throws HITException {
-            }
+                    @Override
+                    protected void didRemove(Product content) throws HITException {
+                    }
 
-            @Override
-            public synchronized void addObserver(Observer o) {
-            }
-        });
+                    @Override
+                    public synchronized void addObserver(Observer o) {
+                    }
+                }
+        );
     }
 
     @Override
@@ -77,7 +77,7 @@ implements InventoryManager {
     public Iterable<Item> getRemovedItems(Product product) {
         return this.removedItems.getItems(product);
     }
-    
+
     @Override
     public void saveRemovedItem(Item item) throws HITException {
         assert null != item;
@@ -93,7 +93,7 @@ implements InventoryManager {
     @Override
     public void deleteRemovedItem(Item item) throws HITException {
         this.removedItems.remove(item);
-        
+
         item.setExitDate(null);
     }
 
@@ -122,10 +122,10 @@ implements InventoryManager {
         if (false == arg instanceof ModelNotification) {
             return;
         }
-        
+
         ModelNotification notification = (ModelNotification) arg;
         Object payload = notification.getContent();
-        
+
         try {
             switch (notification.getChangeType()) {
                 case ITEM_ADDED:
@@ -152,39 +152,39 @@ implements InventoryManager {
                     break;
             }
         }
-        
+
         // call the super, so that notifications will propagate to my observers
         super.update(o, arg);
     }
-    
-    
+
+
     private void writeObject(ObjectOutputStream out) throws IOException {
-		out.defaultWriteObject();
-	}
-    
-    private void readObject(ObjectInputStream in) throws IOException,
-	  ClassNotFoundException, HITException {
-    	in.defaultReadObject();
-    	InventoryManager.Factory.getInventoryManager().load(this);
+        out.defaultWriteObject();
     }
 
-    
-	@Override
-	public void load(AbstractProductContainer i) throws HITException {
-		super.loadInvMan(i);
-	}
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException, HITException {
+        in.defaultReadObject();
+        InventoryManager.Factory.getInventoryManager().load(this);
+    }
 
-	/**
-	 * @return the lastReportRun
-	 */
-	public Date getLastReportRun() {
-		return lastReportRun;
-	}
 
-	/**
-	 * @param lastReportRun the lastReportRun to set
-	 */
-	public void setLastReportRun(Date lastReportRun) {
-		this.lastReportRun = lastReportRun;
-	}
+    @Override
+    public void load(AbstractProductContainer i) throws HITException {
+        super.loadInvMan(i);
+    }
+
+    /**
+     * @return the lastReportRun
+     */
+    public Date getLastReportRun() {
+        return lastReportRun;
+    }
+
+    /**
+     * @param lastReportRun the lastReportRun to set
+     */
+    public void setLastReportRun(Date lastReportRun) {
+        this.lastReportRun = lastReportRun;
+    }
 }

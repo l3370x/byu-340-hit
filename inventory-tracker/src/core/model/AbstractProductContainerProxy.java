@@ -4,17 +4,16 @@ import common.Visitable;
 import core.model.exception.HITException;
 
 /**
- * The {@code AbstractProductContainerProxy} class is an abstract class that 
- * acts as a proxy for a {@link ProductContainer}.  All ProductContainer 
- * operations will be forwarded to a ProductContainer instance that was given at
- * construction time.
- * 
+ * The {@code AbstractProductContainerProxy} class is an abstract class that acts as a proxy for a
+ * {@link ProductContainer}.  All ProductContainer operations will be forwarded to a
+ * ProductContainer instance that was given at construction time.
+ *
  * @author kmcqueen
  */
-abstract class AbstractProductContainerProxy<T extends Containable> 
-extends AbstractContainer<T> implements ProductContainer<T> {
+abstract class AbstractProductContainerProxy<T extends Containable>
+        extends AbstractContainer<T> implements ProductContainer<T> {
     private final ProductContainer delegate;
-    
+
     protected AbstractProductContainerProxy(ProductContainer delegate) {
         this.delegate = delegate;
     }
@@ -88,7 +87,7 @@ extends AbstractContainer<T> implements ProductContainer<T> {
     public void setName(String name) throws HITException {
         this.delegate.setName(name);
     }
-    
+
     @Override
     public Product getProduct(BarCode barCode) {
         return this.delegate.getProduct(barCode);
