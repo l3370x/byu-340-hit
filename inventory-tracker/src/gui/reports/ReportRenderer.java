@@ -92,12 +92,10 @@ public interface ReportRenderer {
         public static ReportRenderer getRendererFor(FileFormat format) {
             switch (format) {
                 case HTML:
-                    // return new HTMLReportRenderer;
                     return new HTMLReportRenderer();
 
                 case PDF:
-                    // return new PDFReportRenderer
-                    return null;
+                    return new PDFReportRenderer();
             }
 
             return null;

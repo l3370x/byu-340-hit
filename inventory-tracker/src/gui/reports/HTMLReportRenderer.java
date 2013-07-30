@@ -51,7 +51,6 @@ public class HTMLReportRenderer extends AbstractReportRenderer {
 
     @Override
     public void beginTable(String... headers) {
-        // open the html table
         this.writer.write(HTML_TABLE_BEGIN);
         this.writeTableRow(HTML_TABLE_HEADER_CELL, headers);
     }
