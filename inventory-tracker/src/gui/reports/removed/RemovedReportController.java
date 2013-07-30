@@ -1,36 +1,13 @@
 package gui.reports.removed;
 
-import java.awt.Desktop;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
-import common.util.DateUtils;
-import core.model.Item;
 import core.model.Product;
-import core.model.exception.ExceptionHandler;
-import gui.common.*;
-import gui.item.ItemData;
+import gui.common.FileFormat;
+import gui.common.IView;
 import gui.reports.AbstractReportController;
 import gui.reports.Report;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static core.model.InventoryManager.Factory.getInventoryManager;
 
@@ -42,7 +19,7 @@ public class RemovedReportController extends AbstractReportController implements
 		IRemovedReportController {
 	
 	private static Map<Product, int[]> itemsRemoved = new HashMap<Product, int[]>();
-	private static final String BASE_FILE_NAME = System.getProperty("user.dir");
+	//private static final String BASE_FILE_NAME = System.getProperty("user.dir");
 
 	/**
 	 * Constructor.
@@ -103,6 +80,7 @@ public class RemovedReportController extends AbstractReportController implements
 	 * This method is called when the user clicks the "OK"
 	 * button in the removed items report view.
 	 */
+    /*
 	@Override
 	public void display() {
 		
@@ -202,6 +180,7 @@ public class RemovedReportController extends AbstractReportController implements
 			}
 		}
 	}
+	*/
 
     @Override
     protected FileFormat getReportFormat() {
@@ -213,6 +192,7 @@ public class RemovedReportController extends AbstractReportController implements
         return null;
     }
 
+    /*
     private static void displayDocument(File file) {
 		try {
 			Desktop.getDesktop().open(file);
@@ -223,7 +203,9 @@ public class RemovedReportController extends AbstractReportController implements
 					"Can't open the file");
 		}
 	}
-	
+	*/
+
+    /*
 	private static File initOutputFile(FileFormat type) {
 		File outFile = null;
 		try {
@@ -249,7 +231,9 @@ public class RemovedReportController extends AbstractReportController implements
 
 		return outFile;
 	}
-	
+	*/
+
+    /*
 	private static void formatDocument(Document document,
 			PdfContentByte contentByte,Product p, PdfPTable table) {
 		if (p == null) {
@@ -278,7 +262,9 @@ public class RemovedReportController extends AbstractReportController implements
 			}
 		}
 	}
+	*/
 
+    /*
 	private static final Map<String, String> REPORT_HEADINGS = new HashMap<>();
 	static {
 		REPORT_HEADINGS.put("h1", "Description");
@@ -288,6 +274,7 @@ public class RemovedReportController extends AbstractReportController implements
 		REPORT_HEADINGS.put("h5", "Current Supply");
 		
 	}
+	*/
 
 }
 

@@ -1,37 +1,17 @@
 package gui.reports.expired;
 
 
-import common.VisitOrder;
-import gui.common.*;
-import gui.item.ItemData;
+import core.model.Item;
+import gui.common.FileFormat;
+import gui.common.IView;
 import gui.reports.AbstractReportController;
 import gui.reports.Report;
-import gui.reports.productstats.ProductStatsCalculator;
 
-import java.awt.Desktop;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
-import common.util.DateUtils;
-import core.model.Item;
-import core.model.ItemCollection;
-import core.model.Product;
-import core.model.exception.ExceptionHandler;
-import core.model.exception.HITException;
 import static core.model.InventoryManager.Factory.getInventoryManager;
 
 /**
@@ -41,7 +21,7 @@ public class ExpiredReportController extends AbstractReportController implements
 										IExpiredReportController {
 
 	private List<Item> itemsExpired = new ArrayList<Item>();
-	private static final String BASE_FILE_NAME = System.getProperty("user.dir");
+	//private static final String BASE_FILE_NAME = System.getProperty("user.dir");
 
 	/**
 	 * Constructor.
@@ -92,7 +72,8 @@ public class ExpiredReportController extends AbstractReportController implements
  	         }
 	 	  }
 	}
-	
+
+    /*
 	@Override
 	public void display() {
 	
@@ -105,7 +86,7 @@ public class ExpiredReportController extends AbstractReportController implements
 		try {
 			
 			Document document = new Document(PageSize.LETTER_LANDSCAPE);
-			PdfWriter pdfWriter = PdfWriter.getInstance(document,
+			PdfWriter pdfWriter = PdfWriter.newProductStatsCalculator(document,
 					new FileOutputStream(outFile, true));
 			document.open();
 			PdfPTable table = new PdfPTable(6);
@@ -167,6 +148,7 @@ public class ExpiredReportController extends AbstractReportController implements
 			}
 		}
 	}
+	*/
 
     @Override
     protected FileFormat getReportFormat() {
@@ -178,6 +160,7 @@ public class ExpiredReportController extends AbstractReportController implements
         return null;
     }
 
+    /*
     private static void displayDocument(File file) {
 		try {
 			Desktop.getDesktop().open(file);
@@ -188,7 +171,9 @@ public class ExpiredReportController extends AbstractReportController implements
 					"Can't open the file");
 		}
 	}
-	
+	*/
+
+    /*
 	private static File initOutputFile(FileFormat type) {
 		File outFile = null;
 		try {
@@ -214,7 +199,9 @@ public class ExpiredReportController extends AbstractReportController implements
 
 		return outFile;
 	}
-	
+	*/
+
+    /*
 	private static void formatDocument(Document document,
 			PdfContentByte contentByte,Item i, PdfPTable table) {
 		if (i == null) {
@@ -253,7 +240,9 @@ public class ExpiredReportController extends AbstractReportController implements
 			}
 		}
 	}
+	*/
 
+    /*
 	private static final Map<String, String> REPORT_HEADINGS = new HashMap<>();
 	static {
 		REPORT_HEADINGS.put("h1", "Description");
@@ -263,6 +252,7 @@ public class ExpiredReportController extends AbstractReportController implements
 		REPORT_HEADINGS.put("h5", "Expire Date");
 		REPORT_HEADINGS.put("h6", "Item Barcode");
 	}
+	*/
 
 }
 

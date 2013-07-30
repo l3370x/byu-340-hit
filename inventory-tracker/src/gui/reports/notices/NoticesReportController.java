@@ -1,16 +1,9 @@
 package gui.reports.notices;
 
-import common.VisitOrder;
 import gui.common.FileFormat;
 import gui.common.IView;
-import gui.reports.*;
-
-import java.util.List;
-
-import core.model.Item;
-import core.model.exception.ExceptionHandler;
-import core.model.exception.HITException;
-import core.model.exception.HITException.Severity;
+import gui.reports.AbstractReportController;
+import gui.reports.Report;
 
 /**
  * Controller class for the notices report view.
@@ -50,11 +43,6 @@ public class NoticesReportController extends AbstractReportController implements
 	// IExpiredReportController overrides
 	//
 
-    private List<Item> createData() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
 	 * 
 	 * @param storageUnit
@@ -69,6 +57,7 @@ public class NoticesReportController extends AbstractReportController implements
 	 *            following: a product description, an item description, and the
 	 *            quantity of an item that conflicts witht the 3-month param
 	 */
+    /*
 	public void addWarning(ReportController report, String storageUnit,
 			String category, String threeMonthSupply,
 			List<String> problems) {
@@ -80,6 +69,7 @@ public class NoticesReportController extends AbstractReportController implements
 				report.appendText(String.format("- %s::%s (%s)", problems.get(i)));
 		//}
 	}
+	*/
 	
 //	public class BadStuff{
 //		public BadStuff(Category c, Item i){
@@ -95,6 +85,7 @@ public class NoticesReportController extends AbstractReportController implements
 	 * This method is called when the user clicks the "OK" button in the notices
 	 * report view.
 	 */
+    /*
 	@Override
 	public void display() {
 		ReportController report = null;
@@ -151,6 +142,7 @@ public class NoticesReportController extends AbstractReportController implements
 		report.finalize();
 
 	}
+	*/
 
     @Override
     protected FileFormat getReportFormat() {
@@ -159,18 +151,15 @@ public class NoticesReportController extends AbstractReportController implements
 
     @Override
     protected Report getReport() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
-    @Override
-    protected VisitOrder getModelVisitOrder() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
+    /*
     private boolean isValidInput() {
 		if (this.getView().getFormat() == null)
 			return false;
 		return true;
 	}
+	*/
 
 }

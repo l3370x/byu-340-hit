@@ -18,7 +18,7 @@ import static core.model.InventoryManager.Factory.getInventoryManager;
 	public class SupplyReportController extends AbstractReportController implements
 		ISupplyReportController {
 		
-	private static final String BASE_FILE_NAME = System.getProperty("user.dir");
+	//private static final String BASE_FILE_NAME = System.getProperty("user.dir");
 
 	/**
 	 * Constructor.

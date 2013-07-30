@@ -4,26 +4,13 @@ import gui.common.FileFormat;
 import gui.common.IView;
 import gui.reports.*;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import core.model.InventoryManager;
-import core.model.Product;
-import core.model.exception.ExceptionHandler;
-import core.model.exception.HITException;
-import core.model.exception.HITException.Severity;
-
 /**
  * Controller class for the product statistics report view.
  */
 public class ProductStatsReportController extends AbstractReportController implements
 		IProductStatsReportController {
 
-	ProductStatsCalculator calc = ProductStatsCalculator.Factory.getInstance();
+	ProductStatsCalculator calc = ProductStatsCalculator.Factory.newProductStatsCalculator();
 
 	/**
 	 * Constructor.
@@ -86,6 +73,7 @@ public class ProductStatsReportController extends AbstractReportController imple
 	 * This method is called when the user clicks the "OK" button in the product
 	 * statistics report view.
 	 */
+    /*
 	@Override
 	public void display() {
 		if (!isValidInput(this.getView().getMonths())) {
@@ -122,6 +110,7 @@ public class ProductStatsReportController extends AbstractReportController imple
 		report.finalize();
 
 	}
+	*/
 
     @Override
     protected FileFormat getReportFormat() {
@@ -133,10 +122,11 @@ public class ProductStatsReportController extends AbstractReportController imple
         return null;
     }
 
+    /*
     private List<ArrayList<String>> createData() {
 		List<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
 		Date startingDate = new Date();
-		Calendar goBack = Calendar.getInstance();
+		Calendar goBack = Calendar.newProductStatsCalculator();
 		goBack.setTime(startingDate);
 		goBack.add(Calendar.MONTH,
 				-1 * Integer.valueOf(this.getView().getMonths()));
@@ -201,7 +191,9 @@ public class ProductStatsReportController extends AbstractReportController imple
 		}
 		return data;
 	}
+	*/
 
+    /*
 	public List<ArrayList<String>> createHeader() {
 		List<ArrayList<String>> rows = new ArrayList<ArrayList<String>>();
 		ArrayList<String> table = new ArrayList<String>();
@@ -211,6 +203,7 @@ public class ProductStatsReportController extends AbstractReportController imple
 		rows.add(table);
 		return rows;
 	}
+	*/
 
 	private boolean isValidInput(String months) {
 		// Check to make sure the month value isn't blank
@@ -227,6 +220,7 @@ public class ProductStatsReportController extends AbstractReportController imple
 		return true;
 	}
 
+    /*
 	private static final Map<String, String> REPORT_HEADINGS = new HashMap<>();
 	static {
 		REPORT_HEADINGS.put("h1", "Description");
@@ -240,5 +234,6 @@ public class ProductStatsReportController extends AbstractReportController imple
 		REPORT_HEADINGS.put("h9", "Used Age: Avg/Max");
 		REPORT_HEADINGS.put("h10", "Cur Age: Avg/Max");
 	}
+	*/
 
 }

@@ -31,10 +31,8 @@ public interface ProductStatsCalculator {
 	int calculateMaximumAgeCurrent();
 
 	public static class Factory {
-		private static final ProductStatsCalculator INSTANCE = new ProductStatsCalculatorImpl();
-
-		public static ProductStatsCalculator getInstance() {
-			return INSTANCE;
+		public static ProductStatsCalculator newProductStatsCalculator() {
+			return new ProductStatsCalculatorImpl();
 		}
 	}
 
