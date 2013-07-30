@@ -39,21 +39,14 @@ public class PDFReportRenderer extends AbstractReportRenderer {
         // open the document
         this.document.open();
 
-        /*
+        // create and add the title to the document
         try {
-            this.writeTitle(title);
+            Paragraph titleParagraph = new Paragraph(title, FONT_TITLE);
+            titleParagraph.setAlignment(Element.ALIGN_CENTER);
+            this.document.add(titleParagraph);
         } catch (DocumentException e) {
             throw new IOException(e);
         }
-        */
-
-        this.document.addTitle(title);
-    }
-
-    private void writeTitle(String title) throws DocumentException {
-        Paragraph titleParagraph = new Paragraph(title, FONT_TITLE);
-        titleParagraph.setAlignment(Element.ALIGN_CENTER);
-        this.document.add(titleParagraph);
     }
 
     @Override
