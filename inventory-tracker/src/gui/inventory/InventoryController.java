@@ -562,7 +562,7 @@ public class InventoryController extends Controller
             case PRODUCT_REMOVED:
             case ITEM_REMOVED:
                 this.productContainerSelectionChanged();
-                this.productSelectionChanged();
+                //this.productSelectionChanged();
                 break;
                 
             case PRODUCT_UPDATED:

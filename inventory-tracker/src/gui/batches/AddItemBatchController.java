@@ -1,6 +1,6 @@
 package gui.batches;
 
-import java.util.Calendar;
+import java.util.*;
 
 import common.Command;
 import common.UndoSupport;
@@ -19,11 +19,6 @@ import gui.item.ItemData;
 import gui.product.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 import javax.swing.Timer;
@@ -186,11 +181,18 @@ public class AddItemBatchController extends Controller implements
             return;
         }
 
-        List<Item> addedItems = this.addedItemsByProduct.get((Product) tag);
+        List<Item> addedItems = this.addedItemsByProduct.get(tag);
         if (null == addedItems) {
             this.getView().setItems(new ItemData[0]);
             return;
         }
+
+        Collections.sort(addedItems, new Comparator<Item>() {
+            @Override
+            public int compare(Item o1, Item o2) {
+                return o1.getEntryDate().compareTo(o2.getEntryDate());
+            }
+        });
 
         List<ItemData> itemList = new ArrayList<>();
         for (Item item : addedItems) {
@@ -391,7 +393,7 @@ public class AddItemBatchController extends Controller implements
                 }
 
                 for (Item item : this.items) {
-                    container.addItem(item);
+                    this.container.addItem(item);
                     addedItems.add(item);
                 }
 
