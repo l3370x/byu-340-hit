@@ -104,6 +104,20 @@ public class EditProductGroupController extends Controller implements
 	//
 	// IEditProductGroupController overrides
 	//
+	
+	private boolean isValidName(String name) {
+        if (null == name || name.isEmpty())
+            return false;
+        return true;
+    }
+
+    private boolean isValidCount(String count) {
+        if (false == count.matches("-?\\d+(\\.\\d+)?") || null == count
+                || Float.parseFloat(count) < 0)
+            return false;
+        return true;
+    }
+	
 	/**
 	 * This method is called when any of the fields in the edit product group
 	 * view is changed by the user.
@@ -113,7 +127,7 @@ public class EditProductGroupController extends Controller implements
 		// if the name is null or the name is empty then we
 		// can't create a Product Group
 		String name = this.getView().getProductGroupName();
-		if (null == name || name.isEmpty()) {
+		if (!isValidName(name)) {
 			this.getView().enableOK(false);
 			return;
 		}
@@ -121,8 +135,7 @@ public class EditProductGroupController extends Controller implements
 		// if the count is not a number or is blank, or is negative, don't allow
 		// OK
 		String count = this.getView().getSupplyValue();
-		if (false == count.matches("-?\\d+(\\.\\d+)?") || null == count
-				|| name.isEmpty() || Float.parseFloat(count) < 0) {
+		if (!isValidCount(count)) {
 			this.getView().enableOK(false);
 			return;
 		}
