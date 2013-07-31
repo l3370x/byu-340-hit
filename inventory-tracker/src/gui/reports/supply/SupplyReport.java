@@ -1,18 +1,11 @@
-package gui.reports;
+package gui.reports.supply;
 
 import static core.model.InventoryManager.Factory.getInventoryManager;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import gui.common.FileFormat;
-import gui.item.ItemData;
-import core.model.InventoryManager;
-import core.model.Item;
+import gui.reports.AbstractReport;
+import gui.reports.ReportRenderer;
 import core.model.Product;
 import core.model.ProductContainer;
 
@@ -73,50 +66,4 @@ public class SupplyReport extends AbstractReport {
 		Months = months;
 	}
 	
-	
-	/* private List<ArrayList<String>> createProductData() {
-			List<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
-		
-			InventoryManager inventory = InventoryManager.Factory
-					.getInventoryManager();
-			Iterable<Product> allProducts = inventory.getProducts();
-		
-			for (Product p : allProducts) {
-				p.
-			      int count = 0;
-			      Iterator<Item> allItems = getInventoryManager().getItems().iterator();
-				  while(allItems.hasNext()) {
-			 		 Item itemN = allItems.next();
-		 	         if (itemN.getProduct().getBarCode().getValue().equals(p.getBarCode().getValue()))		 
-		 	         {
-		 	        	 ++count;
-		 	         }
-			 	  }
-				
-				if(p.get3MonthSupplyQuota() > 0 && p.get3MonthSupplyQuota() > count){
-					ArrayList<String> toAppend = new ArrayList<String>();
-					
-					for (int i = 1; i <= 4; i++) {
-						switch (i) {
-						case 1:
-							toAppend.add(p.getDescription());
-							break;
-						case 2:
-							toAppend.add(p.getBarCode().getValue());
-							break;
-						case 3:
-							toAppend.add(String.valueOf((int)(p.get3MonthSupplyQuota()
-							* (Integer.parseInt(this.getView().getMonths())/ 3.0))) + " Count");
-							break;
-						case 4:
-							toAppend.add(String.valueOf(count) + " Count");
-							break;
-					}
-				}
-				data.add(toAppend);
-				}
-			}
-			return data;
-		}
-		*/
 }
