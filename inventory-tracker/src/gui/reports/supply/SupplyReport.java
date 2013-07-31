@@ -48,11 +48,23 @@ public class SupplyReport extends AbstractReport {
 		for (Category c : productGroups.values()) {
 			String name = c.getName();
 			String storageUnit = c.getStorageUnit().getName();
-			String monthSupply = String.valueOf(
+			
+			String monthSupply = String.valueOf((float)
 					(c.get3MonthSupplyQuantity().getValue() * (double)Months/3.0)) + " " 
 					+ c.get3MonthSupplyQuantity().getUnits().getLabel();
+			if(c.get3MonthSupplyQuantity().getUnits() == Units.COUNT){
+				int i = (int) Math.round((c.get3MonthSupplyQuantity().getValue() * (double)Months/3.0));
+				monthSupply = String.valueOf(i) + " " 
+						+ c.get3MonthSupplyQuantity().getUnits().getLabel();
+			}
+			
 			String currentSupply = String.valueOf(productGroupsAmount.get(c.getName())) 
 								   + " " + c.get3MonthSupplyQuantity().getUnits().getLabel();
+			if(c.get3MonthSupplyQuantity().getUnits() == Units.COUNT){
+				int i = Math.round(productGroupsAmount.get(c.getName()));
+				currentSupply = String.valueOf(i) 
+						   + " " + c.get3MonthSupplyQuantity().getUnits().getLabel();
+			}
 			renderer.addTableRow(name, storageUnit, monthSupply, currentSupply);
 		 }
 		renderer.endTable();
@@ -96,7 +108,7 @@ public class SupplyReport extends AbstractReport {
 				e.printStackTrace();
 			}
 		    if(c.get3MonthSupplyQuantity().getValue() > 0 &&
-	           c.get3MonthSupplyQuantity().getValue() > categoryCount){
+		      (c.get3MonthSupplyQuantity().getValue() * (double)Months/3.0) > categoryCount){
 		    	productGroups.put(number, c);
 		    	productGroupsAmount.put(c.getName(), categoryCount);
 		    	number++;
