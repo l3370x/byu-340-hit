@@ -49,7 +49,7 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 			netDaysItemsStored += calculateItemsStoredinDate(cal);
 			cal.add(Calendar.DAY_OF_YEAR, 1);
 		}
-		averageSupply = netDaysItemsStored / numberOfDays;
+		averageSupply = (double) netDaysItemsStored / (double) numberOfDays;
 		return averageSupply;
 	}
 
@@ -115,7 +115,7 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		while (iterRem.hasNext()) {
 			Item item = iterRem.next();
 			if (item.getExitDate().after(startDate)
-					&& item.getExitDate().equals(startDate)) {
+					|| item.getExitDate().equals(startDate)) {
 				itemsUsed++;
 			}
 		}
@@ -131,14 +131,14 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		while (iterCur.hasNext()) {
 			item = iterCur.next();
 			if (item.getEntryDate().after(startDate)
-					&& item.getEntryDate().equals(startDate)) {
+					|| item.getEntryDate().equals(startDate)) {
 				itemsAdded++;
 			}
 		}
 		while (iterRem.hasNext()) {
 			item = iterRem.next();
 			if (item.getEntryDate().after(startDate)
-					&& item.getEntryDate().equals(startDate)) {
+					|| item.getEntryDate().equals(startDate)) {
 				itemsAdded++;
 			}
 		}
@@ -160,7 +160,7 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		}
 		if (totalUsedItems == 0)
 			return 0;
-		averageAgeUsed = (double) (netAgeUsed / totalUsedItems);
+		averageAgeUsed = ((double) netAgeUsed / (double) totalUsedItems);
 		return averageAgeUsed;
 	}
 
@@ -193,7 +193,7 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 					DateUtils.removeTimeFromDate(endDate));
 			totalCurrentItems++;
 		}
-		averageAgeCurrent = (double) (netAgeCurrent / totalCurrentItems);
+		averageAgeCurrent = ((double) netAgeCurrent / (double) totalCurrentItems);
 		return averageAgeCurrent;
 	}
 
@@ -224,21 +224,14 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 			dayDifference++;
 			cal.add(Calendar.DAY_OF_YEAR, 1);
 		}
-		System.out.println("Day Difference between " + begin + " and " + end + ": " + dayDifference);
 		return dayDifference;
 	}
 
 	public Date getEarliestDate(Date date1, Date date2) {
-		if (date1.before(date2)) {
-			return date1;
-		}
-		return date2;
+		return (date1.before(date2) ? date1 : date2);
 	}
 
 	public Date getLatestDate(Date date1, Date date2) {
-		if (date1.after(date2)) {
-			return date1;
-		}
-		return date2;
+		return (date1.after(date2) ? date1 : date2);
 	}
 }
