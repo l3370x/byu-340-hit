@@ -2,6 +2,7 @@ package gui.common;
 
 import core.model.Quantity.Units;
 import core.model.exception.HITException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,6 +89,61 @@ public class UnitsConverter {
         SIZE_UNITS_BY_TYPE.put(Units.QUARTS, UnitType.Volume);
     }
 
+
+    private static final Map<Units, Map<Units,  Double>> CONVERSION_BY_UNITS = new HashMap<>();
+    static {
+    	
+    	CONVERSION_BY_UNITS.put(Units.FLUID_OUNCES, new HashMap<Units, Double>());
+    	CONVERSION_BY_UNITS.get(Units.FLUID_OUNCES).put(Units.GALLONS, 0.007813);
+    	CONVERSION_BY_UNITS.get(Units.FLUID_OUNCES).put(Units.LITERS, 0.02957);
+    	CONVERSION_BY_UNITS.get(Units.FLUID_OUNCES).put(Units.PINTS, 0.0625);
+    	CONVERSION_BY_UNITS.get(Units.FLUID_OUNCES).put(Units.QUARTS, 0.03125);
+    	
+    	CONVERSION_BY_UNITS.put(Units.GALLONS, new HashMap<Units, Double>());
+    	CONVERSION_BY_UNITS.get(Units.GALLONS).put(Units.FLUID_OUNCES, 128.0);
+    	CONVERSION_BY_UNITS.get(Units.GALLONS).put(Units.LITERS, 3.785);
+    	CONVERSION_BY_UNITS.get(Units.GALLONS).put(Units.PINTS, 8.0);
+    	CONVERSION_BY_UNITS.get(Units.GALLONS).put(Units.QUARTS, 4.0);
+    	
+    	CONVERSION_BY_UNITS.put(Units.GRAMS, new HashMap<Units, Double>());
+    	CONVERSION_BY_UNITS.get(Units.GRAMS).put(Units.KILOGRAMS, 0.001);
+    	CONVERSION_BY_UNITS.get(Units.GRAMS).put(Units.OUNCES, 0.03527);
+    	CONVERSION_BY_UNITS.get(Units.GRAMS).put(Units.POUNDS, 0.0022);
+    	
+    	CONVERSION_BY_UNITS.put(Units.KILOGRAMS, new HashMap<Units, Double>());
+    	CONVERSION_BY_UNITS.get(Units.KILOGRAMS).put(Units.GRAMS, 1000.0);
+    	CONVERSION_BY_UNITS.get(Units.KILOGRAMS).put(Units.OUNCES, 35.37296);
+    	CONVERSION_BY_UNITS.get(Units.KILOGRAMS).put(Units.POUNDS, 2.20462);
+    	
+    	CONVERSION_BY_UNITS.put(Units.LITERS, new HashMap<Units, Double>());
+    	CONVERSION_BY_UNITS.get(Units.LITERS).put(Units.FLUID_OUNCES, 33.814);
+    	CONVERSION_BY_UNITS.get(Units.LITERS).put(Units.GALLONS, 0.2642);
+    	CONVERSION_BY_UNITS.get(Units.LITERS).put(Units.PINTS, 2.1134);
+    	CONVERSION_BY_UNITS.get(Units.LITERS).put(Units.QUARTS, 1.0567);
+    	
+    	CONVERSION_BY_UNITS.put(Units.OUNCES, new HashMap<Units, Double>());
+    	CONVERSION_BY_UNITS.get(Units.OUNCES).put(Units.KILOGRAMS, 0.02835);
+    	CONVERSION_BY_UNITS.get(Units.OUNCES).put(Units.GRAMS, 28.34952);
+    	CONVERSION_BY_UNITS.get(Units.OUNCES).put(Units.POUNDS, 0.0625);
+    	
+    	CONVERSION_BY_UNITS.put(Units.PINTS, new HashMap<Units, Double>());
+    	CONVERSION_BY_UNITS.get(Units.PINTS).put(Units.LITERS, 0.4732);
+    	CONVERSION_BY_UNITS.get(Units.PINTS).put(Units.FLUID_OUNCES, 16.0);
+    	CONVERSION_BY_UNITS.get(Units.PINTS).put(Units.GALLONS, 0.125);
+    	CONVERSION_BY_UNITS.get(Units.PINTS).put(Units.QUARTS, 0.5);
+    	
+    	CONVERSION_BY_UNITS.put(Units.POUNDS, new HashMap<Units, Double>());
+    	CONVERSION_BY_UNITS.get(Units.POUNDS).put(Units.KILOGRAMS, 0.45359);
+    	CONVERSION_BY_UNITS.get(Units.POUNDS).put(Units.GRAMS, 453.59237);
+    	CONVERSION_BY_UNITS.get(Units.POUNDS).put(Units.OUNCES, 16.0);
+    	
+    	CONVERSION_BY_UNITS.put(Units.QUARTS, new HashMap<Units, Double>());
+    	CONVERSION_BY_UNITS.get(Units.QUARTS).put(Units.LITERS,  0.9464);
+    	CONVERSION_BY_UNITS.get(Units.QUARTS).put(Units.FLUID_OUNCES, 32.0);
+    	CONVERSION_BY_UNITS.get(Units.QUARTS).put(Units.GALLONS, 0.25);
+    	CONVERSION_BY_UNITS.get(Units.QUARTS).put(Units.PINTS, 2.0);
+    }
+   
     public static enum UnitType {
 
         Weight("weight"), Volume("volume"), Neither("none");
@@ -102,7 +158,7 @@ public class UnitsConverter {
             return this.label;
         }
     }
-
+   
     public static UnitType unitsToUnitType(Units u) throws HITException {
         return SIZE_UNITS_BY_TYPE.get(u);
     }
@@ -153,5 +209,19 @@ public class UnitsConverter {
      */
     public static String unitsToString(SizeUnits value) throws HITException {
         return STRING_BY_SIZE_UNITS.get(value);
+    }
+    
+    /**
+     * 
+     * @param from
+     *            The Units to convert from
+     *@param to
+     *			The Units to convert to            
+     * @return The conversion unit between the two
+     * @throws HITException
+     *             if the conversion failed
+     */
+    public static double unitsToConstant(Units from, Units to) throws HITException {
+        return CONVERSION_BY_UNITS.get(from).get(to);
     }
 }

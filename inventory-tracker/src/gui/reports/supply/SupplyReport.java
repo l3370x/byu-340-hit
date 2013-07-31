@@ -6,18 +6,21 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import gui.common.UnitsConverter;
+import gui.common.UnitsConverter.UnitType;
 import gui.reports.AbstractReport;
 import gui.reports.ReportRenderer;
 import core.model.*;
 import core.model.Quantity.Units;
+import core.model.exception.HITException;
 
 
 public class SupplyReport extends AbstractReport {
 	private String title;
 	private int Months;
+	private int number = 0;
 	HashMap<String, Product> products = new HashMap<>();
-	HashMap<String, Category> productGroups = new HashMap<>();
-	HashMap<String, Float> productGroupsAmount = new HashMap<>();
+	HashMap<Integer, Category> productGroups = new HashMap<>();
+	HashMap<String, Double> productGroupsAmount = new HashMap<>();
 	
 	@Override
 	public void render(ReportRenderer renderer) {
@@ -45,11 +48,11 @@ public class SupplyReport extends AbstractReport {
 		for (Category c : productGroups.values()) {
 			String name = c.getName();
 			String storageUnit = c.getStorageUnit().getName();
-			String monthSupply = String.valueOf((c.get3MonthSupplyQuantity().getValue()
-						         * (double)Months/3.0)) +  c.get3MonthSupplyQuantity().getUnits().toString();
+			String monthSupply = String.valueOf(
+					(c.get3MonthSupplyQuantity().getValue() * (double)Months/3.0)) + " " 
+					+ c.get3MonthSupplyQuantity().getUnits().toString();
 			String currentSupply = String.valueOf(productGroupsAmount.get(c.getName())) 
 								   + " " + c.get3MonthSupplyQuantity().getUnits().toString();
-				
 			renderer.addTableRow(name, storageUnit, monthSupply, currentSupply);
 		 }
 		renderer.endTable();
@@ -63,7 +66,7 @@ public class SupplyReport extends AbstractReport {
 
 	@Override
 	public Boolean operate(ProductContainer obj) {
-		float categoryCount = 0;
+		double categoryCount = 0;
 		Iterable<Product> containerProducts = obj.getProducts();
 		for(Product p : containerProducts) {
 			int count = (getInventoryManager()).getItemCount(p);
@@ -76,18 +79,27 @@ public class SupplyReport extends AbstractReport {
 			Category c = (Category)obj;
 			Iterable<Item> containerItems = c.getItems();
 			Quantity q = c.get3MonthSupplyQuantity();
-			for(Item i : containerItems) {
-				if(q.getUnits().toString().equals
-				  (i.getProduct().getSize().getUnits().toString()))
-				{
-					categoryCount = categoryCount + i.getProduct().getSize().getValue();
+			try {
+				UnitType t = UnitsConverter.unitsToUnitType(q.getUnits());		
+				for(Item i : containerItems) {
+					Units u = i.getProduct().getSize().getUnits();
+					if(t == (UnitsConverter.unitsToUnitType(u))) {
+						double constant = 1.0;
+						if(u != q.getUnits())
+						{
+							constant = UnitsConverter.unitsToConstant(u, q.getUnits());
+						}
+						categoryCount += (constant * i.getProduct().getSize().getValue());
+					}	
 				}
-				
+			} catch (HITException e) {
+				e.printStackTrace();
 			}
 		    if(c.get3MonthSupplyQuantity().getValue() > 0 &&
 	           c.get3MonthSupplyQuantity().getValue() > categoryCount){
-		    	productGroups.put(c.getName(), c);
+		    	productGroups.put(number, c);
 		    	productGroupsAmount.put(c.getName(), categoryCount);
+		    	number++;
 	        	}      
 		}
 		return true;
