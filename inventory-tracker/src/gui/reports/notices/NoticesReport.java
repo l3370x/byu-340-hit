@@ -64,14 +64,13 @@ public class NoticesReport extends AbstractReport {
                                     c.getContainer().getName(), c.getName(), c
                                             .get3MonthSupplyQuantity()
                                             .toString()));
+                    List<String> problemTexts = new ArrayList<String>();
                     for (List<Item> problemItems : notices.get(c).itemsByProduct
                             .values()) {
-                        for (Item i : problemItems) {
-                            renderer.addText(String.format("- %s::%s (%s)", i
-                                    .getContainer().getName(), i.getProduct()
-                                    .getDescription(), i.getProduct().getSize()
-                                    .toString()));
-                        }
+                        problemTexts = findProblems(problemItems);
+                    }
+                    for(String s : problemTexts){
+                        renderer.addText(s);
                     }
                 }
             }
@@ -80,6 +79,17 @@ public class NoticesReport extends AbstractReport {
             e.printStackTrace();
         }
 
+    }
+
+    private List<String> findProblems(List<Item> problemItems) {
+        List<String> problems = new ArrayList<String>();
+        for (Item i : problemItems) {
+            problems.add(String.format("- %s::%s (%s)", i
+                    .getContainer().getName(), i.getProduct()
+                    .getDescription(), i.getProduct().getSize()
+                    .toString()));
+        }
+        return problems;
     }
 
     @Override
