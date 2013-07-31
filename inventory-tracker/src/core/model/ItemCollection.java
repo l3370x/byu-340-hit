@@ -74,7 +74,12 @@ public class ItemCollection extends AbstractProductContainerProxy<Item> {
             return Collections.emptySet();
         }
 
-        return Collections.unmodifiableSet(new HashSet<>(items));
+        List<Item> sortedItems = new ArrayList<>(items);
+        Collections.sort(sortedItems, this.getComparator());
+
+        return Collections.unmodifiableList(sortedItems);
+
+        //return Collections.unmodifiableSet(new HashSet<>(items));
     }
 
     @Override
