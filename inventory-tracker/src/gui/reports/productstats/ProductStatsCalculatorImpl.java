@@ -44,8 +44,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		double averageSupply = 0;
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(startDate);
-		int netDaysItemsStored = calculateItemsStoredinDate(cal);
-		while (!cal.getTime().equals(endDate)) {
+		int netDaysItemsStored = 0;
+		while (!cal.getTime().after(endDate)) {
 			netDaysItemsStored += calculateItemsStoredinDate(cal);
 			cal.add(Calendar.DAY_OF_YEAR, 1);
 		}
