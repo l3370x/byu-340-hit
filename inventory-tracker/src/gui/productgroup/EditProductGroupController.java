@@ -1,18 +1,20 @@
 package gui.productgroup;
 
-import static core.model.ModelNotification.ChangeType.CONTENT_UPDATED;
-
-import java.util.Observable;
-
 import core.model.Category;
 import core.model.ModelNotification;
 import core.model.Quantity;
 import core.model.Quantity.Units;
-import gui.common.*;
-import gui.inventory.*;
-import core.model.Container;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
+import gui.common.Controller;
+import gui.common.IView;
+import gui.common.SizeUnits;
+import gui.common.UnitsConverter;
+import gui.inventory.ProductContainerData;
+
+import java.util.Observable;
+
+import static core.model.ModelNotification.ChangeType.CONTENT_UPDATED;
 
 /**
  * Controller class for the edit product group view.
@@ -112,8 +114,9 @@ public class EditProductGroupController extends Controller implements
     }
 
     private boolean isValidCount(String count) {
-        if (false == count.matches("-?\\d+(\\.\\d+)?") || null == count
-                || Float.parseFloat(count) < 0)
+        if (null == count ||
+                false == count.matches("-?\\d+(\\.\\d+)?") ||
+                Float.parseFloat(count) < 0)
             return false;
         return true;
     }
@@ -175,9 +178,6 @@ public class EditProductGroupController extends Controller implements
 		try {
 			// get the StorageUnit "tag" from the data
 			final Category category = (Category) this.target.getTag();
-
-			// get the category's container
-			Container container = category.getContainer();
 
 			// set the category's new info
 			category.setName(newName);

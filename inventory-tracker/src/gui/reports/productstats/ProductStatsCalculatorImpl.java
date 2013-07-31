@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
-import common.util.DateUtils;
+import static common.util.DateUtils.*;
 import core.model.Item;
 import core.model.Product;
 
@@ -20,8 +20,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 	public void setValues(Date startDate, Iterable<Item> currentItems,
 			Iterable<Item> removedItems, Product product) {
 		this.product = product;
-		this.startDate = DateUtils.removeTimeFromDate(startDate);
-		this.endDate = DateUtils.removeTimeFromDate(new Date());
+		this.startDate = removeTimeFromDate(startDate);
+		this.endDate = removeTimeFromDate(new Date());
 		this.currentItems = currentItems;
 		this.removedItems = removedItems;
 		numberOfDays = calculateDayDifference(this.startDate,
@@ -159,8 +159,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Iterator<Item> iter = removedItems.iterator();
 		while (iter.hasNext()) {
 			item = iter.next();
-			netAgeUsed += calculateDayDifference(DateUtils.removeTimeFromDate(item.getEntryDate()),
-					DateUtils.removeTimeFromDate(item.getExitDate()));
+			netAgeUsed += calculateDayDifference(removeTimeFromDate(item.getEntryDate()),
+					removeTimeFromDate(item.getExitDate()));
 			totalUsedItems++;
 		}
 		if (totalUsedItems == 0)
@@ -176,8 +176,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Iterator<Item> iter = removedItems.iterator();
 		while (iter.hasNext()) {
 			item = iter.next();
-			int age = calculateDayDifference(DateUtils.removeTimeFromDate(item.getEntryDate()),
-					DateUtils.removeTimeFromDate(item.getExitDate()));
+			int age = calculateDayDifference(removeTimeFromDate(item.getEntryDate()),
+					removeTimeFromDate(item.getExitDate()));
 			if (age > maximumAgeUsed) {
 				maximumAgeUsed = age;
 			}
@@ -194,8 +194,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Iterator<Item> iter = currentItems.iterator();
 		while (iter.hasNext()) {
 			item = iter.next();
-			netAgeCurrent += calculateDayDifference(DateUtils.removeTimeFromDate(item.getEntryDate()),
-					DateUtils.removeTimeFromDate(endDate));
+			netAgeCurrent += calculateDayDifference(removeTimeFromDate(item.getEntryDate()),
+					removeTimeFromDate(endDate));
 			totalCurrentItems++;
 		}
 		averageAgeCurrent = ((double) netAgeCurrent / (double) totalCurrentItems);
@@ -209,8 +209,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Iterator<Item> iter = currentItems.iterator();
 		while (iter.hasNext()) {
 			item = iter.next();
-			int age = calculateDayDifference(DateUtils.removeTimeFromDate(item.getEntryDate()),
-					DateUtils.removeTimeFromDate(new Date()));
+			int age = calculateDayDifference(removeTimeFromDate(item.getEntryDate()),
+					removeTimeFromDate(new Date()));
 			if (age > maximumAgeCurrent) {
 				maximumAgeCurrent = age;
 			}
