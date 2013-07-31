@@ -6,11 +6,13 @@ package gui.reports.productstats;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import core.model.InventoryManager;
 import core.model.Product;
@@ -27,9 +29,23 @@ import core.model.exception.ExceptionHandler;
  */
 public class ProductStatisticsReport extends AbstractReport {
 
-    private List<Item> items = new ArrayList<Item>();
-    private Map<Product, List<Item>> itemsByProduct = new LinkedHashMap<>();
-    private Map<Product, List<Item>> removedItemsByProduct = new LinkedHashMap<>();
+    
+    private Comparator<Product> productComparator = new Comparator<Product>() {
+        @Override
+        public int compare(Product p1, Product p2) {
+            String desc1 = p1.getDescription();
+            String desc2 = p2.getDescription();
+
+            int comparison = desc1.compareTo(desc2);
+            if (comparison != 0) {
+                return comparison;
+            }
+
+            return p1.getBarCode().getValue().compareTo(p2.getBarCode().getValue());
+        }
+    };
+    
+    private Map<Product, List<Item>> itemsByProduct = new TreeMap<Product,List<Item>>(productComparator);
     private int nMonths = 3;
     private Date startingDate = new Date();
 
