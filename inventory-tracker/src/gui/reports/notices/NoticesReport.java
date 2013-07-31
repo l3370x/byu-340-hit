@@ -1,18 +1,14 @@
 package gui.reports.notices;
 
 import gui.common.UnitsConverter;
-import gui.common.UnitsConverter.UnitType;
 import gui.reports.AbstractReport;
-import gui.reports.HTMLReport;
 import gui.reports.ReportRenderer;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import core.model.Category;
 import core.model.Item;
@@ -24,7 +20,8 @@ import core.model.exception.HITException;
 public class NoticesReport extends AbstractReport {
 
     private class ProductItemWrapper {
-        private Map<Product, List<Item>> itemsByProduct = new LinkedHashMap<Product, List<Item>>();
+        private Map<Product, List<Item>> itemsByProduct = 
+                new LinkedHashMap<Product, List<Item>>();
 
         public ProductItemWrapper() {
 
@@ -47,7 +44,8 @@ public class NoticesReport extends AbstractReport {
 
     }
 
-    private Map<Category, ProductItemWrapper> notices = new LinkedHashMap<Category, ProductItemWrapper>();
+    private Map<Category, ProductItemWrapper> notices = 
+            new LinkedHashMap<Category, ProductItemWrapper>();
 
     @Override
     public void render(ReportRenderer renderer) {
@@ -60,7 +58,9 @@ public class NoticesReport extends AbstractReport {
                 renderer.addHeading("3-Month Supply Notices");
                 for (Category c : notices.keySet()) {
                     renderer.addText(String
-                            .format("Product group %s::%s has a 3-month supply of (%s) that is inconsistent with the following products:",
+                            .format("Product group %s::%s has a 3-month supply "
+                                    + "of (%s) that is inconsistent with the "
+                                    + "following products:",
                                     c.getContainer().getName(), c.getName(), c
                                             .get3MonthSupplyQuantity()
                                             .toString()));
@@ -87,7 +87,7 @@ public class NoticesReport extends AbstractReport {
         if ((container instanceof Category)) {
             Units goodUnit = ((Category) container).get3MonthSupplyQuantity()
                     .getUnits();
-            if(goodUnit.equals(Units.COUNT)){
+            if (goodUnit.equals(Units.COUNT)) {
                 return true;
             }
             ProductItemWrapper toAdd = new ProductItemWrapper();
