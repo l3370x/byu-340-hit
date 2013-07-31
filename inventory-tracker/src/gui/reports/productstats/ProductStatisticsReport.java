@@ -68,9 +68,16 @@ public class ProductStatisticsReport extends AbstractReport {
             String name = "ProductReport";
 
             renderer.beginDocument(name, title, ReportOrientation.LANDSCAPE);
-            renderer.beginTable("Description", "Barcode", "Size",
-                    "3-Month Supply", "Supply: Cur/Avg", "Supply: Min/Max",
-                    "Supply: Used/Added", "Shelf Life", "Used Age: Avg/Max",
+            renderer.beginTable(
+                    "Description",
+                    "Barcode",
+                    "Size",
+                    "3-Month Supply",
+                    "Supply: Cur/Avg",
+                    "Supply: Min/Max",
+                    "Supply: Used/Added",
+                    "Shelf Life",
+                    "Used Age: Avg/Max",
                     "Cur Age: Avg/Max");
             ProductStatsCalculator calc = ProductStatsCalculator.Factory
                     .newProductStatsCalculator();
@@ -85,20 +92,24 @@ public class ProductStatisticsReport extends AbstractReport {
                         .format("%d months", p.getShelfLifeInMonths());
                 calc.setValues(startingDate, items,
                         inventory.getRemovedItems(p), p);
-                renderer.addTableRow(p.getDescription(), p.getBarCode()
-                        .getValue(), p.getSize().toString(), threeMonth, String
-                        .format("%d / %s", calc.calculateCurrentSupply(),
+                renderer.addTableRow(
+                        p.getDescription(),
+                        p.getBarCode().getValue(),
+                        p.getSize().toString(),
+                        threeMonth,
+                        String.format("%d / %s", calc.calculateCurrentSupply(),
                                 String.valueOf(calc.calculateAverageSupply())
-                                        .replaceAll("\\.?0*$", "")), String
-                        .format("%d / %d", calc.calculateMinimumSupply(),
-                                calc.calculateMaximumSupply()), String.format(
-                        "%d / %d", calc.calculateItemsUsed(),
-                        calc.calculateItemsAdded()), shelfLife, String.format(
-                        "%s days / %d days",
+                                        .replaceAll("\\.?0*$", "")),
+                        String.format("%d / %d", calc.calculateMinimumSupply(),
+                                calc.calculateMaximumSupply()),
+                        String.format("%d / %d", calc.calculateItemsUsed(),
+                        calc.calculateItemsAdded()),
+                        shelfLife,
+                        String.format("%s days / %d days",
                         String.valueOf(calc.calculateAverageAgeUsed())
                                 .replaceAll("\\.?0*$", ""), calc
-                                .calculateMaximumAgeUsed()), String.format(
-                        "%s days / %d days",
+                                .calculateMaximumAgeUsed()),
+                        String.format("%s days / %d days",
                         String.valueOf(calc.calculateAverageAgedCurrent())
                                 .replaceAll("\\.?0*$", ""), calc
                                 .calculateMaximumAgeCurrent()));
@@ -109,9 +120,9 @@ public class ProductStatisticsReport extends AbstractReport {
 
         } catch (IOException e) {
             ExceptionHandler.TO_USER.reportException(e,
-                    "Couln't make product statistics report");
+                    "Couldn't make product statistics report");
             ExceptionHandler.TO_LOG.reportException(e,
-                    "Couln't make product statistics report");
+                    "Couldn't make product statistics report");
         }
     }
 

@@ -49,8 +49,8 @@ public interface IRemovedReportView extends IView {
     void enableSinceLast(boolean value);
 
     /**
-     * Sets the value of the "Since Last Value" field. (This is the date/time at which the report was
-     * last run.)
+     * Sets the value of the "Since Last Value" field. (This is the date/time at which the report
+     * was last run.)
      *
      * @param value New "Since Last Value"
      */
@@ -89,8 +89,8 @@ public interface IRemovedReportView extends IView {
     void setSinceDateValue(Date value);
 
     /**
-     * Sets the enable/disable state of the "Since Date Value" field. (This is the date/time entered by
-     * the user.)
+     * Sets the enable/disable state of the "Since Date Value" field. (This is the date/time entered
+     * by the user.)
      *
      * @param value New enable/disable value
      */
