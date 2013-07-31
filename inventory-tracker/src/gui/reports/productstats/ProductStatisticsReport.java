@@ -45,7 +45,8 @@ public class ProductStatisticsReport extends AbstractReport {
         }
     };
     
-    private Map<Product, List<Item>> itemsByProduct = new TreeMap<Product,List<Item>>(productComparator);
+    private Map<Product, List<Item>> itemsByProduct = 
+            new TreeMap<Product,List<Item>>(productComparator);
     private int nMonths = 3;
     private Date startingDate = new Date();
 
