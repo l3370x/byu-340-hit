@@ -50,7 +50,12 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 			cal.add(Calendar.DAY_OF_YEAR, 1);
 		}
 		averageSupply = (double) netDaysItemsStored / (double) numberOfDays;
+		averageSupply = roundOnePlace(averageSupply);
 		return averageSupply;
+	}
+	
+	private double roundOnePlace(double in) {
+	    return (double)Math.round(in * 1000) / 1000;
 	}
 
 	private int calculateItemsStoredinDate(Calendar cal) {

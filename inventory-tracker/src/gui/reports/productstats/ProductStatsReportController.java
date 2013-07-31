@@ -119,7 +119,8 @@ public class ProductStatsReportController extends AbstractReportController imple
 
     @Override
     protected Report getReport() {
-        return null;
+        Report report = new ProductStatisticsReport(Integer.parseInt(this.getView().getMonths()));
+        return report;
     }
 
     /*
