@@ -4,13 +4,19 @@ import core.model.exception.ExceptionHandler;
 
 import java.awt.*;
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * The {@code AbstractReportRenderer} implements functionality common to all report renderer
  * implementations.
  */
 abstract class AbstractReportRenderer implements ReportRenderer {
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MMM-yyyy");
+    private static final DateFormat DATE_TIME_FORMAT = new SimpleDateFormat("dd-MMM-yyyy hh:mm a");
     private static final String BASE_FILE_NAME = System.getProperty("user.dir");
+
     private File outFile;
 
     protected AbstractReportRenderer() {
@@ -47,6 +53,16 @@ abstract class AbstractReportRenderer implements ReportRenderer {
         }
     }
 
+    @Override
+    public String formatDate(Date date) {
+        return DATE_FORMAT.format(date);
+    }
+
+    @Override
+    public String formatDateAndTime(Date datetime) {
+        return DATE_TIME_FORMAT.format(datetime);
+    }
+
     /**
      * Get the file extension used for this renderer.
      *
@@ -54,4 +70,8 @@ abstract class AbstractReportRenderer implements ReportRenderer {
      */
     protected abstract String getFileExtension();
 
+    @Override
+    public void beginDocument(String filename, String title) throws IOException {
+        this.beginDocument(filename, title, ReportOrientation.PORTRAIT);
+    }
 }

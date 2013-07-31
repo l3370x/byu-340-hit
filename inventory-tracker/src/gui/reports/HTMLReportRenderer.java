@@ -10,12 +10,12 @@ import java.text.MessageFormat;
 public class HTMLReportRenderer extends AbstractReportRenderer {
     private static final String HTML_FILE_EXT = "html";
     private static final String HTML_HEADER =
-            "<html>\n<head><title>{0}</title</head>\n<body>\n<h1>{0}</h1><br/>";
+            "<!DOCTYPE html>\n<html>\n<head><title>{0}</title></head>\n<body>\n<h1>{0}</h1><br/>";
     private static final String HTML_END = "</body></html>";
     private static final String HTML_TABLE_BEGIN = "\n<table border=\"1\">";
-    private static final String HTML_TABLE_ROW_BEGIN = "\n<tr>\n";
+    private static final String HTML_TABLE_ROW_BEGIN = "\n<tr>";
     private static final String HTML_TABLE_HEADER_CELL = "\n<th>{0}</th>";
-    private static final String HTML_TABLE_DATA_CELL = "\n<td>{0}</td";
+    private static final String HTML_TABLE_DATA_CELL = "\n<td>{0}</td>";
     private static final String HTML_TABLE_ROW_END = "\n</tr>";
     private static final String HTML_TABLE_END = "\n</table>";
     private static final String HTML_HEADING = "\n<h3>{0}</h3>";
@@ -24,7 +24,8 @@ public class HTMLReportRenderer extends AbstractReportRenderer {
     private PrintWriter writer;
 
     @Override
-    public void beginDocument(String filename, String title) throws IOException {
+    public void beginDocument(String filename, String title, ReportOrientation orientation)
+            throws IOException {
         // open the output stream
         this.writer = new PrintWriter(this.openOutputStream(filename));
 

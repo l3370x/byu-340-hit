@@ -3,6 +3,7 @@ package gui.reports;
 import gui.common.FileFormat;
 
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * The {@code ReportRenderer} interface defines the contract for an object that can be used to
@@ -21,6 +22,20 @@ public interface ReportRenderer {
      * @throws IOException
      */
     void beginDocument(String filename, String title) throws IOException;
+
+    /**
+     * Initialize the report document with the given title text.  This method should be called
+     * before adding any content to the report document.
+
+     * @param filename the base filename (without extension) to which the report document should be
+     *                 written
+     * @param title the title of the report
+     * @param orientation the orientation of the report
+     *
+     * @throws IOException
+     */
+    void beginDocument(String filename, String title, ReportOrientation orientation)
+            throws IOException;
 
     /**
      * Finalize the document, or make it ready for publishing.
@@ -76,6 +91,29 @@ public interface ReportRenderer {
      * Display the rendered report to the user.
      */
     void displayReport();
+
+    /**
+     * Format the date portion of the given date.
+     *
+     * @param date to date to be formatted
+     *
+     * @return a string representation (date only) of the given date
+     */
+    String formatDate(Date date);
+
+    /**
+     * Format the date and time of the given date.
+     *
+     * @param datetime the datetime to be formatted
+     *
+     * @return a string representation (date and time) of the given date
+     */
+    String formatDateAndTime(Date datetime);
+
+    public static enum ReportOrientation {
+        PORTRAIT,
+        LANDSCAPE;
+    }
 
     /**
      * The {@code ReportRenderer.Factory} class is used to get an instance of a report renderer

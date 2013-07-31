@@ -4,7 +4,6 @@ package gui.reports.expired;
 import gui.common.FileFormat;
 import gui.common.IView;
 import gui.reports.AbstractReportController;
-import gui.reports.ExpiredReport;
 import gui.reports.Report;
 
 /**
