@@ -27,11 +27,19 @@ public class RemovedReport extends AbstractReport {
         try {
 
             renderer.beginDocument("Removed Items", "Removed Items");
-            renderer.beginTable("Description", "Size",
-                    "Product Barcode", "Removed", "Current Supply");
+            renderer.beginTable(
+                    "Description",
+                    "Size",
+                    "Product Barcode",
+                    "Removed",
+                    "Current Supply");
 
             for (Product p : itemsRemoved.keySet()) {
-                renderer.addTableRow(p.getDescription(), p.getSize().toString(), p.getBarCode().toString(), Integer.toString(itemsRemoved.get(p)[0]),
+                renderer.addTableRow(
+                        p.getDescription(),
+                        p.getSize().toString(),
+                        p.getBarCode().toString(),
+                        Integer.toString(itemsRemoved.get(p)[0]),
                         Integer.toString(getInventoryManager().getItemCount(p)));
             }
             renderer.endTable();

@@ -151,7 +151,8 @@ public class NoticesReportController extends AbstractReportController implements
 
     @Override
     protected Report getReport() {
-        return null;
+        NoticesReport report = new NoticesReport();
+        return report;
     }
 
     /*

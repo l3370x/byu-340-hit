@@ -1,18 +1,20 @@
 package gui.productgroup;
 
-import static core.model.ModelNotification.ChangeType.CONTENT_UPDATED;
-
-import java.util.Observable;
-
 import core.model.Category;
 import core.model.ModelNotification;
 import core.model.Quantity;
 import core.model.Quantity.Units;
-import gui.common.*;
-import gui.inventory.*;
-import core.model.Container;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
+import gui.common.Controller;
+import gui.common.IView;
+import gui.common.SizeUnits;
+import gui.common.UnitsConverter;
+import gui.inventory.ProductContainerData;
+
+import java.util.Observable;
+
+import static core.model.ModelNotification.ChangeType.CONTENT_UPDATED;
 
 /**
  * Controller class for the edit product group view.
@@ -104,6 +106,21 @@ public class EditProductGroupController extends Controller implements
 	//
 	// IEditProductGroupController overrides
 	//
+	
+	private boolean isValidName(String name) {
+        if (null == name || name.isEmpty())
+            return false;
+        return true;
+    }
+
+    private boolean isValidCount(String count) {
+        if (null == count ||
+                false == count.matches("-?\\d+(\\.\\d+)?") ||
+                Float.parseFloat(count) < 0)
+            return false;
+        return true;
+    }
+	
 	/**
 	 * This method is called when any of the fields in the edit product group
 	 * view is changed by the user.
@@ -113,7 +130,7 @@ public class EditProductGroupController extends Controller implements
 		// if the name is null or the name is empty then we
 		// can't create a Product Group
 		String name = this.getView().getProductGroupName();
-		if (null == name || name.isEmpty()) {
+		if (!isValidName(name)) {
 			this.getView().enableOK(false);
 			return;
 		}
@@ -121,8 +138,7 @@ public class EditProductGroupController extends Controller implements
 		// if the count is not a number or is blank, or is negative, don't allow
 		// OK
 		String count = this.getView().getSupplyValue();
-		if (false == count.matches("-?\\d+(\\.\\d+)?") || null == count
-				|| name.isEmpty() || Float.parseFloat(count) < 0) {
+		if (!isValidCount(count)) {
 			this.getView().enableOK(false);
 			return;
 		}
@@ -162,9 +178,6 @@ public class EditProductGroupController extends Controller implements
 		try {
 			// get the StorageUnit "tag" from the data
 			final Category category = (Category) this.target.getTag();
-
-			// get the category's container
-			Container container = category.getContainer();
 
 			// set the category's new info
 			category.setName(newName);
