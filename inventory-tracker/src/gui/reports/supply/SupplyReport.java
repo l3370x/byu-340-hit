@@ -83,7 +83,7 @@ public class SupplyReport extends AbstractReport {
 		for(Product p : containerProducts) {
 			int count = (getInventoryManager()).getItemCount(p);
 		    if((p).get3MonthSupplyQuota() > 0 &&
-	           (p).get3MonthSupplyQuota() > count){
+	           ((p).get3MonthSupplyQuota() * (double)Months/3.0) > count){
 		    	products.put(p.getDescription(), p);
 	        	}      
 		    }
