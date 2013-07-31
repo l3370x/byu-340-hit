@@ -10,9 +10,9 @@ import core.model.Product;
 
 public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 
-	Date startDate = new Date();
-	int numberOfDays = calculateDayDifference(startDate,
-			DateUtils.currentDate());
+	Date startDate;
+	Date endDate;
+	int numberOfDays;
 	Product product;
 	Iterable<Item> currentItems;
 	Iterable<Item> removedItems;
@@ -20,15 +20,12 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 	public void setValues(Date startDate, Iterable<Item> currentItems,
 			Iterable<Item> removedItems, Product product) {
 		this.product = product;
-		this.startDate = startDate;
+		this.startDate = DateUtils.removeTimeFromDate(startDate);
+		this.endDate = DateUtils.removeTimeFromDate(new Date());
 		this.currentItems = currentItems;
 		this.removedItems = removedItems;
-		numberOfDays = calculateDayDifference(startDate,
-				DateUtils.currentDate());
-		System.out.println(this);
-		System.out.println("Going back to " + this.startDate);
-		System.out.println("The product is " + this.product);
-		System.out.println("Number of days: " + this.numberOfDays);
+		numberOfDays = calculateDayDifference(this.startDate,
+				endDate);
 	}
 
 	@Override
@@ -45,41 +42,15 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 	@Override
 	public double calculateAverageSupply() {
 		double averageSupply = 0;
-		int netDaysItemsStored = 0;
-		Item item;
-		Iterator<Item> iterCur = currentItems.iterator();
-		Iterator<Item> iterRem = removedItems.iterator();
-		while (iterCur.hasNext()) {
-			item = iterCur.next();
-			netDaysItemsStored += calculateDayDifference(
-					getLatestDate(item.getEntryDate(), startDate),
-					DateUtils.currentDate());
-		}
-		while (iterRem.hasNext()) {
-			item = iterRem.next();
-			if (!item.getExitDate().before(startDate)) {
-				netDaysItemsStored += calculateDayDifference(
-						getLatestDate(item.getEntryDate(), startDate),
-						item.getExitDate());
-			}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(startDate);
+		int netDaysItemsStored = calculateItemsStoredinDate(cal);
+		while (!cal.getTime().equals(endDate)) {
+			netDaysItemsStored += calculateItemsStoredinDate(cal);
+			cal.add(Calendar.DAY_OF_YEAR, 1);
 		}
 		averageSupply = netDaysItemsStored / numberOfDays;
 		return averageSupply;
-	}
-
-	@Override
-	public int calculateMinimumSupply() {
-		int minimumSupply = (int) calculateAverageSupply() + 1;
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(getLatestDate(startDate, product.getCreationDate()));
-		while (!cal.getTime().after(DateUtils.currentDate())) {
-			int itemsStoredinDate = calculateItemsStoredinDate(cal);
-			if (itemsStoredinDate < minimumSupply) {
-				minimumSupply = itemsStoredinDate;
-			}
-			cal.add(Calendar.DATE, 1);
-		}
-		return minimumSupply;
 	}
 
 	private int calculateItemsStoredinDate(Calendar cal) {
@@ -87,7 +58,7 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Iterator<Item> iterCur = currentItems.iterator();
 		Iterator<Item> iterRem = removedItems.iterator();
 		int itemsStoredinDate = 0;
-		// iterate through current items
+		// iterate through items
 		while (iterCur.hasNext()) {
 			item = iterCur.next();
 			if (!item.getEntryDate().after(cal.getTime())) {
@@ -96,8 +67,9 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		}
 		while (iterRem.hasNext()) {
 			item = iterRem.next();
-			if (!(item.getEntryDate().after(cal.getTime()) || item
-					.getExitDate().before(cal.getTime()))) {
+			if (!item.getEntryDate().after(cal.getTime())
+					&& item.getExitDate().after(cal.getTime())
+					&& !item.getExitDate().equals(cal.getTime())) {
 				itemsStoredinDate++;
 			}
 		}
@@ -105,16 +77,33 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 	}
 
 	@Override
-	public int calculateMaximumSupply() {
-		int maximumSupply = (int) calculateAverageSupply();
+	public int calculateMinimumSupply() {
+		int minimumSupply = calculateCurrentSupply();
+		if (minimumSupply == 0)
+			return 0;
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(getLatestDate(startDate, product.getCreationDate()));
-		while (!cal.getTime().after(DateUtils.currentDate())) {
+		while (!cal.getTime().after(endDate) || cal.getTime().equals(endDate)) {
+			int itemsStoredinDate = calculateItemsStoredinDate(cal);
+			if (itemsStoredinDate < minimumSupply) {
+				minimumSupply = itemsStoredinDate;
+			}
+			cal.add(Calendar.DAY_OF_YEAR, 1);
+		}
+		return minimumSupply;
+	}
+
+	@Override
+	public int calculateMaximumSupply() {
+		int maximumSupply = calculateCurrentSupply();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(getLatestDate(startDate, product.getCreationDate()));
+		while (!cal.getTime().after(endDate) || cal.getTime().equals(endDate)) {
 			int itemsStoredinDate = calculateItemsStoredinDate(cal);
 			if (itemsStoredinDate > maximumSupply) {
 				maximumSupply = itemsStoredinDate;
 			}
-			cal.add(Calendar.DATE, 1);
+			cal.add(Calendar.DAY_OF_YEAR, 1);
 		}
 		return maximumSupply;
 	}
@@ -125,7 +114,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Iterator<Item> iterRem = removedItems.iterator();
 		while (iterRem.hasNext()) {
 			Item item = iterRem.next();
-			if (item.getExitDate().after(startDate)) {
+			if (item.getExitDate().after(startDate)
+					&& item.getExitDate().equals(startDate)) {
 				itemsUsed++;
 			}
 		}
@@ -140,13 +130,15 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Item item;
 		while (iterCur.hasNext()) {
 			item = iterCur.next();
-			if (item.getEntryDate().after(startDate)) {
+			if (item.getEntryDate().after(startDate)
+					&& item.getEntryDate().equals(startDate)) {
 				itemsAdded++;
 			}
 		}
 		while (iterRem.hasNext()) {
 			item = iterRem.next();
-			if (item.getEntryDate().after(startDate)) {
+			if (item.getEntryDate().after(startDate)
+					&& item.getEntryDate().equals(startDate)) {
 				itemsAdded++;
 			}
 		}
@@ -162,11 +154,11 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Iterator<Item> iter = removedItems.iterator();
 		while (iter.hasNext()) {
 			item = iter.next();
-			netAgeUsed += calculateDayDifference(item.getEntryDate(),
-					item.getExitDate());
+			netAgeUsed += calculateDayDifference(DateUtils.removeTimeFromDate(item.getEntryDate()),
+					DateUtils.removeTimeFromDate(item.getExitDate()));
 			totalUsedItems++;
 		}
-		if(totalUsedItems == 0)
+		if (totalUsedItems == 0)
 			return 0;
 		averageAgeUsed = (double) (netAgeUsed / totalUsedItems);
 		return averageAgeUsed;
@@ -179,8 +171,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Iterator<Item> iter = removedItems.iterator();
 		while (iter.hasNext()) {
 			item = iter.next();
-			int age = calculateDayDifference(item.getEntryDate(),
-					item.getExitDate());
+			int age = calculateDayDifference(DateUtils.removeTimeFromDate(item.getEntryDate()),
+					DateUtils.removeTimeFromDate(item.getExitDate()));
 			if (age > maximumAgeUsed) {
 				maximumAgeUsed = age;
 			}
@@ -197,8 +189,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Iterator<Item> iter = currentItems.iterator();
 		while (iter.hasNext()) {
 			item = iter.next();
-			netAgeCurrent += calculateDayDifference(item.getEntryDate(),
-					DateUtils.currentDate());
+			netAgeCurrent += calculateDayDifference(DateUtils.removeTimeFromDate(item.getEntryDate()),
+					DateUtils.removeTimeFromDate(endDate));
 			totalCurrentItems++;
 		}
 		averageAgeCurrent = (double) (netAgeCurrent / totalCurrentItems);
@@ -212,8 +204,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 		Iterator<Item> iter = currentItems.iterator();
 		while (iter.hasNext()) {
 			item = iter.next();
-			int age = calculateDayDifference(item.getEntryDate(),
-					DateUtils.currentDate());
+			int age = calculateDayDifference(DateUtils.removeTimeFromDate(item.getEntryDate()),
+					DateUtils.removeTimeFromDate(new Date()));
 			if (age > maximumAgeCurrent) {
 				maximumAgeCurrent = age;
 			}
@@ -222,8 +214,18 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 	}
 
 	public int calculateDayDifference(Date begin, Date end) {
-		return (int) ((end.getTime() - begin.getTime()) / (1000 * 60 * 60 * 24))
-				+ 1;
+		if(begin.equals(end) || begin.after(end)) {
+			return 0;
+		}
+		int dayDifference = 0;
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(begin);
+		while(!cal.getTime().equals(end) || cal.getTime().after(end)) {
+			dayDifference++;
+			cal.add(Calendar.DAY_OF_YEAR, 1);
+		}
+		System.out.println("Day Difference between " + begin + " and " + end + ": " + dayDifference);
+		return dayDifference;
 	}
 
 	public Date getEarliestDate(Date date1, Date date2) {
