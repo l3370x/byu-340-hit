@@ -1,21 +1,10 @@
 package gui.reports.supply;
 
-import core.model.InventoryManager;
-import core.model.Item;
-import core.model.Product;
-import core.model.exception.*;
-import core.model.exception.HITException.Severity;
 import gui.common.FileFormat;
 import gui.common.IView;
 import gui.reports.AbstractReportController;
-import gui.reports.HTMLReport;
-import gui.reports.PDFReport;
 import gui.reports.Report;
-import gui.reports.SupplyReport;
 
-import java.util.*;
-
-import static core.model.InventoryManager.Factory.getInventoryManager;
 
 /**
  * Controller class for the N-month supply report view.
@@ -23,8 +12,6 @@ import static core.model.InventoryManager.Factory.getInventoryManager;
 	public class SupplyReportController extends AbstractReportController implements
 		ISupplyReportController {
 		
-		private String name = "MonthSupply";
-
 	/**
 	 * Constructor.
 	 * 
@@ -36,10 +23,6 @@ import static core.model.InventoryManager.Factory.getInventoryManager;
 		construct();
 	}
 
-	//
-	// Controller overrides
-	//
-	
 	/**
 	 * Returns a reference to the view for this controller.
 	 * 
@@ -65,10 +48,6 @@ import static core.model.InventoryManager.Factory.getInventoryManager;
 		this.getView().setMonths("3");
 	}
 
-	//
-	// IExpiredReportController overrides
-	//
-
 	/**
 	 * This method is called when any of the fields in the
 	 * N-month supply report view is changed by the user.
@@ -81,13 +60,7 @@ import static core.model.InventoryManager.Factory.getInventoryManager;
 		}
 		this.getView().enableOK(true);
 	}
-	
-	
-	/**
-	 * This method is called when the user clicks the "OK" button in the product
-	 * statistics report view.
-	 */
-    
+	   
     @Override
     protected FileFormat getReportFormat() {
         return this.getView().getFormat();
