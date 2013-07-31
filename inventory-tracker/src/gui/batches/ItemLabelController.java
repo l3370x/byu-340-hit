@@ -1,21 +1,21 @@
 package gui.batches;
 
-import gui.reports.IReport;
+import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.*;
+import common.util.DateUtils;
+import core.model.Item;
+import core.model.exception.ExceptionHandler;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
-
-import com.itextpdf.text.*;
-import com.itextpdf.text.Font.FontFamily;
-import com.itextpdf.text.pdf.*;
-
-import common.util.DateUtils;
-import core.model.Item;
-import core.model.exception.ExceptionHandler;
 
 public class ItemLabelController {
 

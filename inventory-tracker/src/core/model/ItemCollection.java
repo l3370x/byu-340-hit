@@ -59,7 +59,12 @@ public class ItemCollection extends AbstractProductContainerProxy<Item> {
 
     @Override
     public Comparator<Item> getComparator() {
-        return null;
+        return new Comparator<Item>() {
+            @Override
+            public int compare(Item item1, Item item2) {
+                return item1.getEntryDate().compareTo(item2.getEntryDate());
+            }
+        };
     }
 
     @Override
