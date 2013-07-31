@@ -20,7 +20,7 @@ public class SupplyReport extends AbstractReport {
 	private int number = 0;
 	HashMap<String, Product> products = new HashMap<>();
 	HashMap<Integer, Category> productGroups = new HashMap<>();
-	HashMap<String, Double> productGroupsAmount = new HashMap<>();
+	HashMap<String, Float> productGroupsAmount = new HashMap<>();
 	
 	@Override
 	public void render(ReportRenderer renderer) {
@@ -50,9 +50,9 @@ public class SupplyReport extends AbstractReport {
 			String storageUnit = c.getStorageUnit().getName();
 			String monthSupply = String.valueOf(
 					(c.get3MonthSupplyQuantity().getValue() * (double)Months/3.0)) + " " 
-					+ c.get3MonthSupplyQuantity().getUnits().toString();
+					+ c.get3MonthSupplyQuantity().getUnits().getLabel();
 			String currentSupply = String.valueOf(productGroupsAmount.get(c.getName())) 
-								   + " " + c.get3MonthSupplyQuantity().getUnits().toString();
+								   + " " + c.get3MonthSupplyQuantity().getUnits().getLabel();
 			renderer.addTableRow(name, storageUnit, monthSupply, currentSupply);
 		 }
 		renderer.endTable();
@@ -66,7 +66,7 @@ public class SupplyReport extends AbstractReport {
 
 	@Override
 	public Boolean operate(ProductContainer obj) {
-		double categoryCount = 0;
+		float categoryCount = 0;
 		Iterable<Product> containerProducts = obj.getProducts();
 		for(Product p : containerProducts) {
 			int count = (getInventoryManager()).getItemCount(p);
@@ -84,10 +84,10 @@ public class SupplyReport extends AbstractReport {
 				for(Item i : containerItems) {
 					Units u = i.getProduct().getSize().getUnits();
 					if(t == (UnitsConverter.unitsToUnitType(u))) {
-						double constant = 1.0;
+						float constant = 1;
 						if(u != q.getUnits())
 						{
-							constant = UnitsConverter.unitsToConstant(u, q.getUnits());
+							constant = (float)UnitsConverter.unitsToConstant(u, q.getUnits());
 						}
 						categoryCount += (constant * i.getProduct().getSize().getValue());
 					}	
