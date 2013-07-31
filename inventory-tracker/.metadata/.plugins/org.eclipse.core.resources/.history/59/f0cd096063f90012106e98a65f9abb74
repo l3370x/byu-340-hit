@@ -1,0 +1,133 @@
+package gui.reports.productstats;
+
+import static org.junit.Assert.*;
+
+import java.util.Calendar;
+import java.util.Date;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+public class ProductStatsCalculatorImplTest {
+	
+	ProductStatsCalculator calc = ProductStatsCalculator.Factory.newProductStatsCalculator();
+	ListOfItems list = new ListOfItems();
+	Calendar cal = Calendar.getInstance();
+	
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		list = new ListOfItems();
+		cal.setTime(new Date());
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testCalculateCurrentSupply1Month() {
+		cal.add(Calendar.MONTH, -1);
+		calc.setValues(cal.getTime(), list.returnCurrent(), list.returnRemoved(), null);
+		assertEquals(6, calc.calculateCurrentSupply());
+	}
+	
+	@Test
+	public void testCalculateCurrentSupply3Month() {
+		cal.add(Calendar.MONTH, -3);
+		calc.setValues(cal.getTime(), list.returnCurrent(), list.returnRemoved(), null);
+		assertEquals(6, calc.calculateCurrentSupply());
+	}
+	
+	@Test
+	public void testCalculateCurrentSupply6Month() {
+		cal.add(Calendar.MONTH, -6);
+		calc.setValues(cal.getTime(), list.returnCurrent(), list.returnRemoved(), null);
+		assertEquals(6, calc.calculateCurrentSupply());
+	}
+	
+	@Test
+	public void testCalculateCurrentSupply9Month() {
+		cal.add(Calendar.MONTH, -9);
+		calc.setValues(cal.getTime(), list.returnCurrent(), list.returnRemoved(), null);
+		assertEquals(6, calc.calculateCurrentSupply());
+	}
+	
+	@Test
+	public void testCalculateCurrentSupply12Month() {
+		cal.add(Calendar.MONTH, -12);
+		calc.setValues(cal.getTime(), list.returnCurrent(), list.returnRemoved(), null);
+		assertEquals(6, calc.calculateCurrentSupply());
+	}
+	/*
+	@Test
+	public void testCalculateAverageSupply() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateMinimumSupply() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateMaximumSupply() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateItemsUsed() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateItemsAdded() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateAverageAgeUsed() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateMaximumAgeUsed() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateAverageAgedCurrent() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateMaximumAgeCurrent() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateDayDifference() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testGetEarliestDate() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testGetLatestDate() {
+		fail("Not yet implemented"); // TODO
+	}
+	 */
+}

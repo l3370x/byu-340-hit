@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="com.itextpdf.text.Font"/>
+<fullyQualifiedTypeName name="com.itextpdf.text.Font.FontFamily"/>
+<fullyQualifiedTypeName name="common.util.DateUtils"/>
+<fullyQualifiedTypeName name="core.model.Item"/>
+<fullyQualifiedTypeName name="core.model.Item.Factory"/>
+<fullyQualifiedTypeName name="java.util.Observable"/>
+<fullyQualifiedTypeName name="core.model.ModelNotification"/>
+<fullyQualifiedTypeName name="core.model.ModelNotification.ChangeType"/>
+<fullyQualifiedTypeName name="org.jmock.integration.junit4.JUnitRuleMockery"/>
+<fullyQualifiedTypeName name="org.junit.Rule"/>
+<fullyQualifiedTypeName name="gui.reports.productstats.ProductStatsCalculator.Factory"/>
+<fullyQualifiedTypeName name="gui.reports.productstats.ListOfItems.MockItem1"/>
+<fullyQualifiedTypeName name="core.model.ProductContainer"/>
+<fullyQualifiedTypeName name="core.model.ItemCollection"/>
+<fullyQualifiedTypeName name="java.util.Calendar"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="core.model.Product"/>
+<fullyQualifiedTypeName name="java.io.PrintStream"/>
+<fullyQualifiedTypeName name="java.io.FileOutputStream"/>
+</qualifiedTypeNameHistroy>

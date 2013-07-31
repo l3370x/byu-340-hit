@@ -1,0 +1,14 @@
+1374377065612	Delete element
+1374377070569	Delete element
+1374377075372	Delete element
+1374685004382	Rename type 'ProductStatsCalculator'
+1374685016094	Rename type 'IProductStatsCalculator'
+1374700638348	Extract method 'calculateItemsStoredinDate'
+1374710208609	Rename local variable 'averageAgeUsed'
+1374710233172	Rename local variable 'totalUsedItems'
+1374710307443	Rename local variable 'maximumAgeUsed'
+1374851487579	Move compilation unit
+1374852124960	Delete element
+1374852189859	Delete element
+1374853649685	Move compilation unit
+1374853996509	Change method 'newItem'

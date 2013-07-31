@@ -1,0 +1,105 @@
+package gui.reports.productstats;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import core.model.InventoryManager;
+import core.model.Item;
+import core.model.Product;
+
+public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
+
+	Product product;
+	Date startDate;
+	Date endDate;
+	Iterable<Item> currentItems;
+	Iterable<Item> removedItems;
+
+	public ProductStatsCalculatorImpl(Date startDate, Date endDate) {
+		this.startDate = startDate;
+		this.endDate = endDate;
+		currentItems = InventoryManager.Factory.getInventoryManager().getItems();
+		removedItems = InventoryManager.Factory.getInventoryManager().getRemovedItems();
+	}
+	
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	@Override
+	public int calculateCurrentSupply() {
+		int currentSupply = 0;
+		Iterator<Item> iter = currentItems.iterator();
+		while (iter.hasNext()) {
+			Item item = iter.next();
+			if (item.getProduct().equals(product))
+				currentSupply++;
+		}
+		return currentSupply;
+	}
+
+	@Override
+	public double calculateAverageSupply() {
+		double averageSupply = 0;
+		int numberOfDays = 0;
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(startDate);
+		do {
+			//Iterate through included items
+			cal.add(Calendar.DATE, 1);
+			numberOfDays++;
+		} while (!cal.getTime().equals(endDate));
+		return 0;
+	}
+
+	@Override
+	public int calculateMinimumSupply() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int calculateMaximumSupply() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int calculateItemsUsed() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int calculateItemsAdded() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double calculateAverageAgeUsed() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int calculateMaximumAgeUsed() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double calculateAverageAgedCurrent() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int calculateMaximumAgeCurrent() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

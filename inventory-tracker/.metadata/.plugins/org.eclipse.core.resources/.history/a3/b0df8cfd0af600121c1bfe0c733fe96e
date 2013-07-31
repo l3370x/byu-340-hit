@@ -1,0 +1,115 @@
+package core.model;
+
+import static org.junit.Assert.*;
+import gui.reports.productstats.ProductStatsCalculator;
+import gui.reports.productstats.ProductStatsCalculatorImpl;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static org.easymock.EasyMock.*;
+
+public class ProductStatsCalculatorImplTest {
+	
+	private ProductStatsCalculator calculator;
+	private ProductStatsCalculatorImpl calcImpl;
+	
+	//Items
+	//1) Normal Item
+	private static final Item itemNormal = new Item();
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	}
+
+	@Test
+	public void testProductStatsCalculatorImpl() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testSetValues() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateCurrentSupply() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateAverageSupply() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateMinimumSupply() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateMaximumSupply() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateItemsUsed() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateItemsAdded() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateAverageAgeUsed() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateMaximumAgeUsed() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateAverageAgedCurrent() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateMaximumAgeCurrent() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testCalculateDayDifference() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testGetEarliestDate() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public void testGetLatestDate() {
+		fail("Not yet implemented"); // TODO
+	}
+
+}

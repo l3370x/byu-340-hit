@@ -1,0 +1,35 @@
+package gui.reports.productstats;
+
+import core.model.Product;
+
+public interface ProductStatsCalculator {
+
+	int calculateCurrentSupply();
+
+	double calculateAverageSupply();
+
+	int calculateMinimumSupply();
+
+	int calculateMaximumSupply();
+
+	int calculateItemsUsed();
+
+	int calculateItemsAdded();
+
+	double calculateAverageAgeUsed();
+
+	int calculateMaximumAgeUsed();
+
+	double calculateAverageAgedCurrent();
+
+	int calculateMaximumAgeCurrent();
+
+	public static class Factory {
+		private static final ProductStatsCalculator INSTANCE = new ProductStatsCalculatorImpl();
+		
+		public ProductStatsCalculator getInstance() {
+			return INSTANCE;
+		}
+	}
+
+}

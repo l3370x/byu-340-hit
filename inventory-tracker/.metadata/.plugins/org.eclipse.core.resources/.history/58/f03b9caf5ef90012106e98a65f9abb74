@@ -1,0 +1,1023 @@
+package gui.reports.productstats;
+
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Observer;
+
+import core.model.BarCode;
+import core.model.Item;
+import core.model.ItemCollection;
+import core.model.Product;
+import core.model.ProductContainer;
+import core.model.exception.HITException;
+
+public class ListOfItems {
+	ItemCollection currentItems = new ItemCollection(null);
+	ItemCollection removedItems = new ItemCollection(null);
+	
+	public ListOfItems() {
+		try {
+			currentItems.add(new MockItem1());
+			currentItems.add(new MockItem2());
+			currentItems.add(new MockItem3());
+			currentItems.add(new MockItem4());
+			currentItems.add(new MockItem5());
+			currentItems.add(new MockItem6());
+			
+			removedItems.add(new MockItem7());
+			removedItems.add(new MockItem8());
+			removedItems.add(new MockItem9());
+			removedItems.add(new MockItem10());
+			removedItems.add(new MockItem11());
+			removedItems.add(new MockItem12());
+		} catch (HITException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void addCurrent(Item item) {
+		try {
+			currentItems.add(item);
+		} catch (HITException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void addRemove(Item item) {
+		try {
+			removedItems.add(item);
+		} catch (HITException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public Iterable<Item> returnCurrent() {
+		return currentItems.getContents();
+	}
+	
+	public Iterable<Item> returnRemoved() {
+		return removedItems.getContents();
+	}
+	
+	//Mock Item classes
+	//1-6 current items, 7-12 removed items
+	//1: added today
+	 class MockItem1 implements Item {
+		@Override
+		public Date getEntryDate() {
+			return new Date();
+		}
+
+		@Override
+		public void wasAddedTo(ProductContainer container) throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void wasRemovedFrom(ProductContainer container)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void transfer(ProductContainer from, ProductContainer to)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ProductContainer getContainer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Product getProduct() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public BarCode getBarCode() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Date getExitDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setExitDate(Date d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Date getExpirationDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setEntryDate(Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addObs(Observer o) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	//2: added one day ago
+	 class MockItem2 implements Item {
+		@Override
+		public Date getEntryDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.DATE, -1);
+			return cal.getTime();
+		}
+
+		@Override
+		public void wasAddedTo(ProductContainer container) throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void wasRemovedFrom(ProductContainer container)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void transfer(ProductContainer from, ProductContainer to)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ProductContainer getContainer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Product getProduct() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public BarCode getBarCode() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Date getExitDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setExitDate(Date d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Date getExpirationDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setEntryDate(Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addObs(Observer o) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	//3: added one week ago
+	 class MockItem3 implements Item {
+		@Override
+		public Date getEntryDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.WEEK_OF_YEAR, -1);
+			return cal.getTime();
+		}
+
+		@Override
+		public void wasAddedTo(ProductContainer container) throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void wasRemovedFrom(ProductContainer container)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void transfer(ProductContainer from, ProductContainer to)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ProductContainer getContainer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Product getProduct() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public BarCode getBarCode() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Date getExitDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setExitDate(Date d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Date getExpirationDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setEntryDate(Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addObs(Observer o) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	//4: added two weeks ago
+	 class MockItem4 implements Item {
+		@Override
+		public Date getEntryDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.WEEK_OF_YEAR, -2);
+			return cal.getTime();
+		}
+
+		@Override
+		public void wasAddedTo(ProductContainer container) throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void wasRemovedFrom(ProductContainer container)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void transfer(ProductContainer from, ProductContainer to)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ProductContainer getContainer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Product getProduct() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public BarCode getBarCode() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Date getExitDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setExitDate(Date d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Date getExpirationDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setEntryDate(Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addObs(Observer o) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	//5: added one month ago
+	 class MockItem5 implements Item {
+		@Override
+		public Date getEntryDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.MONTH, -1);
+			return cal.getTime();
+		}
+
+		@Override
+		public void wasAddedTo(ProductContainer container) throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void wasRemovedFrom(ProductContainer container)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void transfer(ProductContainer from, ProductContainer to)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ProductContainer getContainer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Product getProduct() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public BarCode getBarCode() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Date getExitDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setExitDate(Date d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Date getExpirationDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setEntryDate(Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addObs(Observer o) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	//6: added one year ago
+	 class MockItem6 implements Item {
+		@Override
+		public Date getEntryDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.YEAR, -1);
+			return cal.getTime();
+		}
+
+		@Override
+		public void wasAddedTo(ProductContainer container) throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void wasRemovedFrom(ProductContainer container)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void transfer(ProductContainer from, ProductContainer to)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ProductContainer getContainer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Product getProduct() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public BarCode getBarCode() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Date getExitDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setExitDate(Date d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Date getExpirationDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setEntryDate(Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addObs(Observer o) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	//Removed Items
+	//7: added today, removed today
+	 class MockItem7 implements Item {
+		@Override
+		public Date getEntryDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			return cal.getTime();
+		}
+		
+		@Override
+		public Date getExitDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			return cal.getTime();
+		}
+
+		@Override
+		public void wasAddedTo(ProductContainer container) throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void wasRemovedFrom(ProductContainer container)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void transfer(ProductContainer from, ProductContainer to)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ProductContainer getContainer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Product getProduct() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public BarCode getBarCode() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setExitDate(Date d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Date getExpirationDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setEntryDate(Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addObs(Observer o) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	//8: Added 3 weeks ago, removed 1 week ago
+	 class MockItem8 implements Item {
+		@Override
+		public Date getEntryDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.WEEK_OF_YEAR, -3);
+			return cal.getTime();
+		}
+		
+		@Override
+		public Date getExitDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.WEEK_OF_YEAR, -1);
+			return cal.getTime();
+		}
+
+		@Override
+		public void wasAddedTo(ProductContainer container) throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void wasRemovedFrom(ProductContainer container)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void transfer(ProductContainer from, ProductContainer to)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ProductContainer getContainer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Product getProduct() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public BarCode getBarCode() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setExitDate(Date d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Date getExpirationDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setEntryDate(Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addObs(Observer o) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	//9: added one year ago. Removed yesterday
+	 class MockItem9 implements Item {
+		@Override
+		public Date getEntryDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.YEAR, -1);
+			return cal.getTime();
+		}
+		
+		@Override
+		public Date getExitDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.DATE, -1);
+			return cal.getTime();
+		}
+
+		@Override
+		public void wasAddedTo(ProductContainer container) throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void wasRemovedFrom(ProductContainer container)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void transfer(ProductContainer from, ProductContainer to)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ProductContainer getContainer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Product getProduct() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public BarCode getBarCode() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setExitDate(Date d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Date getExpirationDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setEntryDate(Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addObs(Observer o) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	//10: added six months ago, removed 3 months ago
+	 class MockItem10 implements Item {
+		@Override
+		public Date getEntryDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.MONTH, -6);
+			return cal.getTime();
+		}
+		
+		@Override
+		public Date getExitDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.MONTH, -3);
+			return cal.getTime();
+		}
+
+		@Override
+		public void wasAddedTo(ProductContainer container) throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void wasRemovedFrom(ProductContainer container)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void transfer(ProductContainer from, ProductContainer to)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ProductContainer getContainer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Product getProduct() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public BarCode getBarCode() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setExitDate(Date d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Date getExpirationDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setEntryDate(Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addObs(Observer o) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	//11: Added and removed 6 weeks ago
+	 class MockItem11 implements Item {
+		@Override
+		public Date getEntryDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.WEEK_OF_YEAR, -6);
+			return cal.getTime();
+		}
+		
+		@Override
+		public Date getExitDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.WEEK_OF_YEAR, -6);
+			return cal.getTime();
+		}
+
+		@Override
+		public void wasAddedTo(ProductContainer container) throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void wasRemovedFrom(ProductContainer container)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void transfer(ProductContainer from, ProductContainer to)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ProductContainer getContainer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Product getProduct() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public BarCode getBarCode() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setExitDate(Date d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Date getExpirationDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setEntryDate(Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addObs(Observer o) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	//12: added yesterday, removed today
+	 class MockItem12 implements Item {
+		@Override
+		public Date getEntryDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.DATE, -1);
+			return cal.getTime();
+		}
+		
+		@Override
+		public Date getExitDate() {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			return cal.getTime();
+		}
+
+		@Override
+		public void wasAddedTo(ProductContainer container) throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void wasRemovedFrom(ProductContainer container)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void transfer(ProductContainer from, ProductContainer to)
+				throws HITException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ProductContainer getContainer() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Product getProduct() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public BarCode getBarCode() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setExitDate(Date d) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Date getExpirationDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setEntryDate(Date date) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void addObs(Observer o) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+}
