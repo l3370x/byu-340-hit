@@ -33,7 +33,7 @@ public final class GUI extends JFrame implements IMainView {
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
 				try {
-					PersistenceManager.INSTANCE.save();
+					PersistenceManager.Factory.getPersistenceManager().save();
 				} catch (HITException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -45,7 +45,7 @@ public final class GUI extends JFrame implements IMainView {
 		
 		
 		try {
-			PersistenceManager.INSTANCE.load();
+			PersistenceManager.Factory.getPersistenceManager().load();
 		} catch (HITException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

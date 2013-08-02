@@ -13,9 +13,9 @@ import static core.model.exception.HITException.Severity.WARNING;
  *
  * @author aaron
  */
-public enum PersistenceManager {
+public class PersistenceManager {
 
-    INSTANCE;
+    
 
     /**
      * Save the data that the program uses. If there is no data to save, do nothing. This should be
@@ -83,5 +83,28 @@ public enum PersistenceManager {
      * @throws HITException if there was an error performing the update.
      */
     public void update() throws HITException {
+    }
+    
+    
+    /**
+     * The {@code PersistenceManager.Factory} class is used to get the singleton instance of the
+     * {@link PersistenceManager}.
+     *
+     * @invariant ?
+     */
+    public static class Factory {
+        private static final PersistenceManager INSTANCE =
+                new PersistenceManager();
+
+        /**
+         * Get the {@link PersistenceManager} instance.
+         *
+         * @return the persistence manager
+         * @pre
+         * @post return != null
+         */
+        public static PersistenceManager getPersistenceManager() {
+            return INSTANCE;
+        }
     }
 }

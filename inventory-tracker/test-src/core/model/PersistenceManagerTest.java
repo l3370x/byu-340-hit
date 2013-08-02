@@ -45,7 +45,7 @@ public class PersistenceManagerTest {
 		// s1.addProduct(p1);
 		i.add(s2);
 		// System.out.println("before save " + i.getContents().iterator().next().getName());
-		PersistenceManager.INSTANCE.save();
+		PersistenceManager.Factory.getPersistenceManager().save();
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class PersistenceManagerTest {
 		
 		assertTrue("make sure the InventoryManager is blank before loading.",i.getContents().iterator().hasNext() == false);
 		assertTrue("make sure List units is clear", units.isEmpty() == true);
-		PersistenceManager.INSTANCE.load();
+		PersistenceManager.Factory.getPersistenceManager().load();
 		
 		// make list of all storage units
 		it = i.getContents().iterator();
