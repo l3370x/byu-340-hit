@@ -19,13 +19,7 @@ public enum VisitOrder {
             }
 
             // now visit the next generation
-            for (Visitable child : target.getNextToBeVisited()) {
-                if (false == this.visit((V) child, operator)) {
-                    return false;
-                }
-            }
-
-            return true;
+            return super.visit(target, operator);
         }
 
     },
@@ -36,11 +30,9 @@ public enum VisitOrder {
     POST_ORDER {
         @Override
         public <V extends Visitable> boolean visit(V target, Operator<V, Boolean> operator) {
-            // now visit the next generation first
-            for (Visitable child : target.getNextToBeVisited()) {
-                if (false == this.visit((V) child, operator)) {
-                    return false;
-                }
+            // visit the children first
+            if (false == super.visit(target, operator)) {
+                return false;
             }
 
             // now visit the target
@@ -52,5 +44,13 @@ public enum VisitOrder {
         }
     };
     
-    public abstract <V extends Visitable> boolean visit(V target, Operator<V, Boolean> visitor);
+    public <V extends Visitable> boolean visit(V target, Operator<V, Boolean> operator) {
+        for (Visitable child : target.getNextToBeVisited()) {
+            if (false == this.visit((V) child, operator)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
