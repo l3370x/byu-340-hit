@@ -1,21 +1,22 @@
-drop table product_container;
-drop table product;
-drop table item;
-drop table inventory;
+drop table if exists product_container;
+drop table if exists product;
+drop table if exists item;
+drop table if exists removed_items_report;
+drop table if exists product_product_container;
 
 create table product_container
-{
-	id int primary key autoincrement,
+(
+	id INTEGER not null primary key autoincrement,
 	name varchar(255) not null,
 	is_storage_unit boolean,
-	3_month_supply_amt real(3,3),
-	3_month_supply_unit varchar(255),
-	parent_container int
-};
+	_3_month_supply_amt real(3,3),
+	_3_month_supply_unit varchar(255),
+	parent_container INTEGER constraint fk_parent REFERENCES product_container (id)
+);
 
 create table product
 (
-	barcode varchar(12) primary key,
+	barcode varchar(12) not null primary key,
 	description varchar(255) not null,
 	size_amt real(3,3),
 	size_unit varchar(255),
@@ -24,16 +25,16 @@ create table product
 );
 
 create table product_product_container
-{
-	product varchar(255) not null,
-	product_container int not null
-	constraint pk_prod_prod_cntnr primary key (product, product_container)
-};
+(
+	product_id varchar(12) not null constraint fk_product REFERENCES product (barcode),
+	product_container_id INTEGER not null constraint fk_container REFERENCES product_container (id),
+	primary key (product_id, product_container_id)
+);
 
 create table item
 (
-	barcode varchar(12) primary key,
-	prod_barcode varchar(12) not null,
+	barcode varchar(12) not null primary key,
+	product varchar(12) not null constraint fk_item_product REFERENCES product (barcode),
 	entry_date date not null,
 	product_container int,
 	removed_date date

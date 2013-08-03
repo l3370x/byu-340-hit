@@ -10,13 +10,13 @@ import java.io.IOException;
 public class UPCDatabaseDotOrgTests {
     @Test
     public void testGetProductInfo() throws IOException {
-        ProductDetector detector = ProductDetector.Factory.getProductDetector();
+        //ProductDetector detector = ProductDetector.Factory.getProductDetector();
 
-        //UPCDatabaseDotOrg detector = new UPCDatabaseDotOrg();
+        UPCDatabaseDotOrg detector = new UPCDatabaseDotOrg();
         ProductDescriptor descriptor = detector.getProductDescription("0111222333446");
 
         Assert.assertNotNull(descriptor);
-
-        System.out.println(descriptor.getDescription());
+        Assert.assertEquals("UPC Database Testing Code", descriptor.getDescription());
+        Assert.assertEquals("0111222333446", descriptor.getBarcode());
     }
 }
