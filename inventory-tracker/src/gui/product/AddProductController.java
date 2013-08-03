@@ -1,5 +1,6 @@
 package gui.product;
 
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import core.model.BarCode;
@@ -7,9 +8,12 @@ import core.model.Product;
 import core.model.Quantity;
 import static core.model.InventoryManager.Factory.getInventoryManager;
 import static core.model.Product.Factory.newProduct;
+import static gui.product.ProductDetector.Factory.getProductDetector;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
 import gui.common.*;
+
+import javax.swing.*;
 
 /**
  * Controller class for the add item view.
@@ -85,7 +89,34 @@ public class AddProductController extends Controller implements
      */
     @Override
     protected void loadValues() {
-        this.getView().setDescription("");
+        this.getView().setDescription("Identifying Product -- Please Wait...");
+        this.getView().enableDescription(false);
+
+        SwingWorker<ProductDescriptor, Void> worker = new SwingWorker<ProductDescriptor, Void>() {
+            @Override
+            protected ProductDescriptor doInBackground() throws Exception {
+                AddProductController _this = AddProductController.this;
+
+                return getProductDetector().getProductDescription(_this.barcode);
+            }
+
+            @Override
+            protected void done() {
+                AddProductController _this = AddProductController.this;
+
+                try {
+                    ProductDescriptor descriptor = this.get();
+                    _this.getView().setBarcode(descriptor.getBarcode());
+                    _this.getView().setDescription(descriptor.getDescription());
+                } catch (Exception e) {
+                    ExceptionHandler.TO_LOG.reportException(e, "Unable to get product description");
+                }
+
+                _this.getView().enableDescription(true);
+            }
+        };
+        worker.execute();
+
         this.getView().setBarcode(barcode);
         this.getView().setSizeValue("1");
         this.getView().setSizeUnit(SizeUnits.Count);
