@@ -36,6 +36,9 @@ public enum ExceptionHandler {
                 }
 
                 Logger.getAnonymousLogger().log(level, additionalMessage, error);
+
+                System.err.println(additionalMessage);
+                error.printStackTrace(System.err);
             }
         }
     },
