@@ -44,9 +44,6 @@ public class SqlitePersistence implements Persistence {
 	public void load() throws HITException {
 		InventoryManager i = InventoryManager.Factory.getInventoryManager();
 
-		// add persistence observer to invMan
-		i.addObserver(this);
-
 		ProductContainerDAO dao = new ProductContainerDAO();
 		Iterable<DataTransferObject> data = dao.getAll();
 		for (DataTransferObject obj : data) {
@@ -56,7 +53,7 @@ public class SqlitePersistence implements Persistence {
 				// add storage Unit
 				StorageUnit su = StorageUnit.Factory.newStorageUnit(name);
 				i.add(su);
-				System.out.println(obj.getValues());
+				// System.out.println(obj.getValues());
 			} else {
 				// add category
 				Category c = Category.Factory.newCategory(name);
@@ -65,6 +62,9 @@ public class SqlitePersistence implements Persistence {
 				// Quantity q = new Quantity(value, unit)
 			}
 		}
+
+		// add persistence observer to invMan
+		i.addObserver(this);
 
 	}
 
