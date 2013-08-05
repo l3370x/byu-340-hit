@@ -37,7 +37,7 @@ public class SqlitePersistence implements Persistence {
 	 */
 	@Override
 	public void load() throws HITException {
-		
+
 		// holds added containers in order to add new categories to existing
 		// product containers
 		Map<Integer, ProductContainer> addedContainers = new HashMap<Integer, ProductContainer>();
@@ -50,8 +50,7 @@ public class SqlitePersistence implements Persistence {
 		ProductContainerDAO dao = new ProductContainerDAO();
 		Iterable<DataTransferObject> data = dao.getAll();
 		for (DataTransferObject dto : data) {
-			if (((String) dto.getValue(ProductContainerDAO.COL_IS_STORAGE_UNIT))
-					.equals("true")) {
+			if (((String) dto.getValue(ProductContainerDAO.COL_IS_STORAGE_UNIT)).equals("true")) {
 				StorageUnit su = addStorageUnitFromDTO(dto);
 				addedContainers.put((int) dto.getValue(ProductContainerDAO.COL_ID), su);
 			} else {
@@ -91,8 +90,7 @@ public class SqlitePersistence implements Persistence {
 
 	}
 
-	private Category newCategoryFromDTO(DataTransferObject dto)
-			throws HITException {
+	private Category newCategoryFromDTO(DataTransferObject dto) throws HITException {
 		String name = (String) dto.getValue(ProductContainerDAO.COL_NAME);
 		// create new category
 		Category c = Category.Factory.newCategory(name);
@@ -107,8 +105,7 @@ public class SqlitePersistence implements Persistence {
 		return c;
 	}
 
-	private StorageUnit addStorageUnitFromDTO(DataTransferObject dto)
-			throws HITException {
+	private StorageUnit addStorageUnitFromDTO(DataTransferObject dto) throws HITException {
 		String name = (String) dto.getValue(ProductContainerDAO.COL_NAME);
 		StorageUnit su = StorageUnit.Factory.newStorageUnit(name);
 		InventoryManager.Factory.getInventoryManager().add(su);
@@ -125,43 +122,34 @@ public class SqlitePersistence implements Persistence {
 		Object payload = notification.getContent();
 		switch (notification.getChangeType()) {
 		case ITEM_ADDED:
-			System.out.println("item added "
-					+ ((Item) payload).getProduct().getDescription());
+			System.out.println("item added " + ((Item) payload).getProduct().getDescription());
 			break;
 
 		case ITEM_REMOVED:
-			System.out.println("item removed "
-					+ ((Item) payload).getProduct().getDescription());
+			System.out.println("item removed " + ((Item) payload).getProduct().getDescription());
 			break;
 
 		case PRODUCT_ADDED:
-			System.out.println("product added "
-					+ ((Product) payload).getDescription());
+			System.out.println("product added " + ((Product) payload).getDescription());
 			break;
 
 		case PRODUCT_REMOVED:
-			System.out.println("product removed "
-					+ ((Product) payload).getDescription());
+			System.out.println("product removed " + ((Product) payload).getDescription());
 			break;
 		case CONTENT_ADDED:
-			System.out.println("container added "
-					+ ((ProductContainer) payload).getName());
+			System.out.println("container added " + ((ProductContainer) payload).getName());
 			break;
 		case CONTENT_REMOVED:
-			System.out.println("container removed "
-					+ ((ProductContainer) payload).getName());
+			System.out.println("container removed " + ((ProductContainer) payload).getName());
 			break;
 		case CONTENT_UPDATED:
-			System.out.println("container updated "
-					+ ((ProductContainer) payload).getName());
+			System.out.println("container updated " + ((ProductContainer) payload).getName());
 			break;
 		case ITEM_UPDATED:
-			System.out.println("item updated "
-					+ ((Item) payload).getProduct().getDescription());
+			System.out.println("item updated " + ((Item) payload).getProduct().getDescription());
 			break;
 		case PRODUCT_UPDATED:
-			System.out.println("product updated "
-					+ ((Product) payload).getDescription());
+			System.out.println("product updated " + ((Product) payload).getDescription());
 			break;
 		default:
 			break;
@@ -194,7 +182,7 @@ public class SqlitePersistence implements Persistence {
 			return INSTANCE;
 		}
 	}
-	
+
 	class UnaddedCategoryWrapper {
 		public Category c;
 		public int myID;
