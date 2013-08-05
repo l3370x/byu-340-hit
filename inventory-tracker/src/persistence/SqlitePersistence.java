@@ -37,25 +37,14 @@ public class SqlitePersistence implements Persistence {
 	 */
 	@Override
 	public void load() throws HITException {
-		InventoryManager i = InventoryManager.Factory.getInventoryManager();
-		class CategoryWrapper {
-			public Category c;
-			public int myID;
-			public int parentID;
-
-			public CategoryWrapper(Category c, int myID, int parentID) {
-				this.c = c;
-				this.myID = myID;
-				this.parentID = parentID;
-			}
-		}
+		
 		// holds added containers in order to add new categories to existing
 		// product containers
 		Map<Integer, ProductContainer> addedContainers = new HashMap<Integer, ProductContainer>();
 
 		// holds unadded containers to add later (this is necessary if a
 		// category is to be loaded without the parent being in memory yet.
-		List<CategoryWrapper> unaddedContainers = new ArrayList<CategoryWrapper>();
+		List<UnaddedCategoryWrapper> unaddedContainers = new ArrayList<UnaddedCategoryWrapper>();
 
 		// add all product containers
 		ProductContainerDAO dao = new ProductContainerDAO();
@@ -64,28 +53,25 @@ public class SqlitePersistence implements Persistence {
 			if (((String) dto.getValue(ProductContainerDAO.COL_IS_STORAGE_UNIT))
 					.equals("true")) {
 				StorageUnit su = addStorageUnitFromDTO(dto);
-				addedContainers.put(
-						(int) dto.getValue(ProductContainerDAO.COL_ID), su);
+				addedContainers.put((int) dto.getValue(ProductContainerDAO.COL_ID), su);
 			} else {
 				Category c = newCategoryFromDTO(dto);
 
 				// check if parent exists
-				int parentKey = (int) dto
-						.getValue(ProductContainerDAO.COL_PARENT);
+				int parentKey = (int) dto.getValue(ProductContainerDAO.COL_PARENT);
 				int cID = (int) dto.getValue(ProductContainerDAO.COL_ID);
 				if (addedContainers.containsKey(parentKey)) {
 					addedContainers.get(parentKey).add(c);
 					addedContainers.put(cID, c);
 				} else {
-					unaddedContainers
-							.add(new CategoryWrapper(c, cID, parentKey));
+					unaddedContainers.add(new UnaddedCategoryWrapper(c, cID, parentKey));
 				}
 			}
 		}
 
 		// add remaining unadded containers
 		while (!unaddedContainers.isEmpty()) {
-			for (CategoryWrapper cw : unaddedContainers) {
+			for (UnaddedCategoryWrapper cw : unaddedContainers) {
 				if (addedContainers.containsKey(cw.parentID)) {
 					addedContainers.get(cw.parentID).add(cw.c);
 					addedContainers.put(cw.myID, cw.c);
@@ -101,15 +87,17 @@ public class SqlitePersistence implements Persistence {
 		// TODO add items
 
 		// add persistence observer to invMan
-		i.addObserver(this);
+		InventoryManager.Factory.getInventoryManager().addObserver(this);
 
 	}
 
 	private Category newCategoryFromDTO(DataTransferObject dto)
 			throws HITException {
 		String name = (String) dto.getValue(ProductContainerDAO.COL_NAME);
+		// create new category
 		Category c = Category.Factory.newCategory(name);
 
+		// set values from dto
 		float value = Float.valueOf(String.valueOf(dto
 				.getValue(ProductContainerDAO.COL_3_MO_SUPPLY_AMT)));
 		Units unit = Units.valueOf((String) dto
@@ -204,6 +192,18 @@ public class SqlitePersistence implements Persistence {
 		 */
 		public static SqlitePersistence getPersistenceManager() {
 			return INSTANCE;
+		}
+	}
+	
+	class UnaddedCategoryWrapper {
+		public Category c;
+		public int myID;
+		public int parentID;
+
+		public UnaddedCategoryWrapper(Category c, int myID, int parentID) {
+			this.c = c;
+			this.myID = myID;
+			this.parentID = parentID;
 		}
 	}
 
