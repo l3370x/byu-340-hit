@@ -21,6 +21,7 @@ create table product
 	size_amt real(3,3),
 	size_unit varchar(255),
 	shelf_life_months int,
+	_3_month_supply int,
 	create_date date not null
 );
 
