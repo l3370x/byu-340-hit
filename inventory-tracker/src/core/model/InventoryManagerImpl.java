@@ -181,10 +181,6 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit>
         return lastReportRun;
     }
     
-    public boolean idExistsInTree(int id){
-    	return true;
-    }
-
     /**
      * @param lastReportRun the lastReportRun to set
      */

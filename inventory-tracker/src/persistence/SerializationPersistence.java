@@ -84,15 +84,6 @@ public class SerializationPersistence implements Persistence {
 		}
 	}
 
-	/**
-	 * Update the saved data to reflect any changes.
-	 * 
-	 * @throws HITException
-	 *             if there was an error performing the update.
-	 */
-	@Override
-	public void update() throws HITException {
-	}
 
 	/**
 	 * The {@code PersistenceManager.Factory} class is used to get the singleton

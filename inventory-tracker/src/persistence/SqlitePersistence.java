@@ -3,21 +3,22 @@
  */
 package persistence;
 
-import static persistence.ProductContainerDAO.COL_IS_STORAGE_UNIT;
-import static persistence.ProductContainerDAO.COL_NAME;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 
+import core.model.Category;
 import core.model.InventoryManager;
 import core.model.Item;
 import core.model.ModelNotification;
 import core.model.Product;
 import core.model.ProductContainer;
 import core.model.Quantity;
+import core.model.Quantity.Units;
 import core.model.StorageUnit;
-import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
-import core.model.Category;
 
 /**
  * @author Aaron
@@ -25,13 +26,7 @@ import core.model.Category;
  */
 public class SqlitePersistence implements Persistence {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see persistence.PersistenceManager#save()
-	 */
-	@Override
-	public void save() throws HITException {
+	private SqlitePersistence() {
 
 	}
 
@@ -43,59 +38,93 @@ public class SqlitePersistence implements Persistence {
 	@Override
 	public void load() throws HITException {
 		InventoryManager i = InventoryManager.Factory.getInventoryManager();
+		class CategoryWrapper {
+			public Category c;
+			public int myID;
+			public int parentID;
 
-		ProductContainerDAO dao = new ProductContainerDAO();
-		Iterable<DataTransferObject> data = dao.getAll();
-		for (DataTransferObject obj : data) {
-			String name = (String) obj.getValue(ProductContainerDAO.COL_NAME);
-			if (((String) obj.getValue(ProductContainerDAO.COL_IS_STORAGE_UNIT))
-					.equals("true")) {
-				// add storage Unit
-				StorageUnit su = StorageUnit.Factory.newStorageUnit(name);
-				i.add(su);
-				// System.out.println(obj.getValues());
-			} else {
-				// add category
-				Category c = Category.Factory.newCategory(name);
-				int parentKey = (int) obj
-						.getValue(ProductContainerDAO.COL_PARENT);
-				// Quantity q = new Quantity(value, unit)
+			public CategoryWrapper(Category c, int myID, int parentID) {
+				this.c = c;
+				this.myID = myID;
+				this.parentID = parentID;
 			}
 		}
+		// holds added containers in order to add new categories to existing
+		// product containers
+		Map<Integer, ProductContainer> addedContainers = new HashMap<Integer, ProductContainer>();
+
+		// holds unadded containers to add later (this is necessary if a
+		// category is to be loaded without the parent being in memory yet.
+		List<CategoryWrapper> unaddedContainers = new ArrayList<CategoryWrapper>();
+
+		// add all product containers
+		ProductContainerDAO dao = new ProductContainerDAO();
+		Iterable<DataTransferObject> data = dao.getAll();
+		for (DataTransferObject dto : data) {
+			if (((String) dto.getValue(ProductContainerDAO.COL_IS_STORAGE_UNIT))
+					.equals("true")) {
+				StorageUnit su = addStorageUnitFromDTO(dto);
+				addedContainers.put(
+						(int) dto.getValue(ProductContainerDAO.COL_ID), su);
+			} else {
+				Category c = newCategoryFromDTO(dto);
+
+				// check if parent exists
+				int parentKey = (int) dto
+						.getValue(ProductContainerDAO.COL_PARENT);
+				int cID = (int) dto.getValue(ProductContainerDAO.COL_ID);
+				if (addedContainers.containsKey(parentKey)) {
+					addedContainers.get(parentKey).add(c);
+					addedContainers.put(cID, c);
+				} else {
+					unaddedContainers
+							.add(new CategoryWrapper(c, cID, parentKey));
+				}
+			}
+		}
+
+		// add remaining unadded containers
+		while (!unaddedContainers.isEmpty()) {
+			for (CategoryWrapper cw : unaddedContainers) {
+				if (addedContainers.containsKey(cw.parentID)) {
+					addedContainers.get(cw.parentID).add(cw.c);
+					addedContainers.put(cw.myID, cw.c);
+					unaddedContainers.remove(cw);
+					break;
+				}
+			}
+		}
+
+		// add products
+		// TODO add products
+		// add items
+		// TODO add items
 
 		// add persistence observer to invMan
 		i.addObserver(this);
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see persistence.PersistenceManager#update()
-	 */
-	@Override
-	public void update() throws HITException {
-		// TODO Auto-generated method stub
+	private Category newCategoryFromDTO(DataTransferObject dto)
+			throws HITException {
+		String name = (String) dto.getValue(ProductContainerDAO.COL_NAME);
+		Category c = Category.Factory.newCategory(name);
 
+		float value = Float.valueOf(String.valueOf(dto
+				.getValue(ProductContainerDAO.COL_3_MO_SUPPLY_AMT)));
+		Units unit = Units.valueOf((String) dto
+				.getValue(ProductContainerDAO.COL_3_MO_SUPPLY_UNITS));
+		Quantity q = new Quantity(value, unit);
+		c.set3MonthSupplyQuantity(q);
+		return c;
 	}
 
-	private SqlitePersistence() {
-
-	}
-
-	public static class Factory {
-		private static final SqlitePersistence INSTANCE = new SqlitePersistence();
-
-		/**
-		 * Get the {@link SqlitePersistence} instance.
-		 * 
-		 * @return the persistence manager
-		 * @pre
-		 * @post return != null
-		 */
-		public static SqlitePersistence getPersistenceManager() {
-			return INSTANCE;
-		}
+	private StorageUnit addStorageUnitFromDTO(DataTransferObject dto)
+			throws HITException {
+		String name = (String) dto.getValue(ProductContainerDAO.COL_NAME);
+		StorageUnit su = StorageUnit.Factory.newStorageUnit(name);
+		InventoryManager.Factory.getInventoryManager().add(su);
+		return su;
 	}
 
 	@Override
@@ -151,6 +180,31 @@ public class SqlitePersistence implements Persistence {
 
 		}
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see persistence.PersistenceManager#save()
+	 */
+	@Override
+	public void save() throws HITException {
+
+	}
+
+	public static class Factory {
+		private static final SqlitePersistence INSTANCE = new SqlitePersistence();
+
+		/**
+		 * Get the {@link SqlitePersistence} instance.
+		 * 
+		 * @return the persistence manager
+		 * @pre
+		 * @post return != null
+		 */
+		public static SqlitePersistence getPersistenceManager() {
+			return INSTANCE;
+		}
 	}
 
 }
