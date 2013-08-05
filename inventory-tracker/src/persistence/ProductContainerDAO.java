@@ -23,9 +23,16 @@ public class ProductContainerDAO extends AbstractDAO {
             COL_PARENT
     };
 
+    private static final String[] KEY_COLUMN_NAMES = new String[]{COL_ID};
+
     @Override
     public String[] getColumnNames() {
         return COLUMN_NAMES;
+    }
+
+    @Override
+    public String[] getKeyColumnNames() {
+        return KEY_COLUMN_NAMES;
     }
 
     @Override
