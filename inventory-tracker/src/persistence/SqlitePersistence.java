@@ -5,12 +5,19 @@ package persistence;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.*;
 
 import core.model.Category;
@@ -35,11 +42,6 @@ public class SqlitePersistence implements Persistence {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see persistence.PersistenceManager#load()
-	 */
 	@Override
 	public void load() throws HITException {
 
@@ -52,15 +54,15 @@ public class SqlitePersistence implements Persistence {
 			// TODO add items
 
 		} catch (Exception e) {
+			e.printStackTrace();  // TODO delete this later
 			System.out.println("Database not found/corrupted.  Starting over.");
-			
 			try {
 				resetDatabase();
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
-		
-		} 
+
+		}
 		// add persistence observer to invMan
 		InventoryManager.Factory.getInventoryManager().addObserver(this);
 
@@ -69,20 +71,44 @@ public class SqlitePersistence implements Persistence {
 	private void resetDatabase() throws SQLException {
 		deleteDatabaseFile();
 		Connection connection = null;
+		Statement statement = null;
 		try {
 			connection = TransactionManager.Factory.getTransactionManager().beginTransaction();
-		} catch (HITException e) {
+			// Open the file that is the first
+			// command line parameter
+			String BASE_FILE_NAME = System.getProperty("user.dir");
+			String path = BASE_FILE_NAME.replace("build/", "");
+	        File inFile = new File(path + "/inventory-tracker/db/hit-createdblines.sql");
+			FileInputStream fstream = new FileInputStream(inFile);
+			// Get the object of DataInputStream
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			String strLine;
+			// Read File Line By Line
+			while ((strLine = br.readLine()) != null) {
+				// Print the content on the console
+				System.out.println(strLine);
+				statement = connection.createStatement();
+				statement.executeUpdate(strLine);
+			}
+			TransactionManager.Factory.getTransactionManager().endTransaction(connection, true);
+			// Close the input stream
+			in.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			connection.close();
 		}
-		
+
 	}
 
 	private void deleteDatabaseFile() {
 		String DB_FILE = "inventory-tracker/db/hit.sqlite";
 		try {
 			Files.deleteIfExists(Paths.get(DB_FILE));
-		} catch (IOException e1) {
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
