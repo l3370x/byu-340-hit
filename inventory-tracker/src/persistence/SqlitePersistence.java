@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,6 @@ public class SqlitePersistence implements Persistence {
 			// TODO add items
 
 		} catch (Exception e) {
-			e.printStackTrace();  // TODO delete this later
 			System.out.println("Database not found/corrupted.  Starting over.");
 			try {
 				resetDatabase();
@@ -74,25 +74,20 @@ public class SqlitePersistence implements Persistence {
 		Statement statement = null;
 		try {
 			connection = TransactionManager.Factory.getTransactionManager().beginTransaction();
-			// Open the file that is the first
-			// command line parameter
+
 			String BASE_FILE_NAME = System.getProperty("user.dir");
 			String path = BASE_FILE_NAME.replace("build/", "");
-	        File inFile = new File(path + "/inventory-tracker/db/hit-createdblines.sql");
+			File inFile = new File(path + "/inventory-tracker/db/hit-createdblines.sql");
 			FileInputStream fstream = new FileInputStream(inFile);
-			// Get the object of DataInputStream
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			String strLine;
-			// Read File Line By Line
 			while ((strLine = br.readLine()) != null) {
-				// Print the content on the console
-				System.out.println(strLine);
+				// System.out.println(strLine);
 				statement = connection.createStatement();
 				statement.executeUpdate(strLine);
 			}
 			TransactionManager.Factory.getTransactionManager().endTransaction(connection, true);
-			// Close the input stream
 			in.close();
 
 		} catch (Exception e) {
@@ -259,6 +254,24 @@ public class SqlitePersistence implements Persistence {
 			this.myID = myID;
 			this.parentID = parentID;
 		}
+	}
+
+	@Override
+	public void setLastReportRun(Date lastReportRun) throws HITException {
+		RemovedItemsDAO dao = new RemovedItemsDAO();
+		DataTransferObject dto = new DataTransferObject();
+		dto.setValue(RemovedItemsDAO.COL_LAST_REPORT_RUN, lastReportRun);
+		dao.update(dto);
+	}
+
+	@Override
+	public Date getLastReportRun() throws HITException {
+		RemovedItemsDAO dao = new RemovedItemsDAO();
+		Date toReturn = null;
+		for (DataTransferObject obj : dao.getAll()) {
+			toReturn = (Date) obj.getValue(RemovedItemsDAO.COL_LAST_REPORT_RUN);
+		}
+		return toReturn;
 	}
 
 }

@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Date;
 import java.util.Observable;
 
 import core.model.exception.HITException;
@@ -21,9 +22,9 @@ import core.model.exception.HITException;
  * @author aaron
  */
 public class SerializationPersistence implements Persistence {
-	
+
 	private SerializationPersistence() {
-		
+
 	}
 
 	/**
@@ -84,7 +85,6 @@ public class SerializationPersistence implements Persistence {
 		}
 	}
 
-
 	/**
 	 * The {@code PersistenceManager.Factory} class is used to get the singleton
 	 * instance of the {@link SerializationPersistence}.
@@ -108,7 +108,15 @@ public class SerializationPersistence implements Persistence {
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void setLastReportRun(Date lastReportRun) {
+	}
+
+	@Override
+	public Date getLastReportRun() {
+		return null;
 	}
 }
