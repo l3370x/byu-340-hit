@@ -4,11 +4,13 @@
 package persistence;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
+import core.model.BarCode;
 import core.model.Category;
 import core.model.InventoryManager;
 import core.model.Item;
@@ -84,6 +86,12 @@ public class SqlitePersistence implements Persistence {
 		// TODO add products
 		// add items
 		// TODO add items
+		ItemDAO itemDAO = new ItemDAO();
+		data = itemDAO.getAll();
+		
+		for (DataTransferObject dto : data) {
+			Item item = addItemFromDTO(dto);
+		}
 
 		// add persistence observer to invMan
 		InventoryManager.Factory.getInventoryManager().addObserver(this);
@@ -110,6 +118,16 @@ public class SqlitePersistence implements Persistence {
 		StorageUnit su = StorageUnit.Factory.newStorageUnit(name);
 		InventoryManager.Factory.getInventoryManager().add(su);
 		return su;
+	}
+	
+	private Item addItemFromDTO(DataTransferObject dto) throws HITException {
+		String productBarCode = (String) dto.getValue(ItemDAO.COL_PROD_BARCODE);
+		Product product = Product.Factory.newProduct(BarCode.getBarCodeFor(productBarCode));
+		Date entryDate = (Date) dto.getValue(ItemDAO.COL_ENTRY_DATE);
+		Item item = Item.Factory.newItem(product, entryDate);
+		item.setExitDate((Date) dto.getValue(ItemDAO.COL_REMOVED_DATE));
+		InventoryManager.Factory.getInventoryManager().addItem(item);
+		return item;
 	}
 
 	@Override
