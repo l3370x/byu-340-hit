@@ -21,6 +21,10 @@ import core.model.exception.HITException;
  * @author aaron
  */
 public class SerializationPersistence implements Persistence {
+	
+	private SerializationPersistence() {
+		
+	}
 
 	/**
 	 * Save the data that the program uses. If there is no data to save, do

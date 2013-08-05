@@ -27,7 +27,7 @@ public class SqlitePersistence implements Persistence {
 	 */
 	@Override
 	public void load() throws HITException {
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -38,6 +38,10 @@ public class SqlitePersistence implements Persistence {
 	public void update() throws HITException {
 		// TODO Auto-generated method stub
 
+	}
+	
+	private SqlitePersistence() {
+		
 	}
 	
 	

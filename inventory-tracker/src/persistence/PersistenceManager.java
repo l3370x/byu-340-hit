@@ -19,10 +19,10 @@ public class PersistenceManager {
 		if (INSTANCE == null) {
 			switch (type) {
 			case serialization:
-				INSTANCE = new SerializationPersistence();
+				INSTANCE = SerializationPersistence.Factory.getPersistenceManager();
 				break;
 			case sqlite:
-				INSTANCE = new SqlitePersistence();
+				INSTANCE = SqlitePersistence.Factory.getPersistenceManager();
 			}
 		}
 	}
