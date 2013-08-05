@@ -3,11 +3,15 @@
  */
 package persistence;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+import java.io.IOException;
+import java.nio.file.*;
 
 import core.model.Category;
 import core.model.InventoryManager;
@@ -25,6 +29,7 @@ import core.model.exception.HITException;
  * 
  */
 public class SqlitePersistence implements Persistence {
+	Map<Integer, ProductContainer> addedContainers;
 
 	private SqlitePersistence() {
 
@@ -38,9 +43,53 @@ public class SqlitePersistence implements Persistence {
 	@Override
 	public void load() throws HITException {
 
+		try {
+			addContainers();
+
+			// add products
+			// TODO add products
+			// add items
+			// TODO add items
+
+		} catch (Exception e) {
+			System.out.println("Database not found/corrupted.  Starting over.");
+			
+			try {
+				resetDatabase();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		
+		} 
+		// add persistence observer to invMan
+		InventoryManager.Factory.getInventoryManager().addObserver(this);
+
+	}
+
+	private void resetDatabase() throws SQLException {
+		deleteDatabaseFile();
+		Connection connection = null;
+		try {
+			connection = TransactionManager.Factory.getTransactionManager().beginTransaction();
+		} catch (HITException e) {
+		} finally {
+			connection.close();
+		}
+		
+	}
+
+	private void deleteDatabaseFile() {
+		String DB_FILE = "inventory-tracker/db/hit.sqlite";
+		try {
+			Files.deleteIfExists(Paths.get(DB_FILE));
+		} catch (IOException e1) {
+		}
+	}
+
+	private void addContainers() throws HITException {
 		// holds added containers in order to add new categories to existing
 		// product containers
-		Map<Integer, ProductContainer> addedContainers = new HashMap<Integer, ProductContainer>();
+		addedContainers = new HashMap<Integer, ProductContainer>();
 
 		// holds unadded containers to add later (this is necessary if a
 		// category is to be loaded without the parent being in memory yet.
@@ -80,14 +129,6 @@ public class SqlitePersistence implements Persistence {
 			}
 		}
 
-		// add products
-		// TODO add products
-		// add items
-		// TODO add items
-
-		// add persistence observer to invMan
-		InventoryManager.Factory.getInventoryManager().addObserver(this);
-
 	}
 
 	private Category newCategoryFromDTO(DataTransferObject dto) throws HITException {
@@ -117,7 +158,6 @@ public class SqlitePersistence implements Persistence {
 		if (false == arg instanceof ModelNotification) {
 			return;
 		}
-		System.out.println("sqlite persistence update");
 		ModelNotification notification = (ModelNotification) arg;
 		Object payload = notification.getContent();
 		switch (notification.getChangeType()) {
