@@ -1,20 +1,27 @@
 
 package gui.main;
 
-import javax.swing.*;
+import gui.common.DialogBox;
+import gui.common.View;
+import gui.inventory.InventoryView;
+import gui.reports.expired.ExpiredReportView;
+import gui.reports.notices.NoticesReportView;
+import gui.reports.productstats.ProductStatsReportView;
+import gui.reports.removed.RemovedReportView;
+import gui.reports.supply.SupplyReportView;
 
-import core.model.PersistenceManager;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
+import persistence.PersistenceManager;
+import persistence.PersistenceType;
 import core.model.exception.HITException;
-
-import java.awt.event.*;
-
-import gui.common.*;
-import gui.inventory.*;
-import gui.reports.expired.*;
-import gui.reports.supply.*;
-import gui.reports.notices.*;
-import gui.reports.productstats.*;
-import gui.reports.removed.*;
 
 
 @SuppressWarnings("serial")
@@ -35,7 +42,6 @@ public final class GUI extends JFrame implements IMainView {
 				try {
 					PersistenceManager.Factory.getPersistenceManager().save();
 				} catch (HITException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				/**/
@@ -47,7 +53,6 @@ public final class GUI extends JFrame implements IMainView {
 		try {
 			PersistenceManager.Factory.getPersistenceManager().load();
 		} catch (HITException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		/**/
@@ -170,6 +175,13 @@ public final class GUI extends JFrame implements IMainView {
     public static void main(final String[] args) {
      	try {
     		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    		if(args.length > 0 && args[0].compareTo("-sql") == 0) {
+    			System.out.println("using sqlite database");
+    			PersistenceManager.setPersistence(PersistenceType.sqlite);
+    		} else {
+    			System.out.println("using serialization");
+    			PersistenceManager.setPersistence(PersistenceType.serialization);
+    		}
     	}
     	catch (Exception e) {
     		e.printStackTrace();

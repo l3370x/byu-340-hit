@@ -12,6 +12,8 @@ import java.util.List;
 
 import core.model.exception.HITException;
 import org.junit.Test;
+
+import persistence.SerializationPersistence;
 /**
  * @author aaron
  *
@@ -27,7 +29,7 @@ public class PersistenceManagerTest {
 	
 	
 	/**
-	 * Test method for {@link core.model.PersistenceManager#save()}.
+	 * Test method for {@link persistence.SerializationPersistence#save()}.
 	 * @throws HITException 
 	 */
 	public void testSave() throws HITException {
@@ -45,11 +47,11 @@ public class PersistenceManagerTest {
 		// s1.addProduct(p1);
 		i.add(s2);
 		// System.out.println("before save " + i.getContents().iterator().next().getName());
-		PersistenceManager.Factory.getPersistenceManager().save();
+		SerializationPersistence.Factory.getPersistenceManager().save();
 	}
 
 	/**
-	 * Test method for {@link core.model.PersistenceManager#load()}.
+	 * Test method for {@link persistence.SerializationPersistence#load()}.
 	 * @throws HITException 
 	 */
 	public void testLoad() throws HITException {
@@ -67,7 +69,7 @@ public class PersistenceManagerTest {
 		
 		assertTrue("make sure the InventoryManager is blank before loading.",i.getContents().iterator().hasNext() == false);
 		assertTrue("make sure List units is clear", units.isEmpty() == true);
-		PersistenceManager.Factory.getPersistenceManager().load();
+		SerializationPersistence.Factory.getPersistenceManager().load();
 		
 		// make list of all storage units
 		it = i.getContents().iterator();
@@ -80,7 +82,7 @@ public class PersistenceManagerTest {
 	}
 
 	/**
-	 * Test method for {@link core.model.PersistenceManager#update()}.
+	 * Test method for {@link persistence.SerializationPersistence#update()}.
 	 */
 	@Test
 	public void testUpdate() {

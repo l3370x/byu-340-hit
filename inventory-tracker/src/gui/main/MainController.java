@@ -1,6 +1,6 @@
 package gui.main;
 
-import core.model.PersistenceManager;
+import persistence.SerializationPersistence;
 import core.model.exception.HITException;
 import gui.common.*;
 
