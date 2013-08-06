@@ -290,6 +290,18 @@ public class SqlitePersistence implements Persistence {
 	private void productAddDAO(Product product) {
 		DataTransferObject productDTO = getDTOFromProduct(product);
 	}
+	
+	private DataTransferObject getDTOFromItem(Item item) {
+		DataTransferObject itemDTO = new DataTransferObject();
+		
+		itemDTO.setValue(ItemDAO.COL_BARCODE, item.getBarCode());
+		itemDTO.setValue(ItemDAO.COL_ENTRY_DATE, item.getEntryDate());
+		itemDTO.setValue(ItemDAO.COL_PROD_BARCODE, item.getProduct().getBarCode());
+		itemDTO.setValue(ItemDAO.COL_PRODUCT_CONTAINER, item.getContainer());
+		itemDTO.setValue(ItemDAO.COL_REMOVED_DATE, item.getExpirationDate());
+		
+		return itemDTO;
+	}
 
 	@Override
 	public void setLastReportRun(Date lastReportRun) throws HITException {
@@ -354,11 +366,10 @@ public class SqlitePersistence implements Persistence {
 			try {
 				Connection conn = manager.beginTransaction();
 				ProductContainer container = (ProductContainer) notification.getContainer();
-				DataTransferObject dto = new DataTransferObject();
-				
+				DataTransferObject dto = getDTOFromItem((Item) payload);
 				ItemDAO dao = new ItemDAO();
-				
 				dao.insert(dto);
+				manager.endTransaction(conn, true);
 			} catch (HITException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
