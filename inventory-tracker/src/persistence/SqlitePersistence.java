@@ -293,10 +293,11 @@ public class SqlitePersistence implements Persistence {
 					.getTransactionManager();
 			try {
 				Connection conn = manager.beginTransaction();
+				ProductContainer container = (ProductContainer) notification.getContainer();
 				DataTransferObject dto = new DataTransferObject();
-				dto.getKeys();
-				// set item values
+				
 				ItemDAO dao = new ItemDAO();
+				
 				dao.insert(dto);
 			} catch (HITException e) {
 				// TODO Auto-generated catch block
