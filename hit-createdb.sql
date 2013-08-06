@@ -21,12 +21,13 @@ create table product
 	size_amt real(3,3),
 	size_unit varchar(255),
 	shelf_life_months int,
+	_3_month_supply int,
 	create_date date not null
 );
 
 create table product_product_container
 (
-	product_id varchar(12) not null constraint fk_product REFERENCES product (barcode),
+	product_id varchar(12) not null constraint fk_product REFERENCES product (barcode) ON DELETE CASCADE,
 	product_container_id INTEGER not null constraint fk_container REFERENCES product_container (id),
 	primary key (product_id, product_container_id)
 );

@@ -1,19 +1,21 @@
 package gui.product;
 
-import java.util.concurrent.ExecutionException;
-import java.util.regex.Pattern;
-
 import core.model.BarCode;
 import core.model.Product;
 import core.model.Quantity;
+import core.model.exception.ExceptionHandler;
+import core.model.exception.HITException;
+import gui.common.Controller;
+import gui.common.IView;
+import gui.common.SizeUnits;
+import gui.common.UnitsConverter;
+
+import javax.swing.*;
+import java.util.regex.Pattern;
+
 import static core.model.InventoryManager.Factory.getInventoryManager;
 import static core.model.Product.Factory.newProduct;
 import static gui.product.ProductDetector.Factory.getProductDetector;
-import core.model.exception.ExceptionHandler;
-import core.model.exception.HITException;
-import gui.common.*;
-
-import javax.swing.*;
 
 /**
  * Controller class for the add item view.
@@ -22,8 +24,8 @@ public class AddProductController extends Controller implements
         IAddProductController {
 
     private final String barcode;
-    private static final Pattern POSITIVE_INTEGER_PATTERN = 
-    Pattern.compile("-?\\d+(\\.\\d+)?");
+    private static final Pattern POSITIVE_INTEGER_PATTERN =
+            Pattern.compile("-?\\d+(\\.\\d+)?");
     private String sizeValue = "0";
     private String shelfLife = "0";
     private String monthSupply = "0";
@@ -31,7 +33,7 @@ public class AddProductController extends Controller implements
     /**
      * Constructor.
      *
-     * @param view Reference to the add product view
+     * @param view    Reference to the add product view
      * @param barcode Barcode for the product being added
      */
     public AddProductController(IView view, String barcode) {
@@ -43,13 +45,14 @@ public class AddProductController extends Controller implements
     //
     // Controller overrides
     //
+
     /**
      * Returns a reference to the view for this controller.
-     *
+     * <p/>
      * {
      *
      * @pre None}
-     *
+     * <p/>
      * {
      * @post Returns a reference to the view for this controller.}
      */
@@ -61,11 +64,11 @@ public class AddProductController extends Controller implements
     /**
      * Sets the enable/disable state of all components in the controller's view. A component should
      * be enabled only if the user is currently allowed to interact with that component.
-     *
+     * <p/>
      * {
      *
      * @pre None}
-     *
+     * <p/>
      * {
      * @post The enable/disable state of all components in the controller's view have been set
      * appropriately.}
@@ -79,11 +82,11 @@ public class AddProductController extends Controller implements
 
     /**
      * Loads data into the controller's view.
-     *
+     * <p/>
      * {
      *
      * @pre None}
-     *
+     * <p/>
      * {
      * @post The controller has loaded data into its view}
      */
@@ -113,6 +116,7 @@ public class AddProductController extends Controller implements
                 }
 
                 _this.getView().enableDescription(true);
+                _this.valuesChanged();
             }
         };
         worker.execute();
@@ -127,6 +131,7 @@ public class AddProductController extends Controller implements
     //
     // IAddProductController overrides
     //
+
     /**
      * This method is called when any of the fields in the add product view is changed by the user.
      */
@@ -151,21 +156,19 @@ public class AddProductController extends Controller implements
         shelfLife = this.getView().getShelfLife();
         // Makes sure the 3 month supply is a number and not blank
         monthSupply = this.getView().getSupply();
-            
-        if(descriptionIsValid(description) == false 
-           || productSizeIsValid(sizeValue) == false 
-           || shelfLifeIsValid(shelfLife) == false 
-           || monthSupplyIsValid(monthSupply) == false)
-        {
-        	this.getView().enableOK(false);
-        	return;
+
+        if (descriptionIsValid(description) == false
+                || productSizeIsValid(sizeValue) == false
+                || shelfLifeIsValid(shelfLife) == false
+                || monthSupplyIsValid(monthSupply) == false) {
+            this.getView().enableOK(false);
+            return;
         }
 
         // If it passes all conditions, enable ok button for adding product
         this.getView().enableOK(true);
-
     }
-    
+
     /**
      * This method is called when the user clicks the "OK" button in the add product view.
      */
@@ -175,7 +178,7 @@ public class AddProductController extends Controller implements
             // Make new product
             final Product product =
                     newProduct(BarCode.getBarCodeFor(this.getView().getBarcode()),
-                    this.getView().getDescription());
+                            this.getView().getDescription());
 
             product.setShelfLifeInMonths(Integer.parseInt(this.getView().getShelfLife()));
             product.set3MonthSupplyQuota(Integer.parseInt(this.getView().getSupply()));
@@ -184,13 +187,13 @@ public class AddProductController extends Controller implements
 
             // add the product to the inventory manager
             getInventoryManager().addProduct(product);
-           
+
         } catch (HITException ex) {
             ExceptionHandler.TO_USER.reportException(ex,
                     "Unable To Create Product");
         }
     }
-    
+
     private boolean productSizeIsValid(String sizeValue) {
         if (null == sizeValue || sizeValue.isEmpty()) {
             return false;
@@ -198,7 +201,7 @@ public class AddProductController extends Controller implements
 
         return POSITIVE_INTEGER_PATTERN.matcher(sizeValue).matches();
     }
-    
+
     private boolean descriptionIsValid(String description) {
         if (null == description || description.isEmpty()) {
             return false;
@@ -206,7 +209,7 @@ public class AddProductController extends Controller implements
 
         return true;
     }
-    
+
     private boolean shelfLifeIsValid(String shelfLife) {
         if (null == shelfLife || shelfLife.isEmpty()) {
             return false;
@@ -214,7 +217,7 @@ public class AddProductController extends Controller implements
 
         return POSITIVE_INTEGER_PATTERN.matcher(shelfLife).matches();
     }
-    
+
     private boolean monthSupplyIsValid(String monthSupply) {
         if (null == monthSupply || monthSupply.isEmpty()) {
             return false;

@@ -30,7 +30,6 @@ public class UPCDatabaseDotOrg extends DefaultHandler2 implements ProductDetecto
     private String barcode;
     private String description = NOT_FOUND;
 
-
     @Override
     public ProductDescriptor getProductDescription(String barcode) {
         InputStream inputStream = null;
@@ -61,7 +60,8 @@ public class UPCDatabaseDotOrg extends DefaultHandler2 implements ProductDetecto
             }
         }
 
-        return new ProductDescriptor(this.barcode, this.description);
+        // use the barcode that was entered rather than the found barcode
+        return new ProductDescriptor(barcode, this.description);
     }
 
     @Override

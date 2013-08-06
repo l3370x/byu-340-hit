@@ -15,6 +15,11 @@ public class RemovedItemsDAO extends AbstractDAO {
     }
 
     @Override
+    public String[] getKeyColumnNames() {
+        return COLUMN_NAMES;
+    }
+
+    @Override
     public String getTableName() {
         return TABLE_NAME;
     }

@@ -22,11 +22,15 @@ import static persistence.TransactionManager.Factory.getTransactionManager;
  * @author Keith McQueen
  */
 public abstract class AbstractDAO {
-    private static final String SELECT_SQL = "select {0} from {1}";
-    private static final String SELECT_SQL_WITH_CONDITION = "select {0} from {1} where {2}";
-
+    private static final String SELECT_SQL = "select {0} from {1}{2}";
     private static final String INSERT_SQL = "insert into {1} ({0}) values ({2})";
+    private static final String UPDATE_SQL = "update {0} set {1}{2}";
+    private static final String DELETE_SQL = "delete from {0}{1}";
 
+    private static final String WHERE = " where ";
+    private static final String AND = " and ";
+    private static final String COMMA = ", ";
+    private static final String CONDITION_EQUAL = "{0} = ?";
 
     /**
      * Get all rows associated with this DAO.
@@ -37,7 +41,7 @@ public abstract class AbstractDAO {
      */
     public Iterable<DataTransferObject> getAll() throws HITException {
         // prepare the query string
-        String query = this.prepareSelectSQL();
+        String query = this.prepareSelectSQL(null);
 
         // begin a transaction (get a connection)
         Connection connection = getTransactionManager().beginTransaction();
@@ -47,6 +51,56 @@ public abstract class AbstractDAO {
         try {
             // prepare the statement
             statement = connection.prepareStatement(query);
+
+            // execute the statement
+            results = statement.executeQuery();
+
+            // prepare the list of data to be returned
+            List<DataTransferObject> data = new ArrayList<>();
+            while (results.next()) {
+                // create the DTO
+                DataTransferObject row = new DataTransferObject();
+
+                // populate the DTO from the results
+                for (String colName : this.getColumnNames()) {
+                    row.setValue(colName, results.getObject(colName));
+                }
+
+                // add the DTO to the result list
+                data.add(row);
+            }
+
+            // return the data
+            return data;
+        } catch (SQLException e) {
+            throw new HITException(ERROR, e);
+        } finally {
+            // end the transaction (no need to commit)
+            getTransactionManager().endTransaction(connection, false);
+
+            // close the statement
+            safeClose(statement);
+
+            // close the result set
+            safeClose(results);
+        }
+    }
+
+    public Iterable<DataTransferObject> get(DataTransferObject dto) throws HITException {
+        // prepare the query string
+        String query = this.prepareSelectSQL(dto);
+
+        // begin a transaction (get a connection)
+        Connection connection = getTransactionManager().beginTransaction();
+
+        PreparedStatement statement = null;
+        ResultSet results = null;
+        try {
+            // prepare the statement
+            statement = connection.prepareStatement(query);
+
+            // bind the statement variables
+            this.bindStatementVariables(statement, this.getKeysAsArray(dto), dto, 1);
 
             // execute the statement
             results = statement.executeQuery();
@@ -101,14 +155,10 @@ public abstract class AbstractDAO {
             statement = connection.prepareStatement(query);
 
             // bind the statement variables
-            String[] columnNames = this.getColumnNames();
-            for (int i = 0; i < columnNames.length; i++) {
-                statement.setObject(i + 1, dto.getValue(columnNames[i]));
-            }
+            this.bindStatementVariables(statement, this.getColumnNames(), dto, 1);
 
-            if (statement.executeUpdate() != 1) {
-                throw new HITException(ERROR, "Unable to insert data into " + this.getTableName());
-            }
+            // execute the statement
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new HITException(ERROR, "Unable to insert data into " + this.getTableName());
         } finally {
@@ -127,7 +177,63 @@ public abstract class AbstractDAO {
      * @throws HITException if the data could not be deleted for any reason
      */
     public void delete(DataTransferObject dto) throws HITException {
+        // prepare the delete query
+        String query = this.prepareDeleteSQL(false);
 
+        // begin a transaction (get a connection)
+        Connection connection = getTransactionManager().beginTransaction();
+
+        PreparedStatement statement = null;
+        try {
+            // prepare the statement
+            statement = connection.prepareStatement(query);
+
+            // bind the statement variables
+            this.bindStatementVariables(statement, this.getKeyColumnNames(), dto, 1);
+
+            // execute the statement
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new HITException(ERROR, "Unable to delete data from " + this.getTableName());
+        } finally {
+            // end the transaction
+            getTransactionManager().endTransaction(connection, true);
+
+            // close the statement
+            safeClose(statement);
+        }
+    }
+
+    /**
+     * Delete all data associated with this DAO.
+     *
+     * @throws HITException
+     */
+    public void deleteAll() throws HITException {
+        // prepare the delete query
+        String query = this.prepareDeleteSQL(true);
+
+        System.out.println(query);
+
+        // begin a transaction (get a connection)
+        Connection connection = getTransactionManager().beginTransaction();
+
+        PreparedStatement statement = null;
+        try {
+            // prepare the statement
+            statement = connection.prepareStatement(query);
+
+            // execute the statement
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new HITException(ERROR, "Unable to delete data from " + this.getTableName());
+        } finally {
+            // end the transaction
+            getTransactionManager().endTransaction(connection, true);
+
+            // close the statement
+            safeClose(statement);
+        }
     }
 
     /**
@@ -137,7 +243,39 @@ public abstract class AbstractDAO {
      * @throws HITException if the data could not be updated for any reason
      */
     public void update(DataTransferObject dto) throws HITException {
+        // prepare the delete query
+        String query = this.prepareUpdateSQL();
 
+        // begin a transaction (get a connection)
+        Connection connection = getTransactionManager().beginTransaction();
+
+        PreparedStatement statement = null;
+        try {
+            // prepare the statement
+            statement = connection.prepareStatement(query);
+
+            // bind the statement variables
+            this.bindStatementVariables(
+                    statement,
+                    this.getColumnNames(),
+                    dto,
+                    1);
+            this.bindStatementVariables(
+                    statement,
+                    this.getKeyColumnNames(),
+                    dto,
+                    this.getColumnNames().length + 1);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new HITException(ERROR, "Unable to delete data from " + this.getTableName());
+        } finally {
+            // end the transaction
+            getTransactionManager().endTransaction(connection, true);
+
+            // close the statement
+            safeClose(statement);
+        }
     }
 
     /**
@@ -149,19 +287,43 @@ public abstract class AbstractDAO {
     public abstract String[] getColumnNames();
 
     /**
+     * Get the column names that are used as keys in this DAO.  These are used to update and delete
+     * data based on the key column.
+     *
+     * @return an array of the column names used as keys with this DAO
+     */
+    public abstract String[] getKeyColumnNames();
+
+    /**
      * Get the table name associated with this DAO.
      *
      * @return the table name associated with this DAO
      */
     public abstract String getTableName();
 
-    private String prepareSelectSQL() {
+    private String prepareSelectSQL(DataTransferObject dto) {
         // prepare the column list
         String columnList = Arrays.toString(this.getColumnNames());
         columnList = columnList.replace("[", "");
         columnList = columnList.replace("]", "");
 
-        return format(SELECT_SQL, columnList, this.getTableName());
+        return format(
+                SELECT_SQL,
+                columnList,
+                this.getTableName(),
+                (null == dto ? "" : this.getKeysAsArray(dto)));
+    }
+
+    private String[] getKeysAsArray(DataTransferObject dto) {
+        String[] keyColumns = new String[0];
+        if (null != dto) {
+            List<String> keyColumnList = new ArrayList<>();
+            for (String keyColumn : dto.getKeys()) {
+                keyColumnList.add(keyColumn);
+            }
+            keyColumns = keyColumnList.toArray(new String[keyColumnList.size()]);
+        }
+        return keyColumns;
     }
 
     private String prepareInsertSQL() {
@@ -172,12 +334,61 @@ public abstract class AbstractDAO {
         columnList = columnList.replace("]", "");
 
         // prepare the placeholders string
-        String[] placholders = new String[columnNames.length];
-        Arrays.fill(placholders, "?");
-        String placeholdersText = Arrays.toString(placholders);
+        String[] placeholders = new String[columnNames.length];
+        Arrays.fill(placeholders, "?");
+        String placeholdersText = Arrays.toString(placeholders);
         placeholdersText = placeholdersText.replace("[", "");
         placeholdersText = placeholdersText.replace("]", "");
 
         return format(INSERT_SQL, columnList, this.getTableName(), placeholdersText);
     }
+
+    private String prepareDeleteSQL(boolean all) {
+        // prepare the condition(s)
+        return format(
+                DELETE_SQL,
+                this.getTableName(),
+                (all ? "" : this.prepareWhereClause(this.getKeyColumnNames())));
+    }
+
+    private String prepareUpdateSQL() {
+        // prepare the update clause
+        String updateClause = "";
+        for (String columnName : this.getColumnNames()) {
+            if (false == updateClause.isEmpty()) {
+                updateClause += COMMA;
+            }
+
+            updateClause += format(CONDITION_EQUAL, columnName);
+        }
+
+        return format(
+                UPDATE_SQL,
+                this.getTableName(),
+                updateClause,
+                this.prepareWhereClause(this.getKeyColumnNames()));
+    }
+
+    private String prepareWhereClause(String[] keyColumns) {
+        String conditionString = WHERE;
+        for (String keyColumn : keyColumns) {
+            if (false == WHERE.equals(conditionString)) {
+                conditionString += AND;
+            }
+
+            conditionString += format(CONDITION_EQUAL, keyColumn);
+        }
+        return conditionString;
+    }
+
+    private void bindStatementVariables(
+            PreparedStatement statement,
+            String[] columnNames,
+            DataTransferObject dto,
+            int offset) throws SQLException {
+        for (int i = 0; i < columnNames.length; i++) {
+            statement.setObject(i + offset, dto.getValue(columnNames[i]));
+        }
+    }
+
 }
