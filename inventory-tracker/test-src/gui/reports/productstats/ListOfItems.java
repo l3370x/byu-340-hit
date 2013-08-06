@@ -7,6 +7,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Observer;
 
+/**
+ * @author Cameron Jones
+ * @author Keith McQueen
+ */
 public class ListOfItems {
     ItemCollection currentItems = new ItemCollection(null);
     ItemCollection removedItems = new ItemCollection(null);
