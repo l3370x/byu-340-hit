@@ -22,34 +22,26 @@ public class GoogleSearch implements ProductDetector {
 	private String endURL = "&key=AIzaSyA3HGkxPt8OOHig-8LlSGCXsStC2H-HEC8"
 			+ "&maxResults=1&fields=totalItems,items";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gui.product.ProductDetector#getProductDescription(java.lang.String)
-	 */
 	@Override
 	public ProductDescriptor getProductDescription(String barcode) {
 		String description = "";
 		if (barcode.matches("[0-9]+") && barcode.length() > 6) {
 
 			try {
-				URL url = new URL(baseURL + URLEncoder.encode(barcode, "UTF-8")
-						+ endURL);
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(url.openStream()));
+				URL url = new URL(baseURL + URLEncoder.encode(barcode, "UTF-8") + endURL);
+				BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openStream()));
 				String line;
 
-				while ((line = reader.readLine()) != null) {
+				while ((line = rdr.readLine()) != null) {
 					// yes, this might be the lazy way
 					if (line.contains("\"description\": ")) {
 						description = line.substring(20, line.length() - 3);
 					}
 				}
-				reader.close();
+				rdr.close();
 
 			} catch (MalformedURLException e) {
-				ExceptionHandler.TO_LOG.reportException(e,
-						"Error making url to www.google.com");
+				ExceptionHandler.TO_LOG.reportException(e, "Error passing url to www.google.com");
 			} catch (IOException e) {
 				ExceptionHandler.TO_LOG.reportException(e,
 						"Error reading input stream from www.google.com");

@@ -3,12 +3,16 @@
  */
 package persistence;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+import java.io.IOException;
+import java.nio.file.*;
 
 import core.model.BarCode;
 import core.model.Category;
@@ -27,6 +31,7 @@ import core.model.exception.HITException;
  * 
  */
 public class SqlitePersistence implements Persistence {
+	Map<Integer, ProductContainer> addedContainers;
 
 	private SqlitePersistence() {
 
@@ -40,9 +45,58 @@ public class SqlitePersistence implements Persistence {
 	@Override
 	public void load() throws HITException {
 
+		try {
+			addContainers();
+
+			// add products
+			// TODO add products
+			// add items
+			ItemDAO itemDAO = new ItemDAO();
+			Iterable<DataTransferObject> data = itemDAO.getAll();
+			
+			for (DataTransferObject dto : data) {
+				addItemFromDTO(dto);
+			}
+
+		} catch (Exception e) {
+			System.out.println("Database not found/corrupted.  Starting over.");
+			
+			try {
+				resetDatabase();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		
+		} 
+		// add persistence observer to invMan
+		InventoryManager.Factory.getInventoryManager().addObserver(this);
+
+	}
+
+	private void resetDatabase() throws SQLException {
+		deleteDatabaseFile();
+		Connection connection = null;
+		try {
+			connection = TransactionManager.Factory.getTransactionManager().beginTransaction();
+		} catch (HITException e) {
+		} finally {
+			connection.close();
+		}
+		
+	}
+
+	private void deleteDatabaseFile() {
+		String DB_FILE = "inventory-tracker/db/hit.sqlite";
+		try {
+			Files.deleteIfExists(Paths.get(DB_FILE));
+		} catch (IOException e1) {
+		}
+	}
+
+	private void addContainers() throws HITException {
 		// holds added containers in order to add new categories to existing
 		// product containers
-		Map<Integer, ProductContainer> addedContainers = new HashMap<Integer, ProductContainer>();
+		addedContainers = new HashMap<Integer, ProductContainer>();
 
 		// holds unadded containers to add later (this is necessary if a
 		// category is to be loaded without the parent being in memory yet.
@@ -82,17 +136,6 @@ public class SqlitePersistence implements Persistence {
 			}
 		}
 
-		// add products
-		// TODO add products
-		// add items
-		// TODO add items
-		ItemDAO itemDAO = new ItemDAO();
-		data = itemDAO.getAll();
-		
-		for (DataTransferObject dto : data) {
-			Item item = addItemFromDTO(dto);
-		}
-
 		// add persistence observer to invMan
 		InventoryManager.Factory.getInventoryManager().addObserver(this);
 
@@ -120,14 +163,14 @@ public class SqlitePersistence implements Persistence {
 		return su;
 	}
 	
-	private Item addItemFromDTO(DataTransferObject dto) throws HITException {
+	private void addItemFromDTO(DataTransferObject dto) throws HITException {
 		String productBarCode = (String) dto.getValue(ItemDAO.COL_PROD_BARCODE);
 		Product product = Product.Factory.newProduct(BarCode.getBarCodeFor(productBarCode));
 		Date entryDate = (Date) dto.getValue(ItemDAO.COL_ENTRY_DATE);
 		Item item = Item.Factory.newItem(product, entryDate);
 		item.setExitDate((Date) dto.getValue(ItemDAO.COL_REMOVED_DATE));
-		InventoryManager.Factory.getInventoryManager().addItem(item);
-		return item;
+		int productContainerID = (Integer) dto.getValue(ItemDAO.COL_PRODUCT_CONTAINER);
+		addedContainers.get(productContainerID).addItem(item);
 	}
 
 	@Override
@@ -135,12 +178,22 @@ public class SqlitePersistence implements Persistence {
 		if (false == arg instanceof ModelNotification) {
 			return;
 		}
-		System.out.println("sqlite persistence update");
 		ModelNotification notification = (ModelNotification) arg;
 		Object payload = notification.getContent();
 		switch (notification.getChangeType()) {
 		case ITEM_ADDED:
-			System.out.println("item added " + ((Item) payload).getProduct().getDescription());
+			TransactionManager manager = TransactionManager.Factory.getTransactionManager();
+			try {
+				manager.beginTransaction();
+				DataTransferObject dto = new DataTransferObject();
+				//set item values
+				ItemDAO dao = new ItemDAO();
+				dao.insert(dto);
+			} catch (HITException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			break;
 
 		case ITEM_REMOVED:
