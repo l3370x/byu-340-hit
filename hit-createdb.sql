@@ -43,6 +43,7 @@ create table item
 
 create table removed_items_report
 (
+	id INTEGER not null primary key,
 	last_report_run date
 );
 
