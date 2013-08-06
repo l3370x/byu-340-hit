@@ -1,715 +1,432 @@
 package gui.reports.productstats;
 
-import static org.junit.Assert.*;
+import org.junit.*;
 
-import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Observer;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import core.model.BarCode;
-import core.model.Product;
-import core.model.ProductContainer;
-import core.model.Quantity;
-import core.model.StorageUnit;
-import core.model.exception.HITException;
+import static gui.reports.productstats.ProductStatsCalculator.Factory.newProductStatsCalculator;
 
 public class ProductStatsCalculatorImplTest {
 
-	ProductStatsCalculator calc = ProductStatsCalculator.Factory
-			.newProductStatsCalculator();
-	ListOfItems list = new ListOfItems();
-	Calendar cal = Calendar.getInstance();
-	Product product = new MockProduct();
-
-	static PrintStream out;
-
-	@SuppressWarnings("serial")
-	class MockProduct implements Product {
-
-		@SuppressWarnings("rawtypes")
-		@Override
-		public void wasAddedTo(ProductContainer container) throws HITException {
-
-		}
-
-		@SuppressWarnings("rawtypes")
-		@Override
-		public void wasRemovedFrom(ProductContainer container)
-				throws HITException {
-
-		}
-
-		@SuppressWarnings("rawtypes")
-		@Override
-		public void transfer(ProductContainer from, ProductContainer to)
-				throws HITException {
-
-		}
-
-		@SuppressWarnings("rawtypes")
-		@Override
-		public ProductContainer getContainer() {
-
-			return null;
-		}
-
-		@Override
-		public Date getCreationDate() {
-			Calendar c = Calendar.getInstance();
-			c.add(Calendar.MONTH, -18);
-			return c.getTime();
-		}
-
-		@Override
-		public BarCode getBarCode() {
-
-			return null;
-		}
-
-		@Override
-		public String getDescription() {
-
-			return null;
-		}
-
-		@Override
-		public void setDescription(String description) {
-
-		}
-
-		@Override
-		public Quantity getSize() {
-
-			return null;
-		}
-
-		@Override
-		public void setSize(Quantity quantity) {
-
-		}
-
-		@Override
-		public void setCreationDate(Date d) {
-
-		}
-
-		@Override
-		public int getShelfLifeInMonths() {
-
-			return 0;
-		}
-
-		@Override
-		public void setShelfLifeInMonths(int shelfLife) throws HITException {
-
-		}
-
-		@Override
-		public int get3MonthSupplyQuota() {
-
-			return 0;
-		}
-
-		@Override
-		public void set3MonthSupplyQuota(int quota) throws HITException {
-
-		}
-
-		@Override
-		public Iterable<StorageUnit> getStorageUnits() {
-
-			return null;
-		}
-
-		@SuppressWarnings("rawtypes")
-		@Override
-		public Iterable<ProductContainer> getProductContainers() {
-
-			return null;
-		}
-
-		@SuppressWarnings("rawtypes")
-		@Override
-		public ProductContainer getProductContainer(StorageUnit unit) {
-
-			return null;
-		}
-
-		@Override
-		public void addObs(Observer o) {
-
-		}
-
-	}
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		out = new PrintStream(new FileOutputStream("output.txt"));
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		list = new ListOfItems();
-		cal.setTime(new Date());
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-
-	@Test
-	public void testCalculateCurrentSupply1Month() {
-		cal.add(Calendar.MONTH, -1);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Current Supply: 1 month = "
-				+ calc.calculateCurrentSupply());
-	}
-
-	@Test
-	public void testCalculateCurrentSupply3Month() {
-		cal.add(Calendar.MONTH, -3);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Current Supply: 3 month = "
-				+ calc.calculateCurrentSupply());
-	}
-
-	@Test
-	public void testCalculateCurrentSupply6Month() {
-		cal.add(Calendar.MONTH, -6);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Current Supply: 6 month = "
-				+ calc.calculateCurrentSupply());
-	}
-
-	@Test
-	public void testCalculateCurrentSupply9Month() {
-		cal.add(Calendar.MONTH, -9);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Current Supply: 9 month = "
-				+ calc.calculateCurrentSupply());
-	}
-
-	@Test
-	public void testCalculateCurrentSupply12Month() {
-		cal.add(Calendar.MONTH, -12);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Current Supply: 12 month = "
-				+ calc.calculateCurrentSupply());
-	}
-
-	@Test
-	public void testCalculateCurrentSupply24Month() {
-		cal.add(Calendar.MONTH, -24);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Current Supply: 24 month = "
-				+ calc.calculateCurrentSupply());
-	}
-
-	@Test
-	public void testCalculateAverageSupply1Month() {
-		cal.add(Calendar.MONTH, -1);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Supply: 1 month = "
-				+ calc.calculateAverageSupply());
-	}
-
-	@Test
-	public void testCalculateAverageSupply3Month() {
-		cal.add(Calendar.MONTH, -3);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Supply: 3 month = "
-				+ calc.calculateAverageSupply());
-	}
-
-	@Test
-	public void testCalculateAverageSupply6Month() {
-		cal.add(Calendar.MONTH, -6);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Supply: 6 month = "
-				+ calc.calculateAverageSupply());
-	}
-
-	@Test
-	public void testCalculateAverageSupply9Month() {
-		cal.add(Calendar.MONTH, -9);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Supply: 9 month = "
-				+ calc.calculateAverageSupply());
-	}
-
-	@Test
-	public void testCalculateAverageSupply12Month() {
-		cal.add(Calendar.MONTH, -12);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Supply: 12 month = "
-				+ calc.calculateAverageSupply());
-	}
-
-	@Test
-	public void testCalculateAverageSupply24Month() {
-		cal.add(Calendar.MONTH, -24);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Supply: 24 month = "
-				+ calc.calculateAverageSupply());
-	}
-
-	@Test
-	public void testCalculateMinimumSupply1Month() {
-		cal.add(Calendar.MONTH, -1);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Minimum Supply: 1 month = "
-				+ calc.calculateMinimumSupply());
-	}
-
-	@Test
-	public void testCalculateMinimumSupply3Month() {
-		cal.add(Calendar.MONTH, -3);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Minimum Supply: 3 month = "
-				+ calc.calculateMinimumSupply());
-	}
-
-	@Test
-	public void testCalculateMinimumSupply6Month() {
-		cal.add(Calendar.MONTH, -6);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Minimum Supply: 6 month = "
-				+ calc.calculateMinimumSupply());
-	}
-
-	@Test
-	public void testCalculateMinimumSupply9Month() {
-		cal.add(Calendar.MONTH, -9);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Minimum Supply: 9 month = "
-				+ calc.calculateMinimumSupply());
-	}
-
-	@Test
-	public void testCalculateMinimumSupply12Month() {
-		cal.add(Calendar.MONTH, -12);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Minimum Supply: 12 month = "
-				+ calc.calculateMinimumSupply());
-	}
-
-	@Test
-	public void testCalculateMinimumSupply24Month() {
-		cal.add(Calendar.MONTH, -24);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Minimum Supply: 24 month = "
-				+ calc.calculateMinimumSupply());
-	}
-
-	@Test
-	public void testCalculateMaximumSupply1Month() {
-		cal.add(Calendar.MONTH, -1);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Supply: 1 month = "
-				+ calc.calculateMaximumSupply());
-	}
-
-	@Test
-	public void testCalculateMaximumSupply3Month() {
-		cal.add(Calendar.MONTH, -3);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Supply: 3 month = "
-				+ calc.calculateMaximumSupply());
-	}
-
-	@Test
-	public void testCalculateMaximumSupply6Month() {
-		cal.add(Calendar.MONTH, -6);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Supply: 6 month = "
-				+ calc.calculateMaximumSupply());
-	}
-
-	@Test
-	public void testCalculateMaximumSupply9Month() {
-		cal.add(Calendar.MONTH, -9);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Supply: 9 month = "
-				+ calc.calculateMaximumSupply());
-	}
-
-	@Test
-	public void testCalculateMaximumSupply12Month() {
-		cal.add(Calendar.MONTH, -12);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Supply: 12 month = "
-				+ calc.calculateMaximumSupply());
-	}
-
-	@Test
-	public void testCalculateMaximumSupply24Month() {
-		cal.add(Calendar.MONTH, -24);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Supply: 24 month = "
-				+ calc.calculateMaximumSupply());
-	}
-
-	@Test
-	public void testCalculateItemsUsed1Month() {
-		cal.add(Calendar.MONTH, -1);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Items used: 1 month = " + calc.calculateItemsUsed());
-	}
-
-	@Test
-	public void testCalculateItemsUsed3Month() {
-		cal.add(Calendar.MONTH, -3);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Items used: 3 month = " + calc.calculateItemsUsed());
-	}
-
-	@Test
-	public void testCalculateItemsUsed6Month() {
-		cal.add(Calendar.MONTH, -6);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Items used: 6 month = " + calc.calculateItemsUsed());
-	}
-
-	@Test
-	public void testCalculateItemsUsed9Month() {
-		cal.add(Calendar.MONTH, -9);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Items used: 9 month = " + calc.calculateItemsUsed());
-	}
-
-	@Test
-	public void testCalculateItemsUsed12Month() {
-		cal.add(Calendar.MONTH, -12);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Items used: 12 month = " + calc.calculateItemsUsed());
-	}
-
-	@Test
-	public void testCalculateItemsUsed24Month() {
-		cal.add(Calendar.MONTH, -24);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Items used: 24 month = " + calc.calculateItemsUsed());
-	}
-
-	@Test
-	public void testCalculateItemsAdded1Month() {
-		cal.add(Calendar.MONTH, -1);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Items added: 1 month = " + calc.calculateItemsAdded());
-	}
-
-	@Test
-	public void testCalculateItemsAdded3Month() {
-		cal.add(Calendar.MONTH, -3);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Items added: 3 month = " + calc.calculateItemsAdded());
-	}
-
-	@Test
-	public void testCalculateItemsAdded6Month() {
-		cal.add(Calendar.MONTH, -6);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Items added: 6 month = " + calc.calculateItemsAdded());
-	}
-
-	@Test
-	public void testCalculateItemsAdded9Month() {
-		cal.add(Calendar.MONTH, -9);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Items added: 9 month = " + calc.calculateItemsAdded());
-	}
-
-	@Test
-	public void testCalculateItemsAdded12Month() {
-		cal.add(Calendar.MONTH, -12);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Items added: 12 month = " + calc.calculateItemsAdded());
-	}
-
-	@Test
-	public void testCalculateItemsAdded24Month() {
-		cal.add(Calendar.MONTH, -24);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Items added: 24 month = " + calc.calculateItemsAdded());
-	}
-
-	@Test
-	public void testCalculateAverageAgeUsed1Month() {
-		cal.add(Calendar.MONTH, -1);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Age Used: 1 month = "
-				+ calc.calculateAverageAgedCurrent());
-	}
-
-	@Test
-	public void testCalculateAverageAgeUsed3Month() {
-		cal.add(Calendar.MONTH, -3);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Age Used: 3 month = "
-				+ calc.calculateAverageAgedCurrent());
-	}
-
-	@Test
-	public void testCalculateAverageAgeUsed6Month() {
-		cal.add(Calendar.MONTH, -6);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Age Used: 6 month = "
-				+ calc.calculateAverageAgedCurrent());
-	}
-
-	@Test
-	public void testCalculateAverageAgeUsed9Month() {
-		cal.add(Calendar.MONTH, -9);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Age Used: 9 month = "
-				+ calc.calculateAverageAgedCurrent());
-	}
-
-	@Test
-	public void testCalculateAverageAgeUsed12Month() {
-		cal.add(Calendar.MONTH, -12);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Age Used: 12 month = "
-				+ calc.calculateAverageAgedCurrent());
-	}
-
-	@Test
-	public void testCalculateAverageAgeUsed24Month() {
-		cal.add(Calendar.MONTH, -24);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Age Used: 24 month = "
-				+ calc.calculateAverageAgedCurrent());
-	}
-
-	@Test
-	public void testCalculateMaximumAgeUsed1Month() {
-		cal.add(Calendar.MONTH, -1);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Age Used: 1 month = "
-				+ calc.calculateMaximumAgeUsed());
-	}
-
-	@Test
-	public void testCalculateMaximumAgeUsed3Month() {
-		cal.add(Calendar.MONTH, -3);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Age Used: 3 month = "
-				+ calc.calculateMaximumAgeUsed());
-	}
-
-	@Test
-	public void testCalculateMaximumAgeUsed6Month() {
-		cal.add(Calendar.MONTH, -6);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Age Used: 6 month = "
-				+ calc.calculateMaximumAgeUsed());
-	}
-
-	@Test
-	public void testCalculateMaximumAgeUsed9Month() {
-		cal.add(Calendar.MONTH, -9);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Age Used: 9 month = "
-				+ calc.calculateMaximumAgeUsed());
-	}
-
-	@Test
-	public void testCalculateMaximumAgeUsed12Month() {
-		cal.add(Calendar.MONTH, -12);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Age Used: 12 month = "
-				+ calc.calculateMaximumAgeUsed());
-	}
-
-	@Test
-	public void testCalculateMaximumAgeUsed24Month() {
-		cal.add(Calendar.MONTH, -24);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Age Used: 24 month = "
-				+ calc.calculateMaximumAgeUsed());
-	}
-
-	@Test
-	public void testCalculateAverageAgedCurrent1Month() {
-		cal.add(Calendar.MONTH, -1);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Age Current: 1 month = "
-				+ calc.calculateAverageAgedCurrent());
-	}
-
-	@Test
-	public void testCalculateAverageAgedCurrent3Month() {
-		cal.add(Calendar.MONTH, -3);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Age Current: 3 month = "
-				+ calc.calculateAverageAgedCurrent());
-	}
-
-	@Test
-	public void testCalculateAverageAgedCurrent6Month() {
-		cal.add(Calendar.MONTH, -6);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Age Current: 6 month = "
-				+ calc.calculateAverageAgedCurrent());
-	}
-
-	@Test
-	public void testCalculateAverageAgedCurrent9Month() {
-		cal.add(Calendar.MONTH, -9);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Age Current: 9 month = "
-				+ calc.calculateAverageAgedCurrent());
-	}
-
-	@Test
-	public void testCalculateAverageAgedCurrent12Month() {
-		cal.add(Calendar.MONTH, -12);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Age Current: 12 month = "
-				+ calc.calculateAverageAgedCurrent());
-	}
-
-	@Test
-	public void testCalculateAverageAgedCurrent24Month() {
-		cal.add(Calendar.MONTH, -24);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Average Age Current: 24 month = "
-				+ calc.calculateAverageAgedCurrent());
-	}
-
-	@Test
-	public void testCalculateMaximumAgeCurrent1Month() {
-		cal.add(Calendar.MONTH, -1);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Age Current: 1 month = "
-				+ calc.calculateMaximumAgeCurrent());
-	}
-
-	@Test
-	public void testCalculateMaximumAgeCurrent3Month() {
-		cal.add(Calendar.MONTH, -3);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Age Current: 3 month = "
-				+ calc.calculateMaximumAgeCurrent());
-	}
-
-	@Test
-	public void testCalculateMaximumAgeCurrent6Month() {
-		cal.add(Calendar.MONTH, -6);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Age Current: 6 month = "
-				+ calc.calculateMaximumAgeCurrent());
-	}
-
-	@Test
-	public void testCalculateMaximumAgeCurrent9Month() {
-		cal.add(Calendar.MONTH, -9);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Age Current: 9 month = "
-				+ calc.calculateMaximumAgeCurrent());
-	}
-
-	@Test
-	public void testCalculateMaximumAgeCurrent12Month() {
-		cal.add(Calendar.MONTH, -12);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Age Current: 12 month = "
-				+ calc.calculateMaximumAgeCurrent());
-	}
-
-	@Test
-	public void testCalculateMaximumAgeCurrent24Month() {
-		cal.add(Calendar.MONTH, -24);
-		calc.setValues(cal.getTime(), list.returnCurrent(),
-				list.returnRemoved(), product);
-		out.println("Maximum Age Current: 24 month = "
-				+ calc.calculateMaximumAgeCurrent());
-	}
-
-	// @Test
-	// public void testCalculateDayDifference() {
-	// fail("Not yet implemented");
-	// }
-	//
-	// @Test
-	// public void testGetEarliestDate() {
-	// fail("Not yet implemented");
-	// }
-	//
-	// @Test
-	// public void testGetLatestDate() {
-	// fail("Not yet implemented");
-	// }
+    ProductStatsCalculator calc;
+    ListOfItems list = new ListOfItems();
+    Calendar cal = Calendar.getInstance();
+
+    static PrintStream out;
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        //out = new PrintStream(new FileOutputStream("output.txt"));
+        out = System.out;
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        list = new ListOfItems();
+        cal.setTime(new Date());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
+
+    @Test
+    public void testCalculateCurrentSupply1Month() {
+        this.testCalculateCurrentSupply(1);
+    }
+
+    @Test
+    public void testCalculateCurrentSupply3Month() {
+        this.testCalculateCurrentSupply(3);
+    }
+
+    @Test
+    public void testCalculateCurrentSupply6Month() {
+        this.testCalculateCurrentSupply(6);
+    }
+
+    @Test
+    public void testCalculateCurrentSupply9Month() {
+        this.testCalculateCurrentSupply(9);
+    }
+
+    @Test
+    public void testCalculateCurrentSupply12Month() {
+        this.testCalculateCurrentSupply(12);
+    }
+
+    @Test
+    public void testCalculateCurrentSupply24Month() {
+        this.testCalculateCurrentSupply(24);
+    }
+
+    private void testCalculateCurrentSupply(int months) {
+        cal.add(Calendar.MONTH, -months);
+        calc = newProductStatsCalculator(cal.getTime(), list.returnCurrent(),
+                list.returnRemoved());
+        out.println("Current Supply: " + months + " month = "
+                + calc.currentSupply());
+    }
+
+    @Test
+    public void testCalculateAverageSupply1Month() {
+        this.testCalculateAverageSupply(1);
+    }
+
+    @Test
+    public void testCalculateAverageSupply3Month() {
+        this.testCalculateAverageSupply(3);
+    }
+
+    @Test
+    public void testCalculateAverageSupply6Month() {
+        this.testCalculateAverageSupply(6);
+    }
+
+    @Test
+    public void testCalculateAverageSupply9Month() {
+        this.testCalculateAverageSupply(9);
+    }
+
+    @Test
+    public void testCalculateAverageSupply12Month() {
+        this.testCalculateAverageSupply(12);
+    }
+
+    @Test
+    public void testCalculateAverageSupply24Month() {
+        this.testCalculateAverageSupply(24);
+    }
+
+    private void testCalculateAverageSupply(int months) {
+        cal.add(Calendar.MONTH, -months);
+        calc = newProductStatsCalculator(cal.getTime(), list.returnCurrent(),
+                list.returnRemoved());
+        out.println("Average Supply: " + months + " month = "
+                + calc.averageSupply());
+    }
+
+    @Test
+    public void testCalculateMinimumSupply1Month() {
+        this.testCalculateMinimumSupply(1);
+    }
+
+    @Test
+    public void testCalculateMinimumSupply3Month() {
+        this.testCalculateMinimumSupply(3);
+    }
+
+    @Test
+    public void testCalculateMinimumSupply6Month() {
+        this.testCalculateMinimumSupply(6);
+    }
+
+    @Test
+    public void testCalculateMinimumSupply9Month() {
+        this.testCalculateMinimumSupply(9);
+    }
+
+    @Test
+    public void testCalculateMinimumSupply12Month() {
+        this.testCalculateMinimumSupply(12);
+    }
+
+    @Test
+    public void testCalculateMinimumSupply24Month() {
+        this.testCalculateMinimumSupply(24);
+    }
+
+    private void testCalculateMinimumSupply(int months) {
+        cal.add(Calendar.MONTH, -months);
+        calc = newProductStatsCalculator(cal.getTime(), list.returnCurrent(),
+                list.returnRemoved());
+        out.println("Minimum Supply: " + months + " month = "
+                + calc.minimumSupply());
+    }
+
+    @Test
+    public void testCalculateMaximumSupply1Month() {
+        this.testCalculateMaxSupply(1);
+    }
+
+    @Test
+    public void testCalculateMaximumSupply3Month() {
+        this.testCalculateMaxSupply(3);
+    }
+
+    @Test
+    public void testCalculateMaximumSupply6Month() {
+        this.testCalculateMaxSupply(6);
+    }
+
+    @Test
+    public void testCalculateMaximumSupply9Month() {
+        this.testCalculateMaxSupply(9);
+    }
+
+    @Test
+    public void testCalculateMaximumSupply12Month() {
+        this.testCalculateMaxSupply(12);
+    }
+
+    @Test
+    public void testCalculateMaximumSupply24Month() {
+        this.testCalculateMaxSupply(24);
+    }
+
+    private void testCalculateMaxSupply(int months) {
+        cal.add(Calendar.MONTH, -months);
+        calc = newProductStatsCalculator(cal.getTime(), list.returnCurrent(),
+                list.returnRemoved());
+        out.println("Maximum Supply: " + months + " month = "
+                + calc.maximumSupply());
+    }
+
+    @Test
+    public void testCalculateItemsUsed1Month() {
+        this.testCalculateItemsUsed(1);
+    }
+
+    @Test
+    public void testCalculateItemsUsed3Month() {
+        this.testCalculateItemsUsed(3);
+    }
+
+    @Test
+    public void testCalculateItemsUsed6Month() {
+        this.testCalculateItemsUsed(6);
+    }
+
+    @Test
+    public void testCalculateItemsUsed9Month() {
+        this.testCalculateItemsUsed(9);
+    }
+
+    @Test
+    public void testCalculateItemsUsed12Month() {
+        this.testCalculateItemsUsed(12);
+    }
+
+    @Test
+    public void testCalculateItemsUsed24Month() {
+        this.testCalculateItemsUsed(24);
+    }
+
+    private void testCalculateItemsUsed(int m) {
+        cal.add(Calendar.MONTH, -m);
+        calc = newProductStatsCalculator(cal.getTime(), list.returnCurrent(),
+                list.returnRemoved());
+        out.println("Items used: " + m + " month = " + calc.itemsUsed());
+    }
+
+    @Test
+    public void testCalculateItemsAdded1Month() {
+        this.testCalculateItemsAdded(1);
+    }
+
+    @Test
+    public void testCalculateItemsAdded3Month() {
+        this.testCalculateItemsAdded(3);
+    }
+
+    @Test
+    public void testCalculateItemsAdded6Month() {
+        this.testCalculateItemsAdded(6);
+    }
+
+    @Test
+    public void testCalculateItemsAdded9Month() {
+        this.testCalculateItemsAdded(9);
+    }
+
+    @Test
+    public void testCalculateItemsAdded12Month() {
+        this.testCalculateItemsAdded(12);
+    }
+
+    @Test
+    public void testCalculateItemsAdded24Month() {
+        this.testCalculateItemsAdded(24);
+    }
+
+    private void testCalculateItemsAdded(int m) {
+        cal.add(Calendar.MONTH, -m);
+        calc = newProductStatsCalculator(cal.getTime(), list.returnCurrent(),
+                list.returnRemoved());
+        out.println("Items added: " + m + " month = " + calc.itemsAdded());
+    }
+
+    @Test
+    public void testCalculateAverageAgeUsed1Month() {
+        this.testCalculateAverageAgeUsed(1);
+    }
+
+    @Test
+    public void testCalculateAverageAgeUsed3Month() {
+        this.testCalculateAverageAgeUsed(3);
+    }
+
+    @Test
+    public void testCalculateAverageAgeUsed6Month() {
+        this.testCalculateAverageAgeUsed(6);
+    }
+
+    @Test
+    public void testCalculateAverageAgeUsed9Month() {
+        this.testCalculateAverageAgeUsed(9);
+    }
+
+    @Test
+    public void testCalculateAverageAgeUsed12Month() {
+        this.testCalculateAverageAgeUsed(12);
+    }
+
+    @Test
+    public void testCalculateAverageAgeUsed24Month() {
+        this.testCalculateAverageAgeUsed(24);
+    }
+
+    private void testCalculateAverageAgeUsed(int months) {
+        cal.add(Calendar.MONTH, -months);
+        calc = newProductStatsCalculator(cal.getTime(), list.returnCurrent(),
+                list.returnRemoved());
+        out.println("Average Age Used: " + months + " month = "
+                + calc.averageAgedCurrent());
+    }
+
+    @Test
+    public void testCalculateMaximumAgeUsed1Month() {
+        this.testCalculateMaxAgeUsed(1);
+    }
+
+    @Test
+    public void testCalculateMaximumAgeUsed3Month() {
+        this.testCalculateMaxAgeUsed(3);
+    }
+
+    @Test
+    public void testCalculateMaximumAgeUsed6Month() {
+        this.testCalculateMaxAgeUsed(6);
+    }
+
+    @Test
+    public void testCalculateMaximumAgeUsed9Month() {
+        this.testCalculateMaxAgeUsed(9);
+    }
+
+    @Test
+    public void testCalculateMaximumAgeUsed12Month() {
+        this.testCalculateMaxAgeUsed(12);
+    }
+
+    @Test
+    public void testCalculateMaximumAgeUsed24Month() {
+        this.testCalculateMaxAgeUsed(24);
+    }
+
+    private void testCalculateMaxAgeUsed(int months) {
+        cal.add(Calendar.MONTH, -months);
+        calc = newProductStatsCalculator(cal.getTime(), list.returnCurrent(),
+                list.returnRemoved());
+        out.println("Maximum Age Used: " + months + " month = "
+                + calc.maximumAgeUsed());
+    }
+
+    @Test
+    public void testCalculateAverageAgedCurrent1Month() {
+        this.testCalculateAverageAge(1);
+    }
+
+    @Test
+    public void testCalculateAverageAgedCurrent3Month() {
+        this.testCalculateAverageAge(3);
+    }
+
+    @Test
+    public void testCalculateAverageAgedCurrent6Month() {
+        this.testCalculateAverageAge(6);
+    }
+
+    @Test
+    public void testCalculateAverageAgedCurrent9Month() {
+        this.testCalculateAverageAge(9);
+    }
+
+    @Test
+    public void testCalculateAverageAgedCurrent12Month() {
+        this.testCalculateAverageAge(12);
+    }
+
+    @Test
+    public void testCalculateAverageAgedCurrent24Month() {
+        this.testCalculateAverageAge(24);
+    }
+
+    private void testCalculateAverageAge(int months) {
+        cal.add(Calendar.MONTH, -months);
+        calc = newProductStatsCalculator(cal.getTime(), list.returnCurrent(),
+                list.returnRemoved());
+        out.println("Average Age Current: " + months + " month = "
+                + calc.averageAgedCurrent());
+    }
+
+    @Test
+    public void testCalculateMaximumAgeCurrent1Month() {
+        this.testCalculateMaxAgeCurrent(1);
+    }
+
+    @Test
+    public void testCalculateMaximumAgeCurrent3Month() {
+        this.testCalculateMaxAgeCurrent(3);
+    }
+
+    @Test
+    public void testCalculateMaximumAgeCurrent6Month() {
+        this.testCalculateMaxAgeCurrent(6);
+    }
+
+    @Test
+    public void testCalculateMaximumAgeCurrent9Month() {
+        this.testCalculateMaxAgeCurrent(9);
+    }
+
+    @Test
+    public void testCalculateMaximumAgeCurrent12Month() {
+        this.testCalculateMaxAgeCurrent(12);
+    }
+
+    @Test
+    public void testCalculateMaximumAgeCurrent24Month() {
+        this.testCalculateMaxAgeCurrent(24);
+    }
+
+    private void testCalculateMaxAgeCurrent(int months) {
+        cal.add(Calendar.MONTH, -months);
+        calc = newProductStatsCalculator(cal.getTime(), list.returnCurrent(),
+                list.returnRemoved());
+        out.println("Maximum Age Current: " + months + " month = "
+                + calc.maximumAgeCurrent());
+    }
+
+    // @Test
+    // public void testCalculateDayDifference() {
+    // fail("Not yet implemented");
+    // }
+    //
+    // @Test
+    // public void testGetEarliestDate() {
+    // fail("Not yet implemented");
+    // }
+    //
+    // @Test
+    // public void testGetLatestDate() {
+    // fail("Not yet implemented");
+    // }
 
 }
