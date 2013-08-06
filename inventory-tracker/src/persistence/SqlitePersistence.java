@@ -5,10 +5,13 @@ package persistence;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.io.IOException;
@@ -47,7 +50,7 @@ public class SqlitePersistence implements Persistence {
 
 		try {
 			addContainers();
-
+			addProducts();
 			// add products
 			// TODO add products
 			// add items
@@ -72,7 +75,112 @@ public class SqlitePersistence implements Persistence {
 		InventoryManager.Factory.getInventoryManager().addObserver(this);
 
 	}
+	
+	private void addProducts() throws HITException
+	{
+	// add products
+		
+		
+		//First get all the products:
+		
+		ProductDAO productDAO = new ProductDAO();
+		Iterable<DataTransferObject> products = productDAO.getAll();
+		
+		//Hold Products by barcode
+		
+		Map<String, Product> productsToAdd = new HashMap<String, Product>();
+		
+		for (DataTransferObject product : products) {
+			productsToAdd.put(((String) product.getValue(ProductDAO.COL_BARCODE)), getProductFromDTO(product));
+		}
+		
+		//Fetch Data from the Product_ProductContainer DAO
+		
+		ProductPCDAO productPCDAO = new ProductPCDAO();
+		Iterable<DataTransferObject> productPC = productPCDAO.getAll();
+		
+		//Create a list of products Storage unit ID wise
+		
+		Map<Integer, List<String>> productsSortedSU = new HashMap<Integer, List<String>>();
+		
+		for (DataTransferObject productPC1 : productPC) {
+			String productCode=(String) productPC1.getValue(ProductPCDAO.COL_PRODUCT_ID);
+			Integer key = Integer.parseInt((String) productPC1.getValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID)) ;
+			if (productsSortedSU.containsKey(key))
+			{
+				
+				productsSortedSU.get(productPC1.getValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID)).add(productCode);
+			}
+			else
+			{
+				List<String> newList = new ArrayList<String>();
+				newList.add(productCode);
+				productsSortedSU.put(key, newList);
+				
+			}
+		}
+		
+		//Now go through the list and add the products to the storage units
+		
+		for (Integer suID : productsSortedSU.keySet())
+		{
+			List<String> pList = productsSortedSU.get(suID);
+			
+			for (String pCode : pList)
+			{
+				addedContainers.get(suID).addProduct(productsToAdd.get(pCode));
+			}
+		}
+		
+				
+	}
 
+	
+	private Product getProductFromDTO(DataTransferObject dto) throws HITException {
+		
+		BarCode barcode = BarCode.getBarCodeFor(((String) dto.getValue(ProductDAO.COL_BARCODE)));
+		Product p = Product.Factory.newProduct(barcode,((String) dto.getValue(ProductDAO.COL_DESCRIPTION)));
+		int quota = Integer.parseInt((String) dto.getValue(ProductDAO.COL_3_MONTH_SUPPLY));
+		p.set3MonthSupplyQuota(quota);
+		
+		Date date= new Date();
+		try {
+			date = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH).parse(ProductDAO.COL_CREATE_DATE);
+		} catch (ParseException e) {
+		}
+		
+		p.setCreationDate(date);
+		int shelfLife = Integer.parseInt((String) dto.getValue(ProductDAO.COL_SHELF_LIFE_MONTHS));
+		p.setShelfLifeInMonths(shelfLife);
+		
+		Units unit = Units.valueOf((String) dto
+				.getValue(ProductDAO.COL_SIZE_UNIT));
+		
+		Quantity quantity = new Quantity(Float.parseFloat((String) dto.getValue(ProductDAO.COL_SIZE_AMT)), unit);
+		
+		p.setSize(quantity);
+		
+		return p;
+	}
+	
+
+	private void getDTOFromProduct(Product product)
+	{
+		DataTransferObject productDTO = new DataTransferObject();
+		
+		productDTO.setValue(ProductDAO.COL_3_MONTH_SUPPLY, Integer.toString(product.get3MonthSupplyQuota()));
+		productDTO.setValue(ProductDAO.COL_BARCODE, product.getBarCode().toString());
+		productDTO.setValue(ProductDAO.COL_CREATE_DATE, product.getCreationDate().toString());
+
+
+		
+	}
+	
+	private void productAddDAO(Product product)
+	{
+		DataTransferObject productDTO = getDTOFromProduct(product);
+	}
+	
 	private void resetDatabase() throws SQLException {
 		deleteDatabaseFile();
 		Connection connection = null;
@@ -201,6 +309,7 @@ public class SqlitePersistence implements Persistence {
 			break;
 
 		case PRODUCT_ADDED:
+			productAddDAO((Product) payload);
 			System.out.println("product added " + ((Product) payload).getDescription());
 			break;
 
