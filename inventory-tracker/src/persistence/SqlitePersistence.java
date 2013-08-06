@@ -309,8 +309,8 @@ public class SqlitePersistence implements Persistence {
 		Date toReturn = null;
 		for (DataTransferObject obj : dao.getAll()) {
 			toReturn = new Date((String) obj.getValue(RemovedItemsDAO.COL_LAST_REPORT_RUN));
-			System.out.println("I GOT THIS FROM THE DB: "
-					+ (String) obj.getValue(RemovedItemsDAO.COL_LAST_REPORT_RUN));
+			//System.out.println("I GOT THIS FROM THE DB: "
+			//		+ (String) obj.getValue(RemovedItemsDAO.COL_LAST_REPORT_RUN));
 		}
 		return toReturn;
 	}
