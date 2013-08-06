@@ -178,7 +178,7 @@ public class SqlitePersistence implements Persistence {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			System.out.println("Database not found/corrupted.  Starting over.");
 
 			try {
