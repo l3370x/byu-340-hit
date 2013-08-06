@@ -1,35 +1,28 @@
 /**
- * 
+ *
  */
 package gui.reports.productstats;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import core.model.InventoryManager;
+import core.model.Item;
 import core.model.Product;
 import core.model.ProductContainer;
+import core.model.exception.ExceptionHandler;
 import gui.reports.AbstractReport;
 import gui.reports.ReportRenderer;
 import gui.reports.ReportRenderer.ReportOrientation;
-import core.model.Item;
-import core.model.exception.ExceptionHandler;
+
+import java.io.IOException;
+import java.util.*;
+
+import static common.util.DateUtils.max;
+import static core.model.InventoryManager.Factory.getInventoryManager;
+import static gui.reports.productstats.ProductStatsCalculator.Factory.newProductStatsCalculator;
 
 /**
  * @author aaron
- * 
  */
 public class ProductStatisticsReport extends AbstractReport {
-
-    
     private Comparator<Product> productComparator = new Comparator<Product>() {
         @Override
         public int compare(Product p1, Product p2) {
@@ -44,9 +37,8 @@ public class ProductStatisticsReport extends AbstractReport {
             return p1.getBarCode().getValue().compareTo(p2.getBarCode().getValue());
         }
     };
-    
-    private Map<Product, List<Item>> itemsByProduct = 
-            new TreeMap<Product,List<Item>>(productComparator);
+
+    private Map<Product, List<Item>> itemsByProduct = new TreeMap<>(productComparator);
     private int nMonths = 3;
     private Date startingDate = new Date();
 
@@ -80,43 +72,30 @@ public class ProductStatisticsReport extends AbstractReport {
                     "Shelf Life",
                     "Used Age: Avg/Max",
                     "Cur Age: Avg/Max");
-            ProductStatsCalculator calc = ProductStatsCalculator.Factory
-                    .newProductStatsCalculator();
-            InventoryManager inventory = InventoryManager.Factory
-                    .getInventoryManager();
+
             for (List<Item> items : this.itemsByProduct.values()) {
                 Item i = items.get(0);
                 Product p = i.getProduct();
-                String threeMonth = p.get3MonthSupplyQuota() == 0 ? "" : String
-                        .valueOf(p.get3MonthSupplyQuota());
-                String shelfLife = p.getShelfLifeInMonths() == 0 ? "" : String
-                        .format("%d months", p.getShelfLifeInMonths());
-                calc.setValues(startingDate, items,
-                        inventory.getRemovedItems(p), p);
+
+                ProductStatsCalculator calc = newProductStatsCalculator(
+                        max(startingDate, p.getCreationDate()),
+                        items,
+                        getInventoryManager().getRemovedItems(p));
+
                 renderer.addTableRow(
                         p.getDescription(),
                         p.getBarCode().getValue(),
                         p.getSize().toString(),
-                        threeMonth,
-                        String.format("%d / %s", calc.calculateCurrentSupply(),
-                                String.valueOf(calc.calculateAverageSupply())
-                                        .replaceAll("\\.?0*$", "")),
-                        String.format("%d / %d", calc.calculateMinimumSupply(),
-                                calc.calculateMaximumSupply()),
-                        String.format("%d / %d", calc.calculateItemsUsed(),
-                        calc.calculateItemsAdded()),
-                        shelfLife,
-                        String.format("%s days / %d days",
-                        String.valueOf(calc.calculateAverageAgeUsed())
-                                .replaceAll("\\.?0*$", ""), calc
-                                .calculateMaximumAgeUsed()),
-                        String.format("%s days / %d days",
-                        String.valueOf(calc.calculateAverageAgedCurrent())
-                                .replaceAll("\\.?0*$", ""), calc
-                                .calculateMaximumAgeCurrent()));
+                        get3MonthSupplyString(p),
+                        getCurrentSlashAverageSupplyString(calc),
+                        getMinMaxSupplyString(calc),
+                        getItemsUsedSlashAddedString(calc),
+                        getShelfLifeString(p),
+                        getAvgSlashMaxAgeUsedString(calc),
+                        getAvgSlashMaxAgeCurrentString(calc));
             }
-            renderer.endTable();
 
+            renderer.endTable();
             renderer.endDocument();
 
         } catch (IOException e) {
@@ -125,6 +104,46 @@ public class ProductStatisticsReport extends AbstractReport {
             ExceptionHandler.TO_LOG.reportException(e,
                     "Couldn't make product statistics report");
         }
+    }
+
+    private static String getAvgSlashMaxAgeCurrentString(ProductStatsCalculator calc) {
+        return String.format("%s days / %d days",
+                String.valueOf(calc.averageAgedCurrent())
+                        .replaceAll("\\.?0*$", ""), calc
+                .maximumAgeCurrent());
+    }
+
+    private static String getAvgSlashMaxAgeUsedString(ProductStatsCalculator calc) {
+        return String.format("%s days / %d days",
+                String.valueOf(calc.averageAgeUsed())
+                        .replaceAll("\\.?0*$", ""), calc
+                .maximumAgeUsed());
+    }
+
+    private static String getItemsUsedSlashAddedString(ProductStatsCalculator calc) {
+        return String.format("%d / %d", calc.itemsUsed(),
+                calc.itemsAdded());
+    }
+
+    private static String getMinMaxSupplyString(ProductStatsCalculator calc) {
+        return String.format("%d / %d", calc.minimumSupply(),
+                calc.maximumSupply());
+    }
+
+    private static String getCurrentSlashAverageSupplyString(ProductStatsCalculator calc) {
+        return String.format("%d / %s", calc.currentSupply(),
+                String.valueOf(calc.averageSupply())
+                        .replaceAll("\\.?0*$", ""));
+    }
+
+    private static String getShelfLifeString(Product p) {
+        return p.getShelfLifeInMonths() == 0 ? "" : String
+                .format("%d months", p.getShelfLifeInMonths());
+    }
+
+    private static String get3MonthSupplyString(Product p) {
+        return p.get3MonthSupplyQuota() == 0 ? "" : String
+                .valueOf(p.get3MonthSupplyQuota());
     }
 
     @Override

@@ -1,43 +1,36 @@
 package gui.reports.productstats;
 
-import java.util.Date;
-
 import core.model.Item;
-import core.model.Product;
+
+import java.util.Date;
 
 public interface ProductStatsCalculator {
 
-	void setValues(Date startDate, Iterable<Item> currentItems,
-			Iterable<Item> removedItems, Product product);
+    int currentSupply();
 
-	int calculateCurrentSupply();
+    double averageSupply();
 
-	double calculateAverageSupply();
+    int minimumSupply();
 
-	int calculateMinimumSupply();
+    int maximumSupply();
 
-	int calculateMaximumSupply();
+    int itemsUsed();
 
-	int calculateItemsUsed();
+    int itemsAdded();
 
-	int calculateItemsAdded();
+    double averageAgeUsed();
 
-	double calculateAverageAgeUsed();
+    int maximumAgeUsed();
 
-	int calculateMaximumAgeUsed();
+    double averageAgedCurrent();
 
-	double calculateAverageAgedCurrent();
+    int maximumAgeCurrent();
 
-	int calculateMaximumAgeCurrent();
-
-	public static class Factory {
-		
-		public static ProductStatsCalculator INSTANCE;
-		
-		public static ProductStatsCalculator newProductStatsCalculator() {
-			if(INSTANCE == null) INSTANCE = new ProductStatsCalculatorImpl();
-			return INSTANCE;
-		}
-	}
+    public static class Factory {
+        public static ProductStatsCalculator newProductStatsCalculator(
+                Date startDate, Iterable<Item> currentItems, Iterable<Item> removedItems) {
+            return new ProductStatsCalculatorImpl(startDate, currentItems, removedItems);
+        }
+    }
 
 }
