@@ -440,14 +440,17 @@ public class SqlitePersistence implements Persistence {
 		case CONTENT_ADDED:
 			System.out.println("container added "
 					+ ((ProductContainer) payload).getName());
+			this.contentAdded(notification);
 			break;
 		case CONTENT_REMOVED:
 			System.out.println("container removed "
 					+ ((ProductContainer) payload).getName());
+			this.contentRemoved(notification);
 			break;
 		case CONTENT_UPDATED:
 			System.out.println("container updated "
 					+ ((ProductContainer) payload).getName());
+			this.contentUpdated(notification);
 			break;
 		case PRODUCT_UPDATED:
 			System.out.println("product updated "
@@ -458,6 +461,41 @@ public class SqlitePersistence implements Persistence {
 
 		}
 
+	}
+
+	private void contentUpdated(ModelNotification notification) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void contentRemoved(ModelNotification notification) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void contentAdded(ModelNotification notification) {
+		ProductContainer pc = (ProductContainer) notification.getContent();
+		DataTransferObject dto = getDTOFromProductContainer(pc);
+		ProductContainerDAO dao = new ProductContainerDAO();
+		try {
+			dao.insert(dto);
+			Iterable<DataTransferObject> results = dao.get(dto);
+			for(DataTransferObject o : results) {
+				this.addedContainers.put((int)o.getValue(ProductContainerDAO.COL_ID), pc);
+				break;
+			}
+			
+		} catch (HITException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+
+	private DataTransferObject getDTOFromProductContainer(
+			ProductContainer content) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private void itemUpdated(ModelNotification notification) {
