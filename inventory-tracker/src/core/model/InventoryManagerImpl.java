@@ -81,7 +81,7 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit>
     @Override
     public void saveRemovedItem(Item item) throws HITException {
         assert null != item;
-        assert null == item.getContainer();
+        //assert null == item.getContainer();
 
         // set the item's exit date
         item.setExitDate(new Date());
@@ -180,7 +180,7 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit>
     public Date getLastReportRun() {
         return lastReportRun;
     }
-    
+
     /**
      * @param lastReportRun the lastReportRun to set
      */

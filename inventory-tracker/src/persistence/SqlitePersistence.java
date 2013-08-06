@@ -1,37 +1,23 @@
 /**
- * 
+ *
  */
 package persistence;
 
+import core.model.*;
+import core.model.Quantity.Units;
+import core.model.exception.HITException;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Observable;
-import java.io.IOException;
-import java.nio.file.*;
-
-import core.model.BarCode;
-import core.model.Category;
-import core.model.InventoryManager;
-import core.model.Item;
-import core.model.ModelNotification;
-import core.model.Product;
-import core.model.ProductContainer;
-import core.model.Quantity;
-import core.model.Quantity.Units;
-import core.model.StorageUnit;
-import core.model.exception.HITException;
+import java.util.*;
 
 /**
  * @author Aaron
- * 
  */
 public class SqlitePersistence implements Persistence {
 	Map<Integer, ProductContainer> addedContainers;
@@ -375,5 +361,4 @@ public class SqlitePersistence implements Persistence {
 			this.parentID = parentID;
 		}
 	}
-
 }
