@@ -164,13 +164,14 @@ public class SqlitePersistence implements Persistence {
 	}
 	
 
-	private void getDTOFromProduct(Product product)
+	private DataTransferObject getDTOFromProduct(Product product)
 	{
 		DataTransferObject productDTO = new DataTransferObject();
 		
 		productDTO.setValue(ProductDAO.COL_3_MONTH_SUPPLY, Integer.toString(product.get3MonthSupplyQuota()));
 		productDTO.setValue(ProductDAO.COL_BARCODE, product.getBarCode().toString());
 		productDTO.setValue(ProductDAO.COL_CREATE_DATE, product.getCreationDate().toString());
+		return productDTO;
 
 
 		
