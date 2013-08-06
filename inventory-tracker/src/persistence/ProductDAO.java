@@ -13,7 +13,7 @@ public class ProductDAO extends AbstractDAO {
     public static final String COL_DESCRIPTION = "DESCRIPTION";
     public static final String COL_SIZE_AMT = "SIZE_AMT";
     public static final String COL_SIZE_UNIT = "SIZE_AMT";
-    public static final String COL_SHELF_LIFE_MONTHS = "SHELF_LINE_MONTHS";
+    public static final String COL_SHELF_LIFE_MONTHS = "SHELF_LIFE_MONTHS";
     public static final String COL_CREATE_DATE = "CREATE_DATE";
     public static final String COL_3_MONTH_SUPPLY = "_3_MONTH_SUPPLY";
 
