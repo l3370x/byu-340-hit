@@ -20,6 +20,9 @@ inventory-tracker/.metadata
 inventory-tracker/Inventory Tracker
 inventory-tracker/Inventory Trackerprintouts
 inventory-tracker/Inventory Trackerreports
-
-
+inventory-tracker/db
+inventory-tracker/db/hit.sqlite
+reports
+.product-detectors
+save.data
 
