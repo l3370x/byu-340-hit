@@ -7,8 +7,8 @@ import java.util.Calendar;
 import static gui.reports.productstats.ProductStatsCalculator.Factory.newProductStatsCalculator;
 
 /**
- * @author Cameron Jones
- * @author Keith McQueen
+ * @author Cameron Jones (originator)
+ * @author Keith McQueen (refactoring)
  */
 public class ProductStatsAverageSupplyTests extends ProductStatsCalculatorTests {
     @Test

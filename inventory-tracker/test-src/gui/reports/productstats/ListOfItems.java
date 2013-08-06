@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.Observer;
 
 /**
- * @author Cameron Jones
- * @author Keith McQueen
+ * @author Cameron Jones (originator)
+ * @author Keith McQueen (refactoring)
  */
 public class ListOfItems {
     ItemCollection currentItems = new ItemCollection(null);
