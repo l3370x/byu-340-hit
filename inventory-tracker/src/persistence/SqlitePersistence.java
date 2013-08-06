@@ -67,9 +67,9 @@ public class SqlitePersistence implements Persistence {
 		}
 	}
 
-    Map<Integer, ProductContainer> addedContainers;
-    
-    private void addContainers() throws HITException {
+	Map<Integer, ProductContainer> addedContainers;
+
+	private void addContainers() throws HITException {
 		// holds added containers in order to add new categories to existing
 		// product containers
 		addedContainers = new HashMap<Integer, ProductContainer>();
@@ -117,9 +117,7 @@ public class SqlitePersistence implements Persistence {
 
 	}
 
-    
-    
-    private void resetDatabase() throws SQLException {
+	private void resetDatabase() throws SQLException {
 		deleteDatabaseFile();
 		Connection connection = null;
 		Statement statement = null;
@@ -146,15 +144,16 @@ public class SqlitePersistence implements Persistence {
 		} finally {
 			connection.close();
 		}
-    }
- 	private void deleteDatabaseFile() {
- 		String DB_FILE = "inventory-tracker/db/hit.sqlite";
- 		try {
- 			Files.deleteIfExists(Paths.get(DB_FILE));
+	}
+
+	private void deleteDatabaseFile() {
+		String DB_FILE = "inventory-tracker/db/hit.sqlite";
+		try {
+			Files.deleteIfExists(Paths.get(DB_FILE));
 		} catch (IOException e) {
 			e.printStackTrace();
- 		}
- 	}
+		}
+	}
 
 	private SqlitePersistence() {
 
@@ -206,8 +205,7 @@ public class SqlitePersistence implements Persistence {
 		Map<String, Product> productsToAdd = new HashMap<String, Product>();
 
 		for (DataTransferObject product : products) {
-			productsToAdd.put(
-					((String) product.getValue(ProductDAO.COL_BARCODE)),
+			productsToAdd.put(((String) product.getValue(ProductDAO.COL_BARCODE)),
 					getProductFromDTO(product));
 		}
 
@@ -221,15 +219,12 @@ public class SqlitePersistence implements Persistence {
 		Map<Integer, List<String>> productsSortedSU = new HashMap<Integer, List<String>>();
 
 		for (DataTransferObject productPC1 : productPC) {
-			String productCode = (String) productPC1
-					.getValue(ProductPCDAO.COL_PRODUCT_ID);
+			String productCode = (String) productPC1.getValue(ProductPCDAO.COL_PRODUCT_ID);
 			Integer key = Integer.parseInt((String) productPC1
 					.getValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID));
 			if (productsSortedSU.containsKey(key)) {
 
-				productsSortedSU
-						.get(productPC1
-								.getValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID))
+				productsSortedSU.get(productPC1.getValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID))
 						.add(productCode);
 			} else {
 				List<String> newList = new ArrayList<String>();
@@ -251,15 +246,12 @@ public class SqlitePersistence implements Persistence {
 
 	}
 
-	private Product getProductFromDTO(DataTransferObject dto)
-			throws HITException {
+	private Product getProductFromDTO(DataTransferObject dto) throws HITException {
 
-		BarCode barcode = BarCode.getBarCodeFor(((String) dto
-				.getValue(ProductDAO.COL_BARCODE)));
+		BarCode barcode = BarCode.getBarCodeFor(((String) dto.getValue(ProductDAO.COL_BARCODE)));
 		Product p = Product.Factory.newProduct(barcode,
 				((String) dto.getValue(ProductDAO.COL_DESCRIPTION)));
-		int quota = Integer.parseInt((String) dto
-				.getValue(ProductDAO.COL_3_MONTH_SUPPLY));
+		int quota = Integer.parseInt((String) dto.getValue(ProductDAO.COL_3_MONTH_SUPPLY));
 		p.set3MonthSupplyQuota(quota);
 
 		Date date = new Date();
@@ -270,12 +262,10 @@ public class SqlitePersistence implements Persistence {
 		}
 
 		p.setCreationDate(date);
-		int shelfLife = Integer.parseInt((String) dto
-				.getValue(ProductDAO.COL_SHELF_LIFE_MONTHS));
+		int shelfLife = Integer.parseInt((String) dto.getValue(ProductDAO.COL_SHELF_LIFE_MONTHS));
 		p.setShelfLifeInMonths(shelfLife);
 
-		Units unit = Units.valueOf((String) dto
-				.getValue(ProductDAO.COL_SIZE_UNIT));
+		Units unit = Units.valueOf((String) dto.getValue(ProductDAO.COL_SIZE_UNIT));
 
 		Quantity quantity = new Quantity(Float.parseFloat((String) dto
 				.getValue(ProductDAO.COL_SIZE_AMT)), unit);
@@ -290,10 +280,8 @@ public class SqlitePersistence implements Persistence {
 
 		productDTO.setValue(ProductDAO.COL_3_MONTH_SUPPLY,
 				Integer.toString(product.get3MonthSupplyQuota()));
-		productDTO.setValue(ProductDAO.COL_BARCODE, product.getBarCode()
-				.toString());
-		productDTO.setValue(ProductDAO.COL_CREATE_DATE, product
-				.getCreationDate().toString());
+		productDTO.setValue(ProductDAO.COL_BARCODE, product.getBarCode().toString());
+		productDTO.setValue(ProductDAO.COL_CREATE_DATE, product.getCreationDate().toString());
 		return productDTO;
 
 	}
@@ -302,8 +290,6 @@ public class SqlitePersistence implements Persistence {
 		DataTransferObject productDTO = getDTOFromProduct(product);
 	}
 
-
-
 	@Override
 	public void setLastReportRun(Date lastReportRun) throws HITException {
 		RemovedItemsDAO dao = new RemovedItemsDAO();
@@ -311,7 +297,6 @@ public class SqlitePersistence implements Persistence {
 		dto.setValue(RemovedItemsDAO.COL_LAST_REPORT_RUN, lastReportRun);
 		dao.update(dto);
 	}
-
 
 	@Override
 	public Date getLastReportRun() throws HITException {
@@ -323,10 +308,7 @@ public class SqlitePersistence implements Persistence {
 		return toReturn;
 	}
 
-
-
-	private Category newCategoryFromDTO(DataTransferObject dto)
-			throws HITException {
+	private Category newCategoryFromDTO(DataTransferObject dto) throws HITException {
 		String name = (String) dto.getValue(ProductContainerDAO.COL_NAME);
 		// create new category
 		Category c = Category.Factory.newCategory(name);
@@ -341,8 +323,7 @@ public class SqlitePersistence implements Persistence {
 		return c;
 	}
 
-	private StorageUnit addStorageUnitFromDTO(DataTransferObject dto)
-			throws HITException {
+	private StorageUnit addStorageUnitFromDTO(DataTransferObject dto) throws HITException {
 		String name = (String) dto.getValue(ProductContainerDAO.COL_NAME);
 		StorageUnit su = StorageUnit.Factory.newStorageUnit(name);
 		InventoryManager.Factory.getInventoryManager().add(su);
@@ -351,13 +332,11 @@ public class SqlitePersistence implements Persistence {
 
 	private void addItemFromDTO(DataTransferObject dto) throws HITException {
 		String productBarCode = (String) dto.getValue(ItemDAO.COL_PROD_BARCODE);
-		Product product = Product.Factory.newProduct(BarCode
-				.getBarCodeFor(productBarCode));
+		Product product = Product.Factory.newProduct(BarCode.getBarCodeFor(productBarCode));
 		Date entryDate = (Date) dto.getValue(ItemDAO.COL_ENTRY_DATE);
 		Item item = Item.Factory.newItem(product, entryDate);
 		item.setExitDate((Date) dto.getValue(ItemDAO.COL_REMOVED_DATE));
-		int productContainerID = (Integer) dto
-				.getValue(ItemDAO.COL_PRODUCT_CONTAINER);
+		int productContainerID = (Integer) dto.getValue(ItemDAO.COL_PRODUCT_CONTAINER);
 		addedContainers.get(productContainerID).addItem(item);
 	}
 
@@ -370,8 +349,7 @@ public class SqlitePersistence implements Persistence {
 		Object payload = notification.getContent();
 		switch (notification.getChangeType()) {
 		case ITEM_ADDED:
-			TransactionManager manager = TransactionManager.Factory
-					.getTransactionManager();
+			TransactionManager manager = TransactionManager.Factory.getTransactionManager();
 			try {
 				Connection conn = manager.beginTransaction();
 				DataTransferObject dto = new DataTransferObject();
@@ -387,39 +365,31 @@ public class SqlitePersistence implements Persistence {
 			break;
 
 		case ITEM_REMOVED:
-			System.out.println("item removed "
-					+ ((Item) payload).getProduct().getDescription());
+			System.out.println("item removed " + ((Item) payload).getProduct().getDescription());
 			break;
 
 		case PRODUCT_ADDED:
 			productAddDAO((Product) payload);
-			System.out.println("product added "
-					+ ((Product) payload).getDescription());
+			System.out.println("product added " + ((Product) payload).getDescription());
 			break;
 
 		case PRODUCT_REMOVED:
-			System.out.println("product removed "
-					+ ((Product) payload).getDescription());
+			System.out.println("product removed " + ((Product) payload).getDescription());
 			break;
 		case CONTENT_ADDED:
-			System.out.println("container added "
-					+ ((ProductContainer) payload).getName());
+			System.out.println("container added " + ((ProductContainer) payload).getName());
 			break;
 		case CONTENT_REMOVED:
-			System.out.println("container removed "
-					+ ((ProductContainer) payload).getName());
+			System.out.println("container removed " + ((ProductContainer) payload).getName());
 			break;
 		case CONTENT_UPDATED:
-			System.out.println("container updated "
-					+ ((ProductContainer) payload).getName());
+			System.out.println("container updated " + ((ProductContainer) payload).getName());
 			break;
 		case ITEM_UPDATED:
-			System.out.println("item updated "
-					+ ((Item) payload).getProduct().getDescription());
+			System.out.println("item updated " + ((Item) payload).getProduct().getDescription());
 			break;
 		case PRODUCT_UPDATED:
-			System.out.println("product updated "
-					+ ((Product) payload).getDescription());
+			System.out.println("product updated " + ((Product) payload).getDescription());
 			break;
 		default:
 			break;
@@ -438,6 +408,4 @@ public class SqlitePersistence implements Persistence {
 
 	}
 
-
-	
 }
