@@ -230,8 +230,7 @@ public class SqlitePersistence implements Persistence {
 		for (DataTransferObject productPC1 : productPC) {
 			String productCode = (String) productPC1
 					.getValue(ProductPCDAO.COL_PRODUCT_ID);
-			Integer key = Integer.parseInt((String) productPC1
-					.getValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID));
+			Integer key = (Integer) productPC1.getValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID);
 			if (productsSortedSU.containsKey(key)) {
 
 				productsSortedSU
@@ -265,8 +264,7 @@ public class SqlitePersistence implements Persistence {
 				.getValue(ProductDAO.COL_BARCODE)));
 		Product p = Product.Factory.newProduct(barcode,
 				((String) dto.getValue(ProductDAO.COL_DESCRIPTION)));
-		int quota = Integer.parseInt((String) dto
-				.getValue(ProductDAO.COL_3_MONTH_SUPPLY));
+		int quota = (int) dto.getValue(ProductDAO.COL_3_MONTH_SUPPLY);
 		p.set3MonthSupplyQuota(quota);
 
 		Date date = new Date();
@@ -277,15 +275,13 @@ public class SqlitePersistence implements Persistence {
 		}
 
 		p.setCreationDate(date);
-		int shelfLife = Integer.parseInt((String) dto
-				.getValue(ProductDAO.COL_SHELF_LIFE_MONTHS));
+		int shelfLife = (int) dto.getValue(ProductDAO.COL_SHELF_LIFE_MONTHS);
 		p.setShelfLifeInMonths(shelfLife);
 
 		Units unit = Units.valueOf((String) dto
 				.getValue(ProductDAO.COL_SIZE_UNIT));
 
-		Quantity quantity = new Quantity(Float.parseFloat((String) dto
-				.getValue(ProductDAO.COL_SIZE_AMT)), unit);
+		Quantity quantity = new Quantity((float) dto.getValue(ProductDAO.COL_SIZE_AMT), unit);
 
 		p.setSize(quantity);
 
@@ -301,14 +297,55 @@ public class SqlitePersistence implements Persistence {
 				.toString());
 		productDTO.setValue(ProductDAO.COL_CREATE_DATE, product
 				.getCreationDate().toString());
+		productDTO.setValue(ProductDAO.COL_DESCRIPTION,
+				product.getDescription());
+		productDTO.setValue(ProductDAO.COL_SIZE_AMT,
+				Float.toString(product.getSize().getValue()));
+		productDTO.setValue(ProductDAO.COL_SIZE_UNIT,
+				product.getSize().getUnits().toString());
+		productDTO.setValue(ProductDAO.COL_SHELF_LIFE_MONTHS,
+				Integer.toString(product.getShelfLifeInMonths()));
+		
+		
 		return productDTO;
 
 	}
 
 	private void productAddDAO(Product product) {
 		DataTransferObject productDTO = getDTOFromProduct(product);
+		ProductDAO productDAO = new ProductDAO();
+		try {
+			productDAO.insert(productDTO);
+		} catch (HITException e) {
+		
+			e.printStackTrace();
+		}
+		
 	}
 
+	private void productRemoveDAO(Product product) {
+		try {
+			DataTransferObject productDTO = getDTOFromProduct(product);
+			ProductDAO productDAO = new ProductDAO();
+			productDAO.delete(productDTO);
+		} catch (HITException e) {
+		
+			e.printStackTrace();
+		}
+	}
+	
+	private void productUpdateDAO(Product product) {
+		try {
+			DataTransferObject productDTO = getDTOFromProduct(product);
+			ProductDAO productDAO = new ProductDAO();
+			productDAO.update(productDTO);
+		} catch (HITException e) {
+		
+			e.printStackTrace();
+		}
+	}
+
+	
 	private DataTransferObject getDTOFromItem(Item item) {
 		DataTransferObject itemDTO = new DataTransferObject();
 
@@ -434,6 +471,7 @@ public class SqlitePersistence implements Persistence {
 			break;
 
 		case PRODUCT_REMOVED:
+			productRemoveDAO((Product) payload);
 			System.out.println("product removed "
 					+ ((Product) payload).getDescription());
 			break;
@@ -450,6 +488,7 @@ public class SqlitePersistence implements Persistence {
 					+ ((ProductContainer) payload).getName());
 			break;
 		case PRODUCT_UPDATED:
+			productUpdateDAO((Product) payload);
 			System.out.println("product updated "
 					+ ((Product) payload).getDescription());
 			break;
