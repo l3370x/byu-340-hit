@@ -19,8 +19,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 
     public ProductStatsCalculatorImpl(
             Date startDate, Iterable<Item> currentItems, Iterable<Item> removedItems) {
-        this.startDate = startDate;
-        this.endDate = removeTimeFromDate(new Date());
+        this.startDate = removeTimeFromDate(startDate);
+        this.endDate = new Date();//removeTimeFromDate(new Date());
         this.currentItems = currentItems;
         this.removedItems = removedItems;
         this.numberOfDays = calculateDayDifference(this.startDate, this.endDate);
@@ -207,23 +207,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
     }
 
     public int calculateDayDifference(Date begin, Date end) {
-        if (begin.equals(end) || begin.after(end)) {
-            return 0;
-        }
-
         long diff = end.getTime() - begin.getTime();
 
         return (int) (diff / MILLIS_PER_DAY);
-
-        /*
-        int dayDifference = 0;
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(begin);
-		while (!cal.getTime().equals(end) || cal.getTime().after(end)) {
-			dayDifference++;
-			cal.add(Calendar.DAY_OF_YEAR, 1);
-		}
-		return dayDifference;
-		*/
     }
 }
