@@ -97,10 +97,6 @@ public class SqlitePersistence implements Persistence {
                 }
             }
         }
-
-        // add persistence observer to invMan
-        InventoryManager.Factory.getInventoryManager().addObserver(this);
-
     }
 
     private void resetDatabase() throws SQLException {
@@ -167,7 +163,7 @@ public class SqlitePersistence implements Persistence {
             }
 
         } catch (Exception e) {
-            // e.printStackTrace();
+            e.printStackTrace();
             System.out.println("Database not found/corrupted.  Starting over.");
 
             try {
@@ -263,7 +259,7 @@ public class SqlitePersistence implements Persistence {
         Units unit = Units.valueOf((String) dto
                 .getValue(ProductDAO.COL_SIZE_UNIT));
 
-        Quantity quantity = new Quantity((float) dto.getValue(ProductDAO.COL_SIZE_AMT), unit);
+        Quantity quantity = new Quantity(Float.valueOf(String.valueOf((Double)dto.getValue(ProductDAO.COL_SIZE_AMT))), unit);
 
         p.setSize(quantity);
 
@@ -433,8 +429,12 @@ public class SqlitePersistence implements Persistence {
     public void setLastReportRun(Date lastReportRun) throws HITException {
         RemovedItemsDAO dao = new RemovedItemsDAO();
         DataTransferObject dto = new DataTransferObject();
-        dto.setValue(RemovedItemsDAO.COL_LAST_REPORT_RUN, lastReportRun);
-        dao.update(dto);
+        dto.setValue(RemovedItemsDAO.COL_ID, 1);
+        dto.setValue(RemovedItemsDAO.COL_LAST_REPORT_RUN, lastReportRun.toString());
+        if (!dao.getAll().iterator().hasNext())
+            dao.insert(dto);
+        else
+            dao.update(dto);
     }
 
     @Override
@@ -442,7 +442,9 @@ public class SqlitePersistence implements Persistence {
         RemovedItemsDAO dao = new RemovedItemsDAO();
         Date toReturn = null;
         for (DataTransferObject obj : dao.getAll()) {
-            toReturn = (Date) obj.getValue(RemovedItemsDAO.COL_LAST_REPORT_RUN);
+            toReturn = new Date((String) obj.getValue(RemovedItemsDAO.COL_LAST_REPORT_RUN));
+//            System.out.println("I GOT THIS FROM THE DB: "
+//                    + (String) obj.getValue(RemovedItemsDAO.COL_LAST_REPORT_RUN));
         }
         return toReturn;
     }
