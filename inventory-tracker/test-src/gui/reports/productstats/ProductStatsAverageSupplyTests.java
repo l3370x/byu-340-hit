@@ -41,11 +41,10 @@ public class ProductStatsAverageSupplyTests extends ProductStatsCalculatorTests 
         this.testCalculateAverageSupply(24);
     }
 
-    private void testCalculateAverageSupply(int months) {
+    private double testCalculateAverageSupply(int months) {
         cal.add(Calendar.MONTH, -months);
         calc = newProductStatsCalculator(cal.getTime(), list.returnCurrent(),
                 list.returnRemoved());
-        out.println("Average Supply: " + months + " month = "
-                + calc.averageSupply());
+        return calc.averageSupply();
     }
 }
