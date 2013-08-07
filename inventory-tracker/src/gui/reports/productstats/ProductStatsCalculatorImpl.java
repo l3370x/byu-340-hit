@@ -19,8 +19,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
 
     public ProductStatsCalculatorImpl(
             Date startDate, Iterable<Item> currentItems, Iterable<Item> removedItems) {
-        this.startDate = startDate;
-        this.endDate = removeTimeFromDate(new Date());
+        this.startDate = removeTimeFromDate(startDate);
+        this.endDate = new Date();//removeTimeFromDate(new Date());
         this.currentItems = currentItems;
         this.removedItems = removedItems;
         this.numberOfDays = calculateDayDifference(this.startDate, this.endDate);
