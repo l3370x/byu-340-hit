@@ -617,7 +617,6 @@ public class SqlitePersistence implements Persistence {
 		DataTransferObject pcDTO = new DataTransferObject();
  
 		pcDTO.setValue(ProductContainerDAO.COL_NAME, pc.getName());
-		pcDTO.setValue(ProductContainerDAO.TABLE_NAME, "product_container");
 		
 		if(true == pc instanceof StorageUnit) {
 			pcDTO.setValue(ProductContainerDAO.COL_IS_STORAGE_UNIT, true);
