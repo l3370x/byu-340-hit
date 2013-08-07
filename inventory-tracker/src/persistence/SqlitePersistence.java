@@ -417,7 +417,7 @@ public class SqlitePersistence implements Persistence {
 	}
 
 	
-	private DataTransferObject getDTOFromItem(Item item) {
+	private DataTransferObject getDTOFromItem(Item item) { //Eric
 		DataTransferObject itemDTO = new DataTransferObject();
 
 		itemDTO.setValue(ItemDAO.COL_BARCODE, item.getBarCode().toString());
@@ -574,12 +574,25 @@ public class SqlitePersistence implements Persistence {
 	}
 
 	private void contentUpdated(ModelNotification notification) {
-		// TODO Auto-generated method stub
-		
+		ProductContainer pc = (ProductContainer) notification.getContent();
+		DataTransferObject dto = getDTOFromProductContainer(pc);
+		ProductContainerDAO dao = new ProductContainerDAO();
+		try {
+			dao.update(dto);
+		} catch (HITException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void contentRemoved(ModelNotification notification) {
-		// TODO Auto-generated method stub
+		ProductContainer pc = (ProductContainer) notification.getContent();
+		DataTransferObject dto = getDTOFromProductContainer(pc);
+		ProductContainerDAO dao = new ProductContainerDAO();
+		try {
+			dao.delete(dto);
+		} catch (HITException e) {
+			e.printStackTrace();
+		}	
 		
 	}
 
@@ -594,17 +607,37 @@ public class SqlitePersistence implements Persistence {
 				this.addedContainers.put((int)o.getValue(ProductContainerDAO.COL_ID), pc);
 				break;
 			}
-			
 		} catch (HITException e) {
 			e.printStackTrace();
-		}
-		
-		
+		}	
 	}
 
 	private DataTransferObject getDTOFromProductContainer(
-			ProductContainer content) {
-		// TODO Auto-generated method stub
+			ProductContainer pc) {
+		DataTransferObject pcDTO = new DataTransferObject();
+ 
+		pcDTO.setValue(ProductContainerDAO.COL_NAME, pc.getName());
+		pcDTO.setValue(ProductContainerDAO.TABLE_NAME, "product_container");
+		
+		if(true == pc instanceof StorageUnit) {
+			pcDTO.setValue(ProductContainerDAO.COL_IS_STORAGE_UNIT, true);
+			return pcDTO;
+		}
+		else if(true == pc instanceof Category) {
+			pcDTO.setValue(ProductContainerDAO.COL_IS_STORAGE_UNIT, false);
+			pcDTO.setValue(ProductContainerDAO.COL_3_MO_SUPPLY_AMT, 
+					((Category)pc).get3MonthSupplyQuantity().getValue());
+			pcDTO.setValue(ProductContainerDAO.COL_3_MO_SUPPLY_UNITS, 
+					((Category)pc).get3MonthSupplyQuantity().getUnits());
+			ProductContainer parent = ((Category) pc).getContainer();
+			for (Map.Entry<Integer, ProductContainer> entry : this.addedContainers.entrySet()) {
+				if (entry.getValue().equals(parent)) {
+					  pcDTO.setValue(ProductContainerDAO.COL_PARENT, entry.getKey());
+				}
+			}
+			return pcDTO;		
+		}
+		
 		return null;
 	}
 
