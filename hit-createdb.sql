@@ -9,7 +9,7 @@ create table product_container
 	id INTEGER not null primary key autoincrement,
 	name varchar(255) not null,
 	is_storage_unit boolean,
-	_3_month_supply_amt real(3,3),
+	_3_month_supply_amt numeric,
 	_3_month_supply_unit varchar(255),
 	parent_container INTEGER constraint fk_parent REFERENCES product_container (id)
 );
@@ -18,7 +18,7 @@ create table product
 (
 	barcode varchar(12) not null primary key,
 	description varchar(255) not null,
-	size_amt real(3,3),
+	size_amt numeric,
 	size_unit varchar(255),
 	shelf_life_months int,
 	_3_month_supply int,
