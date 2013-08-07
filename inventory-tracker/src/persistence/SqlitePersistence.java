@@ -314,8 +314,26 @@ public class SqlitePersistence implements Persistence {
 	private void productAddDAO(Product product) {
 		DataTransferObject productDTO = getDTOFromProduct(product);
 		ProductDAO productDAO = new ProductDAO();
+		//Make new product_product_containerDTO
+		
+		DataTransferObject ppcDTO = new DataTransferObject();
+		ppcDTO.setValue(ProductPCDAO.COL_PRODUCT_ID, product.getBarCode().toString());
+				
+		for (int pcKey : addedContainers.keySet())
+		{
+			ProductContainer ps = addedContainers.get(pcKey);
+			
+			if ((ps.contains(product)) && (ps==product.getContainer()))
+			{
+				ppcDTO.setValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID, Integer.toString(pcKey));
+			}
+		}
+		
+		
+		ProductPCDAO productPCDAO = new ProductPCDAO();
 		try {
 			productDAO.insert(productDTO);
+			productPCDAO.insert(ppcDTO);
 		} catch (HITException e) {
 		
 			e.printStackTrace();
@@ -324,10 +342,63 @@ public class SqlitePersistence implements Persistence {
 	}
 
 	private void productRemoveDAO(Product product) {
+		
+	
+		
 		try {
-			DataTransferObject productDTO = getDTOFromProduct(product);
-			ProductDAO productDAO = new ProductDAO();
-			productDAO.delete(productDTO);
+			
+			DataTransferObject ppcDTO = new DataTransferObject();
+			ppcDTO.setValue(ProductPCDAO.COL_PRODUCT_ID, product.getBarCode().toString());
+					
+			for (int pcKey : addedContainers.keySet())
+			{
+				ProductContainer ps = addedContainers.get(pcKey);
+				
+				if ((ps.contains(product)) && (ps==product.getContainer()))
+				{
+					ppcDTO.setValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID, Integer.toString(pcKey));
+				}
+			}
+			
+			
+			//First check if this product does not exist in any other container
+			
+			ProductPCDAO productPCDAO = new ProductPCDAO();
+			Iterable<DataTransferObject> productPC = productPCDAO.getAll();
+
+			// Create a list of storage units for each product
+
+			Map<String, List<Integer>> productsSortedSU = new HashMap<String, List<Integer>>();
+
+			for (DataTransferObject productPC1 : productPC) {
+				String key = (String) productPC1
+						.getValue(ProductPCDAO.COL_PRODUCT_ID);
+				Integer suID = (Integer) productPC1.getValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID);
+				if (productsSortedSU.containsKey(key)) {
+
+					productsSortedSU
+							.get(productPC1
+									.getValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID))
+							.add(suID);
+				} else {
+					List<Integer> newList = new ArrayList<Integer>();
+					newList.add(suID);
+					productsSortedSU.put(key, newList);
+
+				}
+			}
+			
+			//Check if the product to be deleted exists in other product units as well
+			
+			if (productsSortedSU.get(product.getBarCode().toString()).size() == 1)
+			{
+				DataTransferObject productDTO = getDTOFromProduct(product);
+				ProductDAO productDAO = new ProductDAO();
+				productDAO.delete(productDTO);
+			}
+			
+			productPCDAO.delete(ppcDTO);
+		
 		} catch (HITException e) {
 		
 			e.printStackTrace();
