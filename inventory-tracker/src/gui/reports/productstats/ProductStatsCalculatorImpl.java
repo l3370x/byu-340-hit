@@ -207,23 +207,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
     }
 
     public int calculateDayDifference(Date begin, Date end) {
-        if (begin.equals(end) || begin.after(end)) {
-            return 0;
-        }
-
         long diff = end.getTime() - begin.getTime();
 
         return (int) (diff / MILLIS_PER_DAY);
-
-        /*
-        int dayDifference = 0;
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(begin);
-		while (!cal.getTime().equals(end) || cal.getTime().after(end)) {
-			dayDifference++;
-			cal.add(Calendar.DAY_OF_YEAR, 1);
-		}
-		return dayDifference;
-		*/
     }
 }
