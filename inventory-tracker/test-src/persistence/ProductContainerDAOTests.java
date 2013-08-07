@@ -27,6 +27,7 @@ public class ProductContainerDAOTests {
         DataTransferObject dtoIn = new DataTransferObject();
         dtoIn.setValue(COL_NAME, "My Storage Unit");
         dtoIn.setValue(COL_IS_STORAGE_UNIT, Boolean.TRUE);
+        dtoIn.setValue(COL_3_MO_SUPPLY_AMT, 1.0f);
 
         // insert the data
         dao.insert(dtoIn);

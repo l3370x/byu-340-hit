@@ -160,7 +160,7 @@ public abstract class AbstractDAO {
             // execute the statement
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new HITException(ERROR, "Unable to insert data into " + this.getTableName());
+            throw new HITException(ERROR, e);
         } finally {
             // end the transaction
             getTransactionManager().endTransaction(connection, true);
@@ -194,7 +194,7 @@ public abstract class AbstractDAO {
             // execute the statement
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new HITException(ERROR, "Unable to delete data from " + this.getTableName());
+            throw new HITException(ERROR, e);
         } finally {
             // end the transaction
             getTransactionManager().endTransaction(connection, true);
@@ -226,7 +226,7 @@ public abstract class AbstractDAO {
             // execute the statement
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new HITException(ERROR, "Unable to delete data from " + this.getTableName());
+            throw new HITException(ERROR, e);
         } finally {
             // end the transaction
             getTransactionManager().endTransaction(connection, true);
@@ -268,7 +268,7 @@ public abstract class AbstractDAO {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new HITException(ERROR, "Unable to delete data from " + this.getTableName());
+            throw new HITException(ERROR, e);
         } finally {
             // end the transaction
             getTransactionManager().endTransaction(connection, true);
