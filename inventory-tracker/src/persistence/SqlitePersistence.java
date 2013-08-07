@@ -274,19 +274,19 @@ public class SqlitePersistence implements Persistence {
         DataTransferObject productDTO = new DataTransferObject();
 
         productDTO.setValue(ProductDAO.COL_3_MONTH_SUPPLY,
-                Integer.toString(product.get3MonthSupplyQuota()));
+                product.get3MonthSupplyQuota());
         productDTO.setValue(ProductDAO.COL_BARCODE, product.getBarCode()
                 .toString());
         productDTO.setValue(ProductDAO.COL_CREATE_DATE, product
-                .getCreationDate().toString());
+                .getCreationDate());
         productDTO.setValue(ProductDAO.COL_DESCRIPTION,
                 product.getDescription());
         productDTO.setValue(ProductDAO.COL_SIZE_AMT,
-                Float.toString(product.getSize().getValue()));
+                product.getSize().getValue());
         productDTO.setValue(ProductDAO.COL_SIZE_UNIT,
                 product.getSize().getUnits().toString());
         productDTO.setValue(ProductDAO.COL_SHELF_LIFE_MONTHS,
-                Integer.toString(product.getShelfLifeInMonths()));
+                product.getShelfLifeInMonths());
 
 
         return productDTO;
@@ -304,8 +304,8 @@ public class SqlitePersistence implements Persistence {
         for (int pcKey : addedContainers.keySet()) {
             ProductContainer ps = addedContainers.get(pcKey);
 
-            if ((ps.contains(product)) && (ps == product.getContainer())) {
-                ppcDTO.setValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID, Integer.toString(pcKey));
+            if ((ps.containsProduct(product)) && (ps == product.getContainer())) {
+                ppcDTO.setValue(ProductPCDAO.COL_PRODUCT_CONTAINER_ID, pcKey);
             }
         }
 
@@ -315,7 +315,6 @@ public class SqlitePersistence implements Persistence {
             productDAO.insert(productDTO);
             productPCDAO.insert(ppcDTO);
         } catch (HITException e) {
-
             e.printStackTrace();
         }
 

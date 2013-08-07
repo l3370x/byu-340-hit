@@ -15,18 +15,18 @@ import java.io.Serializable;
  */
 public class Quantity implements Serializable {
 
-    private final float value;
+    private final double value;
     private final Units units;
 
     /**
      * Create a new Quantity with the given value and units.
      *
      * @param value the value (must be >= 0.0f)
-     * @param unit the units
+     * @param unit  the units
      * @pre float >= 0.0f && units != null
      * @post getValue() == value && getUnits() == units
      */
-    public Quantity(float value, Units unit) throws HITException {
+    public Quantity(double value, Units unit) throws HITException {
         if (value < 0.0) {
             throw new HITException(Severity.WARNING, "Value must be greater than"
                     + " 0");
@@ -43,7 +43,7 @@ public class Quantity implements Serializable {
      * @return the value of this quantity
      * @pre none
      */
-    public float getValue() {
+    public double getValue() {
         assert true;
         return this.value;
     }

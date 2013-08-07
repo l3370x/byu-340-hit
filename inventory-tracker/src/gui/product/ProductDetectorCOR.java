@@ -22,9 +22,11 @@ class ProductDetectorCOR implements ProductDetector {
             this.initDetector();
         }
 
+        System.out.println("Trying detector: " + this.detectorClassName);
+
         ProductDescriptor descriptor = this.detector.getProductDescription(barcode);
         if (null != descriptor.getDescription() &&
-            false == descriptor.getDescription().isEmpty()) {
+                false == descriptor.getDescription().isEmpty()) {
             return descriptor;
         }
 

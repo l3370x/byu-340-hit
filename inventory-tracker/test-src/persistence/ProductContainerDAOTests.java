@@ -27,7 +27,7 @@ public class ProductContainerDAOTests {
         DataTransferObject dtoIn = new DataTransferObject();
         dtoIn.setValue(COL_NAME, "My Storage Unit");
         dtoIn.setValue(COL_IS_STORAGE_UNIT, Boolean.TRUE);
-        dtoIn.setValue(COL_3_MO_SUPPLY_AMT, 1);
+        dtoIn.setValue(COL_3_MO_SUPPLY_AMT, 1.03);
 
         // insert the data
         dao.insert(dtoIn);
@@ -43,7 +43,7 @@ public class ProductContainerDAOTests {
         // update the row
         for (DataTransferObject dtoUpdate : data) {
             dtoUpdate.setValue(COL_NAME, "Updated Name");
-            dtoUpdate.setValue(COL_3_MO_SUPPLY_AMT, 12.0);
+            dtoUpdate.setValue(COL_3_MO_SUPPLY_AMT, 12.5);
             dtoUpdate.setValue(COL_3_MO_SUPPLY_UNITS, "Ounces");
 
             dao.update(dtoUpdate);
@@ -53,7 +53,7 @@ public class ProductContainerDAOTests {
         data = dao.getAll();
         for (DataTransferObject dtoOut : data) {
             assertEquals("Updated Name", dtoOut.getValue(COL_NAME));
-            assertEquals(12.0, dtoOut.getValue(COL_3_MO_SUPPLY_AMT));
+            assertEquals(12.5, dtoOut.getValue(COL_3_MO_SUPPLY_AMT));
             assertEquals("Ounces", dtoOut.getValue(COL_3_MO_SUPPLY_UNITS));
         }
     }
