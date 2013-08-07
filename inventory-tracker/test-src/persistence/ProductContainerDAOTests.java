@@ -32,7 +32,8 @@ public class ProductContainerDAOTests {
         dao.insert(dtoIn);
 
         // select it back out and make sure it matches
-        Iterable<DataTransferObject> data = dao.getAll();
+        //Iterable<DataTransferObject> data = dao.getAll();
+        Iterable<DataTransferObject> data = dao.get(dtoIn);
         for (DataTransferObject dtoOut : data) {
             assertEquals(dtoIn.getValue(COL_NAME), dtoOut.getValue(COL_NAME));
             assertTrue(Boolean.valueOf(String.valueOf(dtoOut.getValue(COL_IS_STORAGE_UNIT))));

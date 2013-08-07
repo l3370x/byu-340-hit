@@ -311,7 +311,7 @@ public abstract class AbstractDAO {
                 SELECT_SQL,
                 columnList,
                 this.getTableName(),
-                (null == dto ? "" : this.getKeysAsArray(dto)));
+                (null == dto ? "" : this.prepareWhereClause(this.getKeysAsArray(dto))));
     }
 
     private String[] getKeysAsArray(DataTransferObject dto) {
