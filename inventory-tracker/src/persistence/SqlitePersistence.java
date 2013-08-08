@@ -50,6 +50,7 @@ public class SqlitePersistence implements Persistence {
     }
 
     Map<Integer, ProductContainer> addedContainers;
+    Map<String, Product> productsToAdd;
 
     private void addContainers() throws HITException {
         // holds added containers in order to add new categories to existing
@@ -188,7 +189,7 @@ public class SqlitePersistence implements Persistence {
 
         // Hold Products by barcode
 
-        Map<String, Product> productsToAdd = new HashMap<String, Product>();
+        productsToAdd = new HashMap<String, Product>();
 
         for (DataTransferObject product : products) {
             productsToAdd.put(
@@ -245,12 +246,8 @@ public class SqlitePersistence implements Persistence {
         int quota = (int) dto.getValue(ProductDAO.COL_3_MONTH_SUPPLY);
         p.set3MonthSupplyQuota(quota);
 
-        Date date = new Date();
-        try {
-            date = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH)
-                    .parse(ProductDAO.COL_CREATE_DATE);
-        } catch (ParseException e) {
-        }
+        
+        Date date = new Date((long) dto.getValue(ProductDAO.COL_CREATE_DATE));
 
         p.setCreationDate(date);
         int shelfLife = (int) dto.getValue(ProductDAO.COL_SHELF_LIFE_MONTHS);
@@ -395,8 +392,16 @@ public class SqlitePersistence implements Persistence {
         itemDTO.setValue(ItemDAO.COL_ENTRY_DATE, item.getEntryDate());
         itemDTO.setValue(ItemDAO.COL_PROD_BARCODE, item.getProduct()
                 .getBarCode().toString());
+        
+        // find the parent container in the addedContainers map
+        int parentContainerID = 0;
+        for (Map.Entry<Integer, ProductContainer> entry : this.addedContainers.entrySet()) {
+          if (entry.getValue().equals(item.getContainer())) {
+            parentContainerID = entry.getKey();
+          }
+        }
         itemDTO.setValue(ItemDAO.COL_PRODUCT_CONTAINER,
-                this.addedContainers.get(item.getContainer()));
+                parentContainerID);
         itemDTO.setValue(ItemDAO.COL_REMOVED_DATE, item.getExpirationDate());
 
         return itemDTO;
@@ -414,8 +419,9 @@ public class SqlitePersistence implements Persistence {
                 product = this.getProductFromDTO(obj);
                 break;
             }
-            Item item = Item.Factory.newItem(product,
-                    (Date) dto.getValue(ItemDAO.COL_ENTRY_DATE));
+            Date date = new Date((long) object.getValue(ItemDAO.COL_ENTRY_DATE));
+
+            Item item = Item.Factory.newItem(product,date);
             return item;
         } catch (HITException e) {
             // TODO Auto-generated catch block
@@ -474,14 +480,17 @@ public class SqlitePersistence implements Persistence {
     }
 
     private void addItemFromDTO(DataTransferObject dto) throws HITException {
+    	
         String productBarCode = (String) dto.getValue(ItemDAO.COL_PROD_BARCODE);
-        Product product = Product.Factory.newProduct(BarCode
-                .getBarCodeFor(productBarCode));
-        Date entryDate = (Date) dto.getValue(ItemDAO.COL_ENTRY_DATE);
-        Item item = Item.Factory.newItem(product, entryDate);
-        item.setExitDate((Date) dto.getValue(ItemDAO.COL_REMOVED_DATE));
-        int productContainerID = (Integer) dto
-                .getValue(ItemDAO.COL_PRODUCT_CONTAINER);
+        
+        Product product = productsToAdd.get(productBarCode);
+        Date date = new Date((long) dto.getValue(ItemDAO.COL_ENTRY_DATE));
+
+        Item item = Item.Factory.newItem(product, date);
+        Date exitdate = new Date((long) dto.getValue(ItemDAO.COL_REMOVED_DATE));
+        item.setExitDate(exitdate);
+        int productContainerID = (Integer) dto.getValue(ItemDAO.COL_PRODUCT_CONTAINER);
+        
         addedContainers.get(productContainerID).addItem(item);
     }
 
