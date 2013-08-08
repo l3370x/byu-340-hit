@@ -34,7 +34,7 @@ public class RemoveItemBatchController extends Controller implements
     private Timer timer;
     private final CopyOnWriteArrayList<Product> removedProducts = new CopyOnWriteArrayList<>();
     private final Map<Product, List<Item>> removedItemsByProduct = new HashMap<>();
-    
+
     private final UndoSupport undoSupport = new UndoSupport();
 
     /**
@@ -68,7 +68,7 @@ public class RemoveItemBatchController extends Controller implements
     @Override
     protected void loadValues() {
         this.getView().setBarcode("");
-        this.getView().setUseScanner(false);
+        this.getView().setUseScanner(true);
         this.useScannerChanged();
         // give focus to the barcode field
         this.getView().giveBarcodeFocus();
@@ -270,36 +270,36 @@ public class RemoveItemBatchController extends Controller implements
     public void done() {
         getView().close();
     }
-    
+
     private class RemoveItemCommand implements Command {
         private final ProductContainer container;
         private final Product product;
         private final Item item;
-        
+
         public RemoveItemCommand(Item item) {
             this.container = item.getContainer();
             this.product = item.getProduct();
             this.item = item;
         }
-        
+
         @Override
         public void execute() {
             try {
                 RemoveItemBatchController _this = RemoveItemBatchController.this;
-                
+
                 // add the item's product to the list of removed products (if necessary)
                 _this.removedProducts.addIfAbsent(this.product);
-                
+
                 // get (or create) the list of removed items
                 List<Item> removedItems = _this.removedItemsByProduct.get(this.product);
                 if (null == removedItems) {
                     removedItems = new ArrayList<>();
                     _this.removedItemsByProduct.put(this.product, removedItems);
                 }
-                
+
                 // add the item to the list of removed items
                 removedItems.add(this.item);
-                
+
                 // remove the item from its container
                 this.container.removeItem(this.item);
 
@@ -311,24 +311,24 @@ public class RemoveItemBatchController extends Controller implements
             } catch (HITException ex) {
                 ExceptionHandler.TO_USER.reportException(ex, "Unable To Remove Item");
             }
-            
+
         }
 
         @Override
         public void undo() {
             try {
                 RemoveItemBatchController _this = RemoveItemBatchController.this;
-                
+
                 List<Item> removedItems = _this.removedItemsByProduct.get(this.product);
                 removedItems.remove(this.item);
                 if (removedItems.isEmpty()) {
                     _this.removedItemsByProduct.remove(this.product);
                     _this.removedProducts.remove(this.product);
                 }
-                
+
                 // put the item back into the container
                 this.container.addItem(this.item);
-                
+
                 // remove the item from the "removed" items
                 getInventoryManager().deleteRemovedItem(this.item);
 
