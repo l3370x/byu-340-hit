@@ -487,8 +487,10 @@ public class SqlitePersistence implements Persistence {
         Date date = new Date((long) dto.getValue(ItemDAO.COL_ENTRY_DATE));
 
         Item item = Item.Factory.newItem(product, date);
-        Date exitdate = new Date((long) dto.getValue(ItemDAO.COL_REMOVED_DATE));
-        item.setExitDate(exitdate);
+	if(dto.getValue(ItemDAO.COL_REMOVED_DATE) != null){
+		Date exitdate = new Date((long) dto.getValue(ItemDAO.COL_REMOVED_DATE));
+        	item.setExitDate(exitdate);
+	}
         int productContainerID = (Integer) dto.getValue(ItemDAO.COL_PRODUCT_CONTAINER);
         
         addedContainers.get(productContainerID).addItem(item);
