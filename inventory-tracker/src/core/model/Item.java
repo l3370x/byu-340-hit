@@ -114,5 +114,11 @@ public interface Item extends Containable<ProductContainer> {
 
             return item;
         }
+
+        public static Item newItem(Product product, Date date,
+                String itemBarCode) {
+            Item item = new ItemImpl(date, product,BarCode.getBarCodeFor(itemBarCode));
+            return item;
+        }
     }
 }
