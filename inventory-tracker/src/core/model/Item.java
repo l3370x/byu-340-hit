@@ -6,6 +6,9 @@ import core.model.exception.HITException.Severity;
 import java.util.Date;
 import java.util.Observer;
 
+import static core.model.BarCode.generateItemBarCode;
+import static core.model.BarCode.getBarCodeFor;
+
 /**
  * Instances of the {@code Item} class represent physical items of a particular {@link Product}. An
  * item corresponds to a physical container with a bar code on it. For example, a case of soda might
@@ -100,25 +103,21 @@ public interface Item extends Containable<ProductContainer> {
          * @post product.contains(Item)
          */
         public static Item newItem(Product product, Date entryDate) throws HITException {
+            return newItem(product, entryDate, generateItemBarCode().getValue());
+        }
+
+        public static Item newItem(Product product, Date entryDate, String barcode)
+                throws HITException {
             if (product == null) {
                 throw new HITException(Severity.WARNING,
-                        "Can't add item to null product.");
+                        "Product must not be null");
             }
 
             if (entryDate == null) {
-                throw new HITException(Severity.WARNING, "Date missing.");
+                throw new HITException(Severity.WARNING, "Entry date must not be null");
             }
 
-            Item item = new ItemImpl(entryDate, product,
-                    BarCode.generateItemBarCode());
-
-            return item;
-        }
-
-        public static Item newItem(Product product, Date date,
-                String itemBarCode) {
-            Item item = new ItemImpl(date, product,BarCode.getBarCodeFor(itemBarCode));
-            return item;
+            return new ItemImpl(entryDate, product, getBarCodeFor(barcode));
         }
     }
 }

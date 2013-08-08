@@ -1,6 +1,7 @@
 package persistence;
 
 import core.model.exception.HITException;
+import junit.framework.Assert;
 import org.junit.Test;
 
 import java.util.Date;
@@ -15,7 +16,8 @@ public class ItemDAOTests {
         DataTransferObject dto = new DataTransferObject();
         dto.setValue(ItemDAO.COL_BARCODE, "123456789111");
         dto.setValue(ItemDAO.COL_PROD_BARCODE, "111987654321");
-        dto.setValue(ItemDAO.COL_ENTRY_DATE, new Date());
+        Date now = new Date();
+        dto.setValue(ItemDAO.COL_ENTRY_DATE, now);
 
         try {
             ItemDAO dao = new ItemDAO();
@@ -28,6 +30,8 @@ public class ItemDAOTests {
                 Date entryDate = new Date((Long) d.getValue(ItemDAO.COL_ENTRY_DATE));
                 System.out.println(d.getValue(ItemDAO.COL_ENTRY_DATE));
                 System.out.println(entryDate);
+
+                Assert.assertEquals(now.getTime(), entryDate.getTime());
             }
         } catch (HITException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
