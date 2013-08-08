@@ -86,8 +86,7 @@ public class SqlitePersistence implements Persistence {
         ProductContainerDAO dao = new ProductContainerDAO();
         Iterable<DataTransferObject> data = dao.getAll();
         for (DataTransferObject dto : data) {
-            if (((String) dto.getValue(ProductContainerDAO.COL_IS_STORAGE_UNIT))
-                    .equals("true")) {
+            if (((int) dto.getValue(ProductContainerDAO.COL_IS_STORAGE_UNIT)) == 1) {
                 StorageUnit su = addStorageUnitFromDTO(dto);
                 addedContainers.put(
                         (int) dto.getValue(ProductContainerDAO.COL_ID), su);
@@ -543,9 +542,9 @@ public class SqlitePersistence implements Persistence {
         if (!hasExitDate) {
             addedContainers.get(productContainerID).addItem(item);
         } else {
-            addedContainers.get(productContainerID).addItem(item);
+            //addedContainers.get(productContainerID).addItem(item);
             getInventoryManager().saveRemovedItem(item);
-            addedContainers.get(productContainerID).removeItem(item);
+            //addedContainers.get(productContainerID).removeItem(item);
         }
     }
 
@@ -627,15 +626,17 @@ public class SqlitePersistence implements Persistence {
     }
 
     private void contentRemoved(ModelNotification notification) {
-        ProductContainer pc = (ProductContainer) notification.getContent();
-        DataTransferObject dto = getDTOFromProductContainer(pc);
-        ProductContainerDAO dao = new ProductContainerDAO();
-        try {
-            dao.delete(dto);
-        } catch (HITException e) {
-            e.printStackTrace();
-        }
-
+		ProductContainer pc = (ProductContainer) notification.getContent();
+		DataTransferObject dto = getDTOFromProductContainer(pc);
+		ProductContainerDAO dao = new ProductContainerDAO();
+		int myID = getIDFromAddedContainers(pc);
+		dto.setValue(ProductContainerDAO.COL_ID, myID);
+		try {
+			dao.delete(dto);
+			addedContainers.remove(myID);
+		} catch (HITException e) {
+			e.printStackTrace();
+		}
     }
 
     private void contentAdded(ModelNotification notification) {
