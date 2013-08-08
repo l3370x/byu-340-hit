@@ -37,6 +37,7 @@ class TransactionManagerImpl implements TransactionManager {
         try {
             String connectionURL = MessageFormat.format(CONNECTION_URL, this.dbPath);
             Connection dbConnection = getConnection(connectionURL);
+            dbConnection.createStatement().execute("PRAGMA foreign_keys = ON;");
             dbConnection.setAutoCommit(false);
 
             return dbConnection;
