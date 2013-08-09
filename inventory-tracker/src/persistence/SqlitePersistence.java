@@ -162,7 +162,7 @@ public class SqlitePersistence implements Persistence {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             System.out.println("Database not found/corrupted.  Starting over.");
 
             try {
@@ -504,54 +504,54 @@ public class SqlitePersistence implements Persistence {
         Object payload = notification.getContent();
         switch (notification.getChangeType()) {
             case ITEM_ADDED:
-                System.out.println("item added "
-                        + ((Item) payload).getProduct().getDescription());
+                // System.out.println("item added "
+                //        + ((Item) payload).getProduct().getDescription());
                 this.itemAdded(notification);
 
                 break;
 
             case ITEM_REMOVED:
-                System.out.println("item removed "
-                        + ((Item) payload).getProduct().getDescription());
+                // System.out.println("item removed "
+                //        + ((Item) payload).getProduct().getDescription());
                 this.itemRemoved(notification);
                 break;
 
             case ITEM_UPDATED:
-                System.out.println("item updated "
-                        + ((Item) payload).getProduct().getDescription());
+                // System.out.println("item updated "
+                //        + ((Item) payload).getProduct().getDescription());
                 this.itemUpdated(notification);
                 break;
 
             case PRODUCT_ADDED:
                 productAddDAO((Product) payload);
-                System.out.println("product added "
-                        + ((Product) payload).getDescription());
+                // System.out.println("product added "
+                //        + ((Product) payload).getDescription());
                 break;
 
             case PRODUCT_REMOVED:
                 productRemoveDAO((ModelNotification) arg);
-                System.out.println("product removed "
-                        + ((Product) payload).getDescription());
+                // System.out.println("product removed "
+                //        + ((Product) payload).getDescription());
                 break;
             case CONTENT_ADDED:
-                System.out.println("container added "
-                        + ((ProductContainer) payload).getName());
+                // System.out.println("container added "
+                //        + ((ProductContainer) payload).getName());
                 this.contentAdded(notification);
                 break;
             case CONTENT_REMOVED:
-                System.out.println("container removed "
-                        + ((ProductContainer) payload).getName());
+                // System.out.println("container removed "
+                //        + ((ProductContainer) payload).getName());
                 this.contentRemoved(notification);
                 break;
             case CONTENT_UPDATED:
-                System.out.println("container updated "
-                        + ((ProductContainer) payload).getName());
+                // System.out.println("container updated "
+                //       + ((ProductContainer) payload).getName());
                 this.contentUpdated(notification);
                 break;
             case PRODUCT_UPDATED:
                 productUpdateDAO((Product) payload);
-                System.out.println("product updated "
-                        + ((Product) payload).getDescription());
+                //System.out.println("product updated "
+                //        + ((Product) payload).getDescription());
                 break;
             default:
                 break;
