@@ -2,15 +2,15 @@ package core.model;
 
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
+import persistence.PersistenceManager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
-
-import persistence.PersistenceManager;
 
 /**
  * The {@code InventoryManagerImpl} class is the default (and sole) implementation of the {@link
@@ -110,6 +110,14 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit>
     }
 
     @Override
+    public void removeProduct(Product product) throws HITException {
+        Iterator<ProductContainer> iter = product.getProductContainers().iterator();
+        if (false == iter.hasNext()) {
+            super.removeProduct(product);
+        }
+    }
+
+    @Override
     public void addItem(Item item) throws HITException {
         this.doAddItem(item);
     }
@@ -180,14 +188,14 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit>
      * @return the lastReportRun
      */
     public Date getLastReportRun() {
-    	Date savedDate = null;
-		try {
-			savedDate = PersistenceManager.Factory.getPersistenceManager().getLastReportRun();
-		} catch (HITException e) {
-			ExceptionHandler.TO_LOG.reportException(e, "error getting last report run date");
-		}
-    	if(savedDate != null)
-    		return savedDate;
+        Date savedDate = null;
+        try {
+            savedDate = PersistenceManager.Factory.getPersistenceManager().getLastReportRun();
+        } catch (HITException e) {
+            ExceptionHandler.TO_LOG.reportException(e, "error getting last report run date");
+        }
+        if (savedDate != null)
+            return savedDate;
         return lastReportRun;
     }
 
@@ -197,9 +205,9 @@ class InventoryManagerImpl extends AbstractProductContainer<StorageUnit>
     public void setLastReportRun(Date lastReportRun) {
         this.lastReportRun = lastReportRun;
         try {
-			PersistenceManager.Factory.getPersistenceManager().setLastReportRun(lastReportRun);
-		} catch (HITException e) {
-			ExceptionHandler.TO_LOG.reportException(e, "error setting last report run date");
-		}
+            PersistenceManager.Factory.getPersistenceManager().setLastReportRun(lastReportRun);
+        } catch (HITException e) {
+            ExceptionHandler.TO_LOG.reportException(e, "error setting last report run date");
+        }
     }
 }

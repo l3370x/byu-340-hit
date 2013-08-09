@@ -157,7 +157,7 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements
     public ProductContainer getProductContainer(StorageUnit unit) {
         ProductContainer container = this.containersByStorageUnit.get(unit);
         /*
-		 * if (null == container) { throw new HITException(Severity.ERROR,
+         * if (null == container) { throw new HITException(Severity.ERROR,
 		 * "This product doesn't exist in the given storage unit"); }
 		 */
 
@@ -189,11 +189,6 @@ class ProductImpl extends AbstractContainable<ProductContainer> implements
         if (null == container) {
             throw new HITException(HITException.Severity.WARNING,
                     "Container must not be null");
-        }
-
-        if (this.getContainer() != container) {
-            throw new HITException(HITException.Severity.WARNING, "Container ("
-                    + container + ") is not the current container");
         }
 
         if (container.containsProduct(this)) {
