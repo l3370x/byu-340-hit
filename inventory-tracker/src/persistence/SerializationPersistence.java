@@ -76,8 +76,8 @@ public class SerializationPersistence implements Persistence {
 				System.out.println("No previous save data found.");
 			} else {
 				if (e.getClass() == InvalidClassException.class) {
-					System.out
-							.println("Couldn't load old save file due to version mismatch.  Starting over.");
+					System.out.println
+					("Couldn't load old save file due to version mismatch.  Starting over.");
 					return;
 				}
 				throw new HITException(WARNING, e.getMessage());

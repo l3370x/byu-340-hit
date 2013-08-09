@@ -30,7 +30,8 @@ public class EditProductController extends Controller
     private String shelfLife;
     private String monthSupply;
     private static final Pattern POSITIVE_INTEGER_PATTERN = 
-	Pattern.compile("-?\\d+(\\.\\d+)?");
+    Pattern.compile("-?\\d+(\\.\\d+)?");
+    	
 
     /**
      * Constructor.
@@ -188,7 +189,8 @@ public class EditProductController extends Controller
     }
     
     private boolean productSizeIsValid(String sizeValue) {
-        if (null == sizeValue || sizeValue.isEmpty()) {
+        if (null == sizeValue || sizeValue.isEmpty()
+        	|| Double.parseDouble(sizeValue) == 0) {
             return false;
         }
 

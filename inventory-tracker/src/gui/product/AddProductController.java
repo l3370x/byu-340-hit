@@ -11,6 +11,7 @@ import gui.common.SizeUnits;
 import gui.common.UnitsConverter;
 
 import javax.swing.*;
+
 import java.util.regex.Pattern;
 
 import static core.model.InventoryManager.Factory.getInventoryManager;
@@ -195,7 +196,8 @@ public class AddProductController extends Controller implements
     }
 
     private boolean productSizeIsValid(String sizeValue) {
-        if (null == sizeValue || sizeValue.isEmpty()) {
+        if (null == sizeValue || sizeValue.isEmpty() 
+        	|| Double.parseDouble(sizeValue) == 0) {
             return false;
         }
 
