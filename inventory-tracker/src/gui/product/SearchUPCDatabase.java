@@ -17,8 +17,8 @@ import java.net.URLConnection;
 import java.text.MessageFormat;
 
 /**
- * The {@code UPCDatabaseDotOrg} class is a {@link ProductDetector} implementation that issues a
- * request to www.upcdatabase.org to find the product details for a particular barcode.
+ * The {@code SearchUPCDatabase} class is a {@link ProductDetector} implementation that issues a
+ * request to www.searchupc.org to find the product details for a particular barcode.
  *
  * @author Eric Hullinger
  */
@@ -50,6 +50,9 @@ public class SearchUPCDatabase extends DefaultHandler2 implements ProductDetecto
     
             this.barcode = barcode;
             this.description = words[0].substring(1);
+            // If it is a bunch of white space due to not finding anything.
+            if(this.description.trim().length() == 0)
+            	this.description = this.description.trim();
         
         } catch (Exception e) {
             ExceptionHandler.TO_LOG.reportException(e,
