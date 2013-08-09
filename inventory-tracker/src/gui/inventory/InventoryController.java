@@ -43,11 +43,11 @@ public class InventoryController extends Controller
 
     /**
      * Loads data into the controller's view.
-     *
+     * <p/>
      * {
      *
      * @pre None}
-     *
+     * <p/>
      * {
      * @post The controller has loaded data into its view}
      */
@@ -64,11 +64,11 @@ public class InventoryController extends Controller
     /**
      * Sets the enable/disable state of all components in the controller's view. A component should
      * be enabled only if the user is currently allowed to interact with that component.
-     *
+     * <p/>
      * {
      *
      * @pre None}
-     *
+     * <p/>
      * {
      * @post The enable/disable state of all components in the controller's view have been set
      * appropriately.}
@@ -80,6 +80,7 @@ public class InventoryController extends Controller
     //
     // IInventoryController overrides
     //
+
     /**
      * Returns true if and only if the "Add Storage Unit" menu item should be enabled.
      */
@@ -172,12 +173,12 @@ public class InventoryController extends Controller
         // prepare the operator that will work on the containers
         final Operator<ProductContainer, Boolean> operator =
                 new Operator<ProductContainer, Boolean>() {
-            @Override
-            public Boolean operate(ProductContainer container) {
-                // if the container has any items just quit now (and return false)
-                return container.getItemCount() == 0;
-            }
-        };
+                    @Override
+                    public Boolean operate(ProductContainer container) {
+                        // if the container has any items just quit now (and return false)
+                        return container.getItemCount() == 0;
+                    }
+                };
 
         // create the visitor (run in pre-order so we can quit at the first sign that a container
         // has some items
@@ -302,9 +303,10 @@ public class InventoryController extends Controller
         if (false == tag instanceof ProductContainer) {
             return;
         }
+
         try {
             ((ProductContainer) tag).removeProduct(product);
-              productContainerSelectionChanged();
+            productContainerSelectionChanged();
         } catch (HITException ex) {
             ExceptionHandler.TO_USER.reportException(ex, "Unable To Remove Product");
         }
@@ -343,22 +345,22 @@ public class InventoryController extends Controller
         if (null == itemData) {
             return;
         }
-        
+
         Object tag = itemData.getTag();
         if (false == tag instanceof Item) {
             return;
         }
-        
+
         Item item = (Item) tag;
-        
+
         try {
-        	getInventoryManager().saveRemovedItem(item);
+            getInventoryManager().saveRemovedItem(item);
             item.getContainer().removeItem(item);
             //Update the view
             updateProductsPane(this.getView());
             updateItemsPane(this.getView());
         } catch (HITException ex) {
-        	
+
             ExceptionHandler.TO_USER.reportException(ex, "Unable To Remove Item");
         }
     }
@@ -446,23 +448,23 @@ public class InventoryController extends Controller
     /**
      * This method is called when the user drags a product into a product container.
      *
-     * @param productData Product dragged into the target product container
+     * @param productData   Product dragged into the target product container
      * @param containerData Target product container
      */
     @Override
     public void addProductToContainer(ProductData productData,
-            ProductContainerData containerData) {
+                                      ProductContainerData containerData) {
         if (null == productData || null == containerData) {
             return;
         }
-        
+
         Object tag = productData.getTag();
         if (false == tag instanceof Product) {
             return;
         }
-        
+
         Product product = (Product) tag;
-        
+
         tag = containerData.getTag();
         if (false == tag instanceof ProductContainer) {
             return;
@@ -470,7 +472,7 @@ public class InventoryController extends Controller
         try {
             ((ProductContainer) tag).addProduct(product);
         } catch (HITException ex) {
-            ExceptionHandler.TO_USER.reportException(ex, 
+            ExceptionHandler.TO_USER.reportException(ex,
                     "Unable To Add Product To Product Container");
         }
     }
@@ -478,12 +480,12 @@ public class InventoryController extends Controller
     /**
      * This method is called when the user drags an item into a product container.
      *
-     * @param itemData Item dragged into the target product container
+     * @param itemData      Item dragged into the target product container
      * @param containerData Target product container
      */
     @Override
     public void moveItemToContainer(ItemData itemData,
-            ProductContainerData containerData) {
+                                    ProductContainerData containerData) {
         if (null == itemData || null == containerData) {
             return;
         }
@@ -564,11 +566,11 @@ public class InventoryController extends Controller
                 this.productContainerSelectionChanged();
                 //this.productSelectionChanged();
                 break;
-                
+
             case PRODUCT_UPDATED:
                 this.productContainerSelectionChanged();
                 break;
-                
+
             case ITEM_UPDATED:
                 this.productSelectionChanged();
                 break;

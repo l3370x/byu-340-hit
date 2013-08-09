@@ -49,6 +49,8 @@ public enum ExceptionHandler {
     TO_USER {
         @Override
         public void reportException(Throwable error, String additionalMessage) {
+            TO_LOG.reportException(error, additionalMessage);
+
             int msgType = JOptionPane.PLAIN_MESSAGE;
 
             // if the error was a HITException, use the Severity to determine

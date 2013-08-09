@@ -1,6 +1,5 @@
 package gui.reports.productstats;
 
-import common.util.DateUtils;
 import core.model.Item;
 
 import java.util.Calendar;
@@ -29,7 +28,7 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
     @Override
     public int currentSupply() {
         int itemCount = 0;
-        for (Item item : this.currentItems) {
+        for (Item ignored : this.currentItems) {
             itemCount++;
         }
 
@@ -43,7 +42,7 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
         cal.setTime(startDate);
         int netDaysItemsStored = 0;
         while (!cal.getTime().after(endDate)) {
-            netDaysItemsStored += calculateItemsStoredInDate(cal);
+            netDaysItemsStored += calculateItemsStoredInDate(cal.getTime());
             cal.add(Calendar.DAY_OF_YEAR, 1);
         }
         if (numberOfDays == 0)
@@ -56,22 +55,28 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
         return (double) Math.round(in * 1000) / 1000;
     }
 
-    private int calculateItemsStoredInDate(Calendar cal) {
+    private int calculateItemsStoredInDate(Date date) {
         int itemsStoredInDate = 0;
 
         // iterate through items
         for (Item item : this.currentItems) {
-            if (!item.getEntryDate().after(cal.getTime())) {
+            if (!item.getEntryDate().after(date)) {
                 itemsStoredInDate++;
             }
         }
 
         for (Item item : this.removedItems) {
+            if (item.getEntryDate().compareTo(date) <= 0 &&
+                    (null != item.getExitDate() && item.getExitDate().compareTo(date) > 0)) {
+                itemsStoredInDate++;
+            }
+            /*
             if (!item.getEntryDate().after(cal.getTime())
                     && item.getExitDate().after(cal.getTime())
                     && !item.getExitDate().equals(cal.getTime())) {
                 itemsStoredInDate++;
             }
+            */
         }
 
         return itemsStoredInDate;
@@ -85,12 +90,10 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
         }
 
         Calendar cal = Calendar.getInstance();
-        cal.setTime(startDate);
-        while (!cal.getTime().after(endDate) || cal.getTime().equals(endDate)) {
-            int itemsStoredInDate = calculateItemsStoredInDate(cal);
-            if (itemsStoredInDate < minimumSupply) {
-                minimumSupply = itemsStoredInDate;
-            }
+        cal.setTime(this.startDate);
+        //while (!cal.getTime().after(endDate) || cal.getTime().equals(endDate)) {
+        while (cal.getTime().compareTo(this.endDate) <= 0) {
+            minimumSupply = Math.min(minimumSupply, this.calculateItemsStoredInDate(cal.getTime()));
             cal.add(Calendar.DAY_OF_YEAR, 1);
         }
 
@@ -102,11 +105,9 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
         int maximumSupply = currentSupply();
         Calendar cal = Calendar.getInstance();
         cal.setTime(startDate);
-        while (!cal.getTime().after(endDate) || cal.getTime().equals(endDate)) {
-            int itemsStoredInDate = calculateItemsStoredInDate(cal);
-            if (itemsStoredInDate > maximumSupply) {
-                maximumSupply = itemsStoredInDate;
-            }
+        //while (!cal.getTime().after(endDate) || cal.getTime().equals(endDate)) {
+        while (cal.getTime().compareTo(this.endDate) <= 0) {
+            maximumSupply = Math.max(maximumSupply, this.calculateItemsStoredInDate(cal.getTime()));
             cal.add(Calendar.DAY_OF_YEAR, 1);
         }
         return maximumSupply;
@@ -116,10 +117,14 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
     public int itemsUsed() {
         int itemsUsed = 0;
         for (Item item : this.removedItems) {
-            if (item.getExitDate().after(startDate)
-                    || item.getExitDate().equals(startDate)) {
+            if (null != item.getExitDate() && item.getExitDate().compareTo(this.startDate) >= 0) {
                 itemsUsed++;
             }
+            /*
+            if (item.getExitDate().after(startDate)
+                    || item.getExitDate().equals(startDate)) {
+            }
+            */
         }
         return itemsUsed;
     }
@@ -129,17 +134,27 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
         int itemsAdded = 0;
 
         for (Item item : this.currentItems) {
+            if (item.getEntryDate().compareTo(this.startDate) >= 0) {
+                itemsAdded++;
+            }
+            /*
             if (item.getEntryDate().after(startDate)
                     || item.getEntryDate().equals(startDate)) {
                 itemsAdded++;
             }
+            */
         }
 
         for (Item item : this.removedItems) {
+            if (item.getEntryDate().compareTo(this.startDate) >= 0) {
+                itemsAdded++;
+            }
+            /*
             if (item.getEntryDate().after(startDate)
                     || item.getEntryDate().equals(startDate)) {
                 itemsAdded++;
             }
+            */
         }
 
         return itemsAdded;
@@ -151,8 +166,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
         int totalUsedItems = 0;
         for (Item item : this.removedItems) {
             netAgeUsed += calculateDayDifference(
-                    DateUtils.removeTimeFromDate(item.getEntryDate()),
-                    DateUtils.removeTimeFromDate(item.getExitDate()));
+                    removeTimeFromDate(item.getEntryDate()),
+                    removeTimeFromDate(item.getExitDate()));
             totalUsedItems++;
         }
 
@@ -168,8 +183,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
         int maximumAgeUsed = 0;
         for (Item item : this.removedItems) {
             int age = calculateDayDifference(
-                    DateUtils.removeTimeFromDate(item.getEntryDate()),
-                    DateUtils.removeTimeFromDate(item.getExitDate()));
+                    removeTimeFromDate(item.getEntryDate()),
+                    removeTimeFromDate(item.getExitDate()));
             if (age > maximumAgeUsed) {
                 maximumAgeUsed = age;
             }
@@ -183,8 +198,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
         int totalCurrentItems = 0;
         for (Item item : this.currentItems) {
             netAgeCurrent += calculateDayDifference(
-                    DateUtils.removeTimeFromDate(item.getEntryDate()),
-                    DateUtils.removeTimeFromDate(endDate));
+                    removeTimeFromDate(item.getEntryDate()),
+                    removeTimeFromDate(endDate));
             totalCurrentItems++;
         }
 
@@ -196,8 +211,8 @@ public class ProductStatsCalculatorImpl implements ProductStatsCalculator {
         int maximumAgeCurrent = 0;
         for (Item item : this.currentItems) {
             int age = calculateDayDifference(
-                    DateUtils.removeTimeFromDate(item.getEntryDate()),
-                    DateUtils.removeTimeFromDate(new Date()));
+                    removeTimeFromDate(item.getEntryDate()),
+                    removeTimeFromDate(new Date()));
             if (age > maximumAgeCurrent) {
                 maximumAgeCurrent = age;
             }
