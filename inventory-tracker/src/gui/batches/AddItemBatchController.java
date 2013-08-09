@@ -1,27 +1,28 @@
 package gui.batches;
 
-import java.util.*;
-
 import common.Command;
 import common.UndoSupport;
 import core.model.*;
 import core.model.exception.ExceptionHandler;
 import core.model.exception.HITException;
-import static core.model.InventoryManager.Factory.getInventoryManager;
-import static core.model.Item.Factory.newItem;
-import static core.model.BarCode.*;
-import static gui.batches.ItemLabelController.*;
-
 import core.model.exception.HITException.Severity;
-import gui.common.*;
-import gui.inventory.*;
+import gui.common.Controller;
+import gui.common.IView;
+import gui.inventory.ProductContainerData;
 import gui.item.ItemData;
-import gui.product.*;
+import gui.product.ProductData;
+
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
-import javax.swing.Timer;
+
+import static core.model.BarCode.getBarCodeFor;
+import static core.model.InventoryManager.Factory.getInventoryManager;
+import static core.model.Item.Factory.newItem;
+import static gui.batches.ItemLabelController.createDocument;
 
 /**
  * Controller class for the add item batch view.
@@ -41,7 +42,7 @@ public class AddItemBatchController extends Controller implements
     /**
      * Constructor.
      *
-     * @param view Reference to the add item batch view.
+     * @param view   Reference to the add item batch view.
      * @param target Reference to the storage unit to which items are being added.
      */
     public AddItemBatchController(IView view, ProductContainerData target) {
@@ -60,11 +61,11 @@ public class AddItemBatchController extends Controller implements
 
     /**
      * Loads data into the controller's view.
-     *
+     * <p/>
      * {
      *
      * @pre None}
-     *
+     * <p/>
      * {
      * @post The controller has loaded data into its view}
      */
@@ -81,11 +82,11 @@ public class AddItemBatchController extends Controller implements
     /**
      * Sets the enable/disable state of all components in the controller's view. A component should
      * be enabled only if the user is currently allowed to interact with that component.
-     *
+     * <p/>
      * {
      *
      * @pre None}
-     *
+     * <p/>
      * {
      * @post The enable/disable state of all components in the controller's view have been set
      * appropriately.}
@@ -115,7 +116,7 @@ public class AddItemBatchController extends Controller implements
         if (this.getView().getUseScanner()) {
             return;
         }
-        
+
         this.getView().enableItemAction(this.countIsValid(this.getView().getCount()));
     }
 
@@ -135,7 +136,7 @@ public class AddItemBatchController extends Controller implements
             this.getView().enableItemAction(true);
             return;
         }
-        
+
         if (this.timer.isRunning()) {
             this.timer.restart();
         } else {
@@ -230,13 +231,13 @@ public class AddItemBatchController extends Controller implements
 
             String countVal = this.getView().getCount();
             if (false == this.countIsValid(countVal)) {
-                throw new HITException(Severity.ERROR, "Invalid value for count (" + countVal + 
+                throw new HITException(Severity.ERROR, "Invalid value for count (" + countVal +
                         "): must be a numeric value greater than 0.");
             }
-            
+
             Object tag = this.source.getTag();
             if (false == tag instanceof StorageUnit) {
-                throw new HITException(Severity.ERROR, 
+                throw new HITException(Severity.ERROR,
                         "Items may only be added when a storage unit is selected");
             }
 
@@ -251,11 +252,6 @@ public class AddItemBatchController extends Controller implements
             List<Item> itemsToAdd = new ArrayList<>();
             int count = Integer.valueOf(countVal);
             for (int i = 0; i < count; i++) {
-                // generate data for the Item
-                Calendar expiryDate = Calendar.getInstance();
-                expiryDate.setTime(this.getView().getEntryDate());
-                expiryDate.add(Calendar.MONTH, product.getShelfLifeInMonths());
-
                 // create the item
                 Item item = newItem(product, this.getView().getEntryDate());
 
@@ -323,16 +319,16 @@ public class AddItemBatchController extends Controller implements
     }
 
     private void updateProductsPane(Product product) {
-        ProductContainer container = (ProductContainer) this.source.getTag();
-
         // create the product data instances
         ProductData selected = null;
         List<ProductData> productList = new ArrayList<>();
         for (Product p : this.addedProducts) {
             ProductData data = new ProductData(p);
-            data.setCount(Integer.toString(container.getItemCount(p)));
+
+            List<Item> items = this.addedItemsByProduct.get(p);
+            data.setCount(Integer.toString(null != items ? items.size() : 0));
             productList.add(data);
-            if ( p == product) {
+            if (p == product) {
                 selected = data;
             }
         }
@@ -385,7 +381,7 @@ public class AddItemBatchController extends Controller implements
         public void execute() {
             try {
                 AddItemBatchController _this = AddItemBatchController.this;
-                
+
                 List<Item> addedItems = _this.addedItemsByProduct.get(this.product);
                 if (null == addedItems) {
                     addedItems = new ArrayList<>();
@@ -397,10 +393,8 @@ public class AddItemBatchController extends Controller implements
                     addedItems.add(item);
                 }
 
-                if (false == this.productExisted) {
-                    // add the product to the list if it hasn't been already
-                    _this.addedProducts.addIfAbsent(this.product);
-                }
+                // add the product to the list if it hasn't been already
+                _this.addedProducts.addIfAbsent(this.product);
 
                 _this.updateProductsPane(this.product);
             } catch (HITException e) {
@@ -413,7 +407,7 @@ public class AddItemBatchController extends Controller implements
         public void undo() {
             try {
                 AddItemBatchController _this = AddItemBatchController.this;
-                
+
                 List<Item> addedItems = _this.addedItemsByProduct.get(this.product);
 
                 for (Item item : this.items) {
